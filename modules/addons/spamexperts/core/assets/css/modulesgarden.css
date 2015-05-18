@@ -1,0 +1,39 @@
+.table form 
+{
+    padding: 0;
+    margin: 0;
+}
+
+.table input
+{
+    margin: 0!important;
+}
+
+input[disabled], select[disabled], textarea[disabled], .body input[readonly], select[readonly], textarea[readonly] {
+    background-color: #EEEEEE!important;
+    cursor: not-allowed!important;
+}
+
+h1 a,
+h2 a,
+h3 a,
+h4 a,
+h5 a,
+h6 a
+{
+    color: #333333!important;
+    text-decoration: none;
+}
+
+h1 a:hover,
+h2 a:hover,
+h3 a:hover,
+h4 a:hover,
+h5 a:hover,
+h6 a:hover
+{
+    text-decoration: underline;
+}
+#left_side {display:none !important;}
+#content_container #content {margin-left:0 !important;}
+#mg-wrapper #mg-content.right {margin-right:0 !important;}
