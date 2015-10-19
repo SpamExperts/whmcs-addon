@@ -25,43 +25,51 @@
 /**
  * @author Maciej Husak <maciej@modulesgarden.com>
  */
-if (!defined("WHMCS")) 
+if (!defined("WHMCS"))
 {
-  die("This file cannot be accessed directly");
+    die("This file cannot be accessed directly");
 }
 
+$reseller_id = 0;
+
 $api->call('/reseller/list/');
+
 if($api->isSuccess())
 {
     $resellers = $api->getResponse();
-    foreach($resellers['result'][0] as $val)
+
+    if (isset($resellers['result'][0]))
     {
-        if($val['username'] == $params['username'])
-        {
-            $reseller_id = $val['id'];
-            break;
+        foreach($resellers['result'][0] as $val) {
+
+            if($val['username'] == $params['username'])
+            {
+                $reseller_id = $val['id'];
+                break;
+            }
         }
     }
 }
 
-$api->call('/auth/getrole/');
-$role = $api->getResponse();
-
-$api->call('/reseller/getbandwidthusage/reseller_id/'.$reseller_id);
-if($api->isSuccess())
+if ($reseller_id)
 {
-    $result = $api->getResponse();
-    $lines  = array_filter(explode("\n",$result['result']));
-    $data   = array();
-
-    foreach($lines as $val)
+    $api->call('/reseller/getbandwidthusage/reseller_id/'.$reseller_id);
+    if($api->isSuccess())
     {
-        $data[]      = explode(',',$val);
-    }
+        $result = $api->getResponse();
+        $lines  = array_filter(explode("\n",$result['result']));
+        $data   = array();
 
-    $vars['data']    = $data;
-    
+        foreach($lines as $val)
+        {
+            $data[]      = explode(',',$val);
+        }
+
+        $vars['data']    = $data;
+    } else {
+        $vars['_status'] = array('code'=>0,'msg'=>$api->error());
+    }
 } else {
-    $vars['_status'] = array('code'=>0,'msg'=>$api->error());
+    $vars['_status'] = array('code'=>0,'msg'=>"No reseller found");
 }
 

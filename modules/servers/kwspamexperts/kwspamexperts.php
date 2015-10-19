@@ -75,6 +75,9 @@ function kwspamexperts_CreateAccount($params)
 	update_query("tblhosting", array("password" => encrypt($password)), array("id" => $params['serviceid']));
 
         // add domain
+        if(empty($domain)){
+            return "Domain cannot be empty. Please enter domain name in Domain field.";
+        }
         $api->call("domain/add/domain/".$domain."/");
 	if ($api->isError())
         {
@@ -117,6 +120,9 @@ function kwspamexperts_TerminateAccount($params)
 {
         $api    = new kwspamexperts_api($params);
         $domain = !empty($params["customfields"]["Domain"])  ? $params["customfields"]["Domain"] : $params['domain'];
+        if(empty($domain)){
+            return "Domain cannot be empty. Please enter domain name in Domain field.";
+        }
         $api ->call("domain/remove/domain/".$domain."/");
         
         if ($api->isError())
@@ -142,6 +148,9 @@ function kwspamexperts_ChangePackage($params) {
         $archiving  = (int)(!empty($params["configoptions"]["archiving"]) && $params["configoptions"]["archiving"]);
         
         $api = new kwspamexperts_api($params);
+        if(empty($domain)){
+            return "Domain cannot be empty. Please enter domain name in Domain field.";
+        }        
         $api ->call("domain/setproducts/domain/".$domain."/incoming/".$incoming."/outgoing/".$outgoing."/archiving/$archiving/");
         
         if ($api->isSuccess())
@@ -157,6 +166,9 @@ function kwspamexperts_SuspendAccount($params)
 	$domain   = !empty($params["customfields"]["Domain"])   ? $params["customfields"]["Domain"] : $params['domain'];
         $api = new kwspamexperts_api($params);
         
+        if(empty($domain)){
+            return "Domain cannot be empty. Please enter domain name in Domain field.";
+        }        
         $api ->call("domain/whitelistrecipient/domain/".$domain."/recipient/*/",false);
         
         if ($api->isSuccess())
@@ -171,6 +183,9 @@ function kwspamexperts_UnsuspendAccount($params)
 {
 	$domain   = !empty($params["customfields"]["Domain"])   ? $params["customfields"]["Domain"] : $params['domain'];
         $api = new kwspamexperts_api($params);
+        if(empty($domain)){
+            return "Domain cannot be empty. Please enter domain name in Domain field.";
+        }        
         $api ->call("domain/unwhitelistrecipient/domain/".$domain."/recipient/*/",false);
         
         if ($api->isSuccess())
