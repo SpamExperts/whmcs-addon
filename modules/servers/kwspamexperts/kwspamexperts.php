@@ -51,6 +51,16 @@ function kwspamexperts_ConfigOptions() {
              "FriendlyName" => "API Password",
              "Description"  => ""
          ),
+	 "EditRoute"      => array( 
+             "Type"         => "yesno", 
+             "FriendlyName" => "Allow users to manage their routes",
+             "Description"  => ""
+         ),
+	 "ChangeContact"      => array( 
+             "Type"         => "yesno", 
+             "FriendlyName" => "Allow users to change their contact details",
+             "Description"  => ""
+         ),
     );
     return $configarray;
 }
@@ -255,7 +265,7 @@ if (!function_exists('kwspamexperts_management')){
          $domain            = !empty($params["customfields"]["Domain"])  ? $params["customfields"]["Domain"]  : $params['domain'];
          
          $allowPages = array('EditEmail','ManageRoutes','ManageAliases');
-         
+
          if(empty($page) || !file_exists(dirname(__FILE__).DS.$page.'.php') || !file_exists(dirname(__FILE__).DS.'templates'.DS.$page.'.tpl') || !in_array($page, $allowPages))
          {
              $vars['_status']    = array('code' => 1, 'msg' => $lang['mainsite']['notfound']);
@@ -287,10 +297,10 @@ function kwspamexperts_ClientArea($params) {
     global $CONFIG,$smarty;	
     $lang   = kwspamexperts_getLang($params);   
     $api    = new kwspamexperts_api($params);
-    $smarty ->assign('lang',$lang['mainsite']);
+    $smarty->assign('lang',$lang['mainsite']);
     $domain = !empty($params["customfields"]["Domain"])  ? $params["customfields"]["Domain"] : $params['domain'];
-    $api    -> call("authticket/create/username/".$domain."/");
-    
+    $api->call("authticket/create/username/".$domain."/");
+
     if(strpos($params['configoption2'], 'http') !== false)
         $api_url = $params['configoption2'];
     else
@@ -301,4 +311,7 @@ function kwspamexperts_ClientArea($params) {
         $smarty->assign('api_url', $api_url);
         $smarty->assign('api_auth',$auth['result']);
     }
+
+    $smarty->assign('disable_manage_routes', $params['configoption5']);
+    $smarty->assign('disable_edit_contact', $params['configoption6']);
 }

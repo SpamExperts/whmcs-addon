@@ -10,7 +10,7 @@ $IS_CLIENTAREA = false;
  * Just change function name. Do not edit anything more.
  */ 
 
- 
+
 function spamexperts_config()
 {
     //SOME USEFUL STUFF

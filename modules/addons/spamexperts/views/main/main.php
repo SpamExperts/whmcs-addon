@@ -5,7 +5,7 @@ if (!defined("WHMCS"))
 }
 ?>
 <form action="" method="post">
-    <table class="table table-bordered table-striped">
+    <table class="table table-bordered table-striped configtable">
         <tr>
             <td>API URL:</td>
             <td><input type="text" name="conf[url]" style="width:304px;" value="<?php echo $data['url']; ?>" /></td>
@@ -17,6 +17,14 @@ if (!defined("WHMCS"))
         <tr>
             <td>API Password</td>
             <td><input type="password" name="conf[password]" value="<?php echo $data['password']; ?>" /></td>
+        </tr>
+        <tr>
+            <td>Disable user access to manage routes page</td>
+            <td><input type="checkbox" name="conf[disable_manage_routes]" value="1" <?php if($data['disable_manage_routes'] == '1') echo 'checked'; ?>/></td>
+        </tr>
+        <tr>
+            <td>Disable user access to edit contact e-mail page</td>
+            <td><input type="checkbox" name="conf[disable_edit_contact]" value="1" <?php if($data['disable_edit_contact'] == '1') echo 'checked'; ?>/></td>
         </tr>
         <tr>
             <td colspan="2">

@@ -443,6 +443,14 @@
 	}
 }
 
+table.configtable tr td{
+    height: 30px;
+}
+
+table.configtable tr td:first-child{
+    width: 350px;
+}
+
 /* Desktop large
 ------------------------- */
 @media (min-width: 1200px) {

@@ -53,6 +53,7 @@ $lang['ManageRoutes']['route_added']        = 'Route has been added';
 $lang['ManageRoutes']['remove_info']        = 'You are not allowed to delete this route as a domain always needs to have at least one route.';
 $lang['ManageRoutes']['selectall']          = 'Select All';
 $lang['ManageRoutes']['delete']             = 'Delete';
+$lang['ManageRoutes']['route_denied']       = 'You are not allowed to change this data.';
 
 
   
@@ -80,5 +81,6 @@ $lang['EditEmail']['email']                 = 'E-mail';
 $lang['EditEmail']['email_changed']         = 'E-mail has been changed.';
 $lang['EditEmail']['primarycontact']        = 'Primary contact e-mail:';
 $lang['EditEmail']['admincontact']          = 'Administrator\'s contact:';
+$lang['EditEmail']['email_denied']          = 'You are not allowed to change this data.';
 
 ?>

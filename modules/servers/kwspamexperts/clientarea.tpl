@@ -26,14 +26,29 @@
 <div class="buttons">
     <h3 style="text-align:left;margin-bottom: 5px;">{$lang.management}</h3>
     {*<button class="btn" onclick="window.location.href='clientarea.php?action=productdetails&id={$serviceid}&modop=custom&a=management&page=logintopanel';return false">{$lang.logintopanel}</button>*}
-    <button class="btn" onclick="window.location.href='clientarea.php?action=productdetails&id={$serviceid}&modop=custom&a=management&page=EditEmail';return false"><i class="icon-edit"></i> {$lang.editcontactemail}</button>
-    <button class="btn" onclick="window.location.href='clientarea.php?action=productdetails&id={$serviceid}&modop=custom&a=management&page=ManageRoutes';return false"><i class="icon-retweet"></i> {$lang.manageroutes}</button>
-    <button class="btn" onclick="window.location.href='clientarea.php?action=productdetails&id={$serviceid}&modop=custom&a=management&page=ManageAliases';return false"><i class="icon-globe"></i> {$lang.managealiases}</button>
-    <button class="btn" onclick="window.open('{$api_url}/?authticket={$api_auth}');return false;"><i class="icon-user"></i> {$lang.logintopanel}</button>
+    {if !$disable_edit_contact}
+        <button class="btn" onclick="window.location.href='clientarea.php?action=productdetails&id={$serviceid}&modop=custom&a=management&page=EditEmail';return false">
+            <i class="icon-edit"></i> {$lang.editcontactemail}
+        </button>
+    {/if}
+
+    {if !$disable_manage_routes}
+        <button class="btn" onclick="window.location.href='clientarea.php?action=productdetails&id={$serviceid}&modop=custom&a=management&page=ManageRoutes';return false">
+            <i class="icon-retweet"></i> {$lang.manageroutes}
+        </button>
+    {/if}
+
+    <button class="btn" onclick="window.location.href='clientarea.php?action=productdetails&id={$serviceid}&modop=custom&a=management&page=ManageAliases';return false">
+        <i class="icon-globe"></i> {$lang.managealiases}
+    </button>
+
+    <button class="btn" onclick="window.open('{$api_url}/?authticket={$api_auth}');return false;">
+        <i class="icon-user"></i> {$lang.logintopanel}
+    </button>
 </div>
 
 <style>
     {literal}
         .buttons .btn {margin-bottom:5px;}
     {/literal}
-</style> 
+</style>

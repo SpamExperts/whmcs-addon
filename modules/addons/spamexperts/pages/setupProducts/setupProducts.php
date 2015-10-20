@@ -49,10 +49,12 @@ if(isset($_POST['action']) && $_POST['action'] == 'addProduct')
             `configoption2`,
             `configoption3`,
             `configoption4`,
+            `configoption5`,
+            `configoption6`,
             `servertype`,
             `showdomainoptions`,
             `paytype`
-        ) VALUES(?,?,?,?,?,?,?,?,?,?)",
+        ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
             array
             (
                 'hostingaccount',
@@ -62,6 +64,8 @@ if(isset($_POST['action']) && $_POST['action'] == 'addProduct')
                 $data['url'],
                 $data['user'],
                 $data['password'],
+                $data['disable_manage_routes'],
+                $data['disable_edit_contact'],
                 'kwspamexperts',
                 'on',
                 'free'

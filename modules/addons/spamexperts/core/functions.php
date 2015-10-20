@@ -187,7 +187,23 @@ if(!function_exists('saveWHMCSconfig2'))
 
 if(!function_exists('updateProductsConfig')){
     function updateProductsConfig($c){
-        $array = unserialize($c); 
-        return mysql_safequery("UPDATE tblproducts SET configoption2 = ?, configoption3 = ?, configoption4 = ? WHERE servertype = 'kwspamexperts';", $array);
+        $array = unserialize($c);
+
+        if(!isset($array['disable_manage_routes'])){
+            $array['disable_manage_routes'] = '0';
+        }
+
+        if(!isset($array['disable_edit_contact'])){
+            $array['disable_edit_contact'] = '0';
+        }
+
+        return mysql_safequery("UPDATE tblproducts SET configoption2 = ?, configoption3 = ?, configoption4 = ?, configoption5 = ?, configoption6 = ? WHERE servertype = 'kwspamexperts';",
+                array(
+                    $array['url'],
+                    $array['user'],
+                    $array['password'],
+                    $array['disable_manage_routes'],
+                    $array['disable_edit_contact']
+                ));
     }
 }
