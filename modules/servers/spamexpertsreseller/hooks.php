@@ -27,13 +27,32 @@
  */
 
 
-if(!function_exists('hide_pass_in_clientarea_spamexperts')){
-    function hide_pass_in_clientarea_spamexperts (){ 
+if (!function_exists('hide_pass_in_clientarea_spamexperts')) {
+    function hide_pass_in_clientarea_spamexperts() {
         global $smarty;
 
-        if($smarty->_tpl_vars['filename'] == 'clientarea' && ($smarty->_tpl_vars['modulename'] == 'kwspamexperts' || $smarty->_tpl_vars['modulename'] == 'spamexpertsreseller'))
-            $smarty->_tpl_vars['password'] = '********';
+        $version = explode('.', $smarty->_version, 2)[0];
+
+        if ($version < 3) {
+            if($smarty->_tpl_vars['filename'] == 'clientarea' &&
+                (
+                    $smarty->_tpl_vars['modulename'] == 'kwspamexperts' ||
+                    $smarty->_tpl_vars['modulename'] == 'spamexpertsreseller'
+                )
+            ) {
+                $smarty->_tpl_vars['password'] = '********';
+            }
+        } else {
+            if ($smarty->getVariable('filename')->value == 'clientarea' &&
+                (
+                    $smarty->getVariable('modulename')->value == 'kwspamexperts' ||
+                    $smarty->getVariable('modulename')->value == 'spamexpertsreseller'
+                )
+            ) {
+                $smarty->assign('password', '********');
+            }
+        }
     }
 }
 
-add_hook('ClientAreaHeadOutput',1,'hide_pass_in_clientarea_spamexperts');
+add_hook('ClientAreaHeadOutput', 1, 'hide_pass_in_clientarea_spamexperts');

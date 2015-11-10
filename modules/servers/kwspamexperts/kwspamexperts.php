@@ -51,13 +51,13 @@ function kwspamexperts_ConfigOptions() {
              "FriendlyName" => "API Password",
              "Description"  => ""
          ),
-	 "EditRoute"      => array( 
-             "Type"         => "yesno", 
+	 "EditRoute"      => array(
+             "Type"         => "yesno",
              "FriendlyName" => "Allow users to manage their routes",
              "Description"  => ""
          ),
-	 "ChangeContact"      => array( 
-             "Type"         => "yesno", 
+	 "ChangeContact"      => array(
+             "Type"         => "yesno",
              "FriendlyName" => "Allow users to change their contact details",
              "Description"  => ""
          ),
