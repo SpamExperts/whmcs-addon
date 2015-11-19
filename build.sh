@@ -1,13 +1,6 @@
 #!/bin/bash
-
-# Make sure everything is up-to-date before triggering the actual build
-# @see https://trac.spamexperts.com/ticket/24852
-SVN_USERNAME=`python -c "import ConfigParser;c=ConfigParser.ConfigParser();c.read('/etc/spamexperts/build.conf');print c.get('frontend', 'svn_user')"`
-SVN_PASSWORD=`python -c "import ConfigParser;c=ConfigParser.ConfigParser();c.read('/etc/spamexperts/build.conf');print c.get('frontend', 'svn_password')"`
-svn up --force --no-auth-cache --password ${SVN_PASSWORD} --username ${SVN_USERNAME}
-if [ $? -ne 0 ]; then
-    echo "svn up failed!"
-    exit 1
+if [ -f ./latest.tar.gz ]; then
+    rm ./latest.tar.gz
 fi
 
-./trigger_build.sh
+tar czf ./latest.tar.gz * --exclude=build.sh --exclude=trigger_build.sh --exclude=.svn --exclude=*.tar.gz
