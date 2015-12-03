@@ -31,9 +31,7 @@ if (!function_exists('hide_pass_in_clientarea_spamexperts')) {
     function hide_pass_in_clientarea_spamexperts() {
         global $smarty;
 
-        $version = explode('.', $smarty->_version, 2)[0];
-
-        if ($version < 3) {
+        if (!defined('Smarty::SMARTY_VERSION')) {
             if($smarty->_tpl_vars['filename'] == 'clientarea' &&
                 (
                     $smarty->_tpl_vars['modulename'] == 'kwspamexperts' ||
