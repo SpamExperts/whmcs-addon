@@ -95,7 +95,6 @@ echo '
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     
-    <script src="'.$ASSETS_DIR.'/js/jquery.js"></script>
     <script src="'.$ASSETS_DIR.'/js/jquery-ui-1.9.1.custom.min.js"></script>
     <script src="'.$ASSETS_DIR.'/js/bootstrap.js"></script>
     
