@@ -42,19 +42,19 @@ class kwspamexperts_api
     function __construct($params)
     {
         $this->url      = $params['configoption2'];
-        $this->user     = $params['configoption3'];
-        $this->pass     = $params['configoption4'];
+        $this->user     = html_entity_decode($params['configoption3']);
+        $this->pass     = html_entity_decode($params['configoption4']);
     }
     
     public function call($action,$format=true)
     {
         $ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, $this->url."/api/".$action.($format?"/format/json/":""));
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt($ch, CURLOPT_USERPWD, $this->user.":".$this->pass);
+	    curl_setopt($ch, CURLOPT_URL, $this->url."/api/".$action.($format?"/format/json/":""));
+	    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	    curl_setopt($ch, CURLOPT_USERPWD, $this->user.":".$this->pass);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-	$this->response     = json_decode(curl_exec($ch),true);
+	    $this->response     = json_decode(curl_exec($ch),true);
         $this->http_code    = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $this->curl_error   = curl_error($ch);
         if($this->response['messages']['error'][0]) 
