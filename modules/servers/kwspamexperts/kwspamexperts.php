@@ -228,8 +228,13 @@ if(!function_exists('kwspamexperts_getLang')){
          else
             require_once(dirname(__FILE__).DS.'language'.DS.'english.php');
 
-         if(isset($lang))
+         if (isset($lang)) {
              return $lang;
+         } elseif (isset($LANG)) {
+             return $LANG;
+         } else {
+             return array();
+         }
     }
 }
 
@@ -290,28 +295,31 @@ if (!function_exists('kwspamexperts_management')){
 /**
 * FUNCTION kwspamexperts_ClientArea
 * Display extended pages in clientarea
-* @params array
+* @param array $params
 * @return array
 */ 
 function kwspamexperts_ClientArea($params) {
-    global $CONFIG,$smarty;	
-    $lang   = kwspamexperts_getLang($params);   
-    $api    = new kwspamexperts_api($params);
-    $smarty->assign('lang',$lang['mainsite']);
-    $domain = !empty($params["customfields"]["Domain"])  ? $params["customfields"]["Domain"] : $params['domain'];
-    $api->call("authticket/create/username/".$domain."/");
+    $output = array('vars' => array());
 
-    if(strpos($params['configoption2'], 'http') !== false)
-        $api_url = $params['configoption2'];
-    else
-        $api_url = 'https://'.$params['configoption2'];
+    $lang = kwspamexperts_getLang($params);
+
+    $api = new kwspamexperts_api($params);
+    $output['vars']['lang'] = $lang['mainsite'];
+    $domain = !empty($params["customfields"]["Domain"]) ? $params["customfields"]["Domain"] : $params['domain'];
+    $api->call("authticket/create/username/{$domain}/");
+
+    $api_url = (strpos($params['configoption2'], 'http') !== false)
+        ? $params['configoption2']
+        : 'https://'.$params['configoption2'];
     
     $auth = $api->getResponse();
-    if($api->isSuccess()){
-        $smarty->assign('api_url', $api_url);
-        $smarty->assign('api_auth',$auth['result']);
+    if ($api->isSuccess()) {
+        $output['vars']['api_url'] = $api_url;
+        $output['vars']['api_auth'] = $auth['result'];
     }
 
-    $smarty->assign('disable_manage_routes', $params['configoption5']);
-    $smarty->assign('disable_edit_contact', $params['configoption6']);
+    $output['vars']['disable_manage_routes'] = $params['configoption5'];
+    $output['vars']['disable_edit_contact'] = $params['configoption6'];
+
+    return $output;
 }

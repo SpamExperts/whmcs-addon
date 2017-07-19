@@ -150,31 +150,31 @@ function spamexpertsreseller_ChangePackage($params) {
 /**
 * FUNCTION spamexpertsreseller_ClientArea
 * Display extended pages in clientarea
-* @params array
+* @param array $params
 * @return array
 */ 
-function spamexpertsreseller_ClientArea($params) {  
-     global $smarty;	
-     include_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'class.connection.php');
-     $lang    = spamexpertsreseller_getLang($params);  
-     
-     $api     = new spamexperts_api($params);
-     $api    -> call("authticket/create/username/".$params['username']."/");
-     if($api->isSuccess())
-     {
-         $res  = $api->getResponse(); 
-         $auth = $res['result'];
-     }
+function spamexpertsreseller_ClientArea($params) {
+    $output = array('vars' => array());
 
-     if(strpos($params['configoption1'], 'http') === false)
-        $url = 'http://'.$params['configoption1'];
-     else
-        $url = $params['configoption1'];
+    include_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'class.connection.php');
+    $lang = spamexpertsreseller_getLang($params);
+    $auth = ''
+;
+    $api = new spamexperts_api($params);
+    $api-> call("authticket/create/username/".$params['username']."/");
+    if ($api->isSuccess()) {
+        $res  = $api->getResponse();
+        $auth = $res['result'];
+    }
 
-     $smarty->assign('api_url', $url.'/?authticket='.$auth);
-     
-     $smarty->assign('lang',$lang['mainsite']);
-   
+    $url = (strpos($params['configoption1'], 'http') === false)
+        ? 'http://'.$params['configoption1']
+        : $params['configoption1'];
+
+    $output['vars']['api_url'] = $url.'/?authticket='.$auth;
+    $output['vars']['lang'] = $lang['mainsite'];
+
+    return $output;
 }
 
 
