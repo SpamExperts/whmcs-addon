@@ -53,12 +53,12 @@ function kwspamexperts_ConfigOptions() {
          ),
 	 "EditRoute"      => array(
              "Type"         => "yesno",
-             "FriendlyName" => "Allow users to manage their routes",
+             "FriendlyName" => "Disable user access to manage routes page",
              "Description"  => ""
          ),
 	 "ChangeContact"      => array(
              "Type"         => "yesno",
-             "FriendlyName" => "Allow users to change their contact details",
+             "FriendlyName" => "Disable user access to edit contact e-mail page",
              "Description"  => ""
          ),
     );
