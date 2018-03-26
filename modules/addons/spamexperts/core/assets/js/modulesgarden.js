@@ -1,7 +1,7 @@
 
 jQuery(function()
 {
-    jQuery('section [href^=#]').click(function (e) {
+    jQuery('section [href^="#"]').click(function (e) {
       e.preventDefault()
     });
     
