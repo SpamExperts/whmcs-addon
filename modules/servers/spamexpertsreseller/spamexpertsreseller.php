@@ -158,9 +158,12 @@ function spamexpertsreseller_ClientArea($params) {
     include_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'class.connection.php');
     $lang = spamexpertsreseller_getLang($params);
     $auth = '';
+
+    $domain     = !empty($params["customfields"]["Domain"])  ? $params["customfields"]["Domain"] : $params['domain'];
      
     $api = new spamexperts_api($params);
-    $api->call("authticket/create/username/".$params['username']."/");
+    $api->call("authticket/create/username/".$domain."/");
+
     if ($api->isSuccess()) {
         $res  = $api->getResponse();
         $auth = $res['result'];
