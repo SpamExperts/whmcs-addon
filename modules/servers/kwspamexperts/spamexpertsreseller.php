@@ -158,12 +158,11 @@ function spamexpertsreseller_ClientArea($params) {
 
     include_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'class.connection.php');
     $lang = spamexpertsreseller_getLang($params);
-    $auth = ''
-;
-    $email     = !empty($params["customfields"]["Email"])  ? $params["customfields"]["Email"] : $params['email'];
-    $api = new spamexperts_api($params);
+    $auth = '';
 
-    $api-> call("authticket/create/username/".$email."/");
+    $api = new spamexperts_api($params);
+    $api-> call("authticket/create/username/".$params['username']."/");
+
     if ($api->isSuccess()) {
         $res  = $api->getResponse();
         $auth = $res['result'];
@@ -173,7 +172,7 @@ function spamexpertsreseller_ClientArea($params) {
         ? 'http://'.$params['configoption1']
         : $params['configoption1'];
 
-    $output['vars']['api_url'] = $url.'/?authtickettttt='.$auth;
+    $output['vars']['api_url'] = $url.'/?authticket='.$auth;
     $output['vars']['lang'] = $lang['mainsite'];
 
     return $output;
