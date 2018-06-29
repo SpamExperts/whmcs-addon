@@ -223,9 +223,9 @@ if(!function_exists('kwspamexperts_getLang')){
 
          $langfilename = dirname(__FILE__).DS.'language'.DS.$language.'.php';
          if(file_exists($langfilename)) 
-            require_once($langfilename);
+            require($langfilename);
          else
-            require_once(dirname(__FILE__).DS.'language'.DS.'english.php');
+            require(dirname(__FILE__).DS.'language'.DS.'english.php');
 
          if (isset($lang)) {
              return $lang;
