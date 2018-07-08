@@ -73,35 +73,35 @@ function kwspamexperts_ConfigOptions() {
 */
 function kwspamexperts_CreateAccount($params) 
 {
-        $api        = new kwspamexperts_api($params);
-        $domain     = !empty($params["customfields"]["Domain"])  ? $params["customfields"]["Domain"] : $params['domain'];
-        $password   = !empty($params['password'])                ? $params["password"]               : createServerPassword();
-	$email      = !empty($params["customfields"]["Email"])   ? $params["customfields"]["Email"]  : $params['clientsdetails']['email'];
-        $archiving  = (int)(!empty($params["configoptions"]["archiving"]) && $params["configoptions"]["archiving"]);
-        
-        
-        // update password
-	update_query("tblhosting", array("password" => encrypt($password)), array("id" => $params['serviceid']));
+    $api        = new kwspamexperts_api($params);
+    $domain     = !empty($params["customfields"]["Domain"])  ? $params["customfields"]["Domain"] : $params['domain'];
+    $password   = !empty($params['password'])                ? $params["password"]               : createServerPassword();
+    $email      = !empty($params["customfields"]["Email"])   ? $params["customfields"]["Email"]  : $params['clientsdetails']['email'];
+    $archiving  = (int)(!empty($params["configoptions"]["archiving"]) && $params["configoptions"]["archiving"]);
 
-        // add domain
-        if(empty($domain)){
-            return "Domain cannot be empty. Please enter domain name in Domain field.";
-        }
-        $api->call("domain/add/domain/".$domain."/");
-	if ($api->isError())
-        {
-            return $api->error();
-	}
+
+    // update password
+    update_query("tblhosting", array("password" => encrypt($password)), array("id" => $params['serviceid']));
+
+    // add domain
+    if(empty($domain)){
+        return "Domain cannot be empty. Please enter domain name in Domain field.";
+    }
+    $api->call("domain/add/domain/".$domain."/");
+    if ($api->isError())
+    {
+        return $api->error();
+    }
         
         // add email
-	$api->call("domainuser/add/domain/".$domain."/password/".$password."/email/".$email."/");
+	$api->call("domainuser/add/domain/".$domain."/password/".rawurlencode($password)."/email/".rawurlencode($email)."/");
 	if ($api->isError())
-        {
-            return $api->error();
+    {
+        return $api->error();
 	}
         
-        $outgoing = $params["configoption1"] != 'Incoming' ? 1 : 0;
-        $incoming = $params["configoption1"] != 'Outgoing' ? 1 : 0;
+    $outgoing = $params["configoption1"] != 'Incoming' ? 1 : 0;
+    $incoming = $params["configoption1"] != 'Outgoing' ? 1 : 0;
 
 	$api->call("domain/setproducts/domain/".$domain."/incoming/".$incoming."/outgoing/".$outgoing."/archiving/$archiving/");
 	if ($api->isError())

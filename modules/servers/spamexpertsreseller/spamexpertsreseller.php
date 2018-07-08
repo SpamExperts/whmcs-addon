@@ -96,7 +96,7 @@ function spamexpertsreseller_CreateAccount($params)
         $username   = !empty($params['username'])                ? $params['username']               : uniqid();
         
        
-        $api->call('/reseller/add/username/'.$username.'/password/'.$password.'/email/'.urlencode($email).'/domainslimit/'.$params['configoption4'].'/api_usage/'.($params['configoption5']=='on' ? 1 : 0));
+        $api->call('/reseller/add/username/'.$username.'/password/'.rawurlencode($password).'/email/'.rawurlencode($email).'/domainslimit/'.$params['configoption4'].'/api_usage/'.($params['configoption5']=='on' ? 1 : 0));
         if($api->isSuccess())
         {   
             // update password & username
@@ -136,7 +136,7 @@ function spamexpertsreseller_TerminateAccount($params)
 function spamexpertsreseller_ChangePackage($params) {
         include_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'class.connection.php');
         $api = new spamexperts_api($params);
-        $api ->call("reseller/update/username/".$params['username']."/password/".$params['password']."/domainslimit/".$params['configoption4']."/api_usage/".($params['configoption5']=='on' ? 1 : 0)."/");
+        $api ->call("reseller/update/username/".$params['username']."/password/".rawurlencode($params['password'])."/domainslimit/".$params['configoption4']."/api_usage/".($params['configoption5']=='on' ? 1 : 0)."/");
         
         if ($api->isSuccess())
         {
