@@ -197,9 +197,9 @@ if(!function_exists('spamexpertsreseller_getLang')){
 
          $langfilename = dirname(__FILE__).DIRECTORY_SEPARATOR.'language'.DIRECTORY_SEPARATOR.$language.'.php';
          if(file_exists($langfilename)) 
-            require_once($langfilename);
+            require($langfilename);
          else
-            require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'language'.DIRECTORY_SEPARATOR.'english.php');
+            require(dirname(__FILE__).DIRECTORY_SEPARATOR.'language'.DIRECTORY_SEPARATOR.'english.php');
 
          if(isset($lang))
              return $lang;
