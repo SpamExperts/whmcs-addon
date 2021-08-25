@@ -6,22 +6,13 @@ if(!class_exists('ModulesGarden'))
     {
         /**
          * Get Module Class Name
-         * @param type $file
-         * @return type 
+         * @param string $path
+         * @return string
          */
-        public static function getModuleClass($file)
+        public static function getModuleClass($path)
         {
-            $dirname = dirname($file);
-            $basename = basename($dirname);
-            return $basename;
-        }
-        
-        static public function getAdmin()
-        {
-            $q = mysql_safequery('SELECT username FROM tbladmins WHERE roleid = 1 LIMIT 1');
-            $row = mysql_fetch_assoc($q);
-
-            return $row['username'];
+            // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
+            return basename(dirname($path));
         }
     }
 }

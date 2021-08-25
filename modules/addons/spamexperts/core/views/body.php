@@ -1,7 +1,8 @@
 <?php
 
-echo 
-'
+// phpcs:disable PHPCS_SecurityAudit.BadFunctions.EasyXSS.EasyXSSwarn
+echo
+    '
     <div id="mg-content" class="right">
     
     	<div id="top-bar">
@@ -10,6 +11,7 @@ echo
             	<h2>'.$MGC->name.'</h2>
                 <h4>'.$AVAILABLE_PAGES[$PAGE]['title'].'</h4>
             </div>';
+// phpcs:enable PHPCS_SecurityAudit.BadFunctions.EasyXSS.EasyXSSwarn
 if($TOP_MENU)
 {
     echo '<ul id="top-nav">';
@@ -18,10 +20,13 @@ if($TOP_MENU)
         if(isset($menu['submenu']))
         {
             echo '<li class="dropdown-toggle">';
+            // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyXSS.EasyXSSwarn
             echo '<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" id="menu-'.$page.'"><i class="icon-'.$menu['icon'].'"></i>'.$menu['title'].'<i class="icon-caret-down"></i></a>';
+            // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyXSS.EasyXSSwarn
             echo '<ul class="dropdown-menu" role="menu" aria-labelledby="menu-'.$page.'">';
             foreach($menu['submenu'] as $subpage => &$submenu)
             {
+                // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyXSS.EasyXSSwarn
                 echo '<li><a href="'.$MODULE_URL.'&modpage='.$page.'&modsubpage='.$subpage.'">'.$submenu['title'].'</a></li>';
             }
             echo '</ul>';
@@ -29,6 +34,7 @@ if($TOP_MENU)
         }
         else
         {
+            // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyXSS.EasyXSSwarn
             echo '<li><a href="'.$MODULE_URL.'&modpage='.$page.'"><i class="icon-'.$menu['icon'].'"></i>'.$menu['title'].'</a></li>';
         }
     }
@@ -49,10 +55,12 @@ echo '
 
 if(!$PAGE_SUBMODULE_HEADING && !isset($TOP_MENU[$PAGE]['submenu'][$_REQUEST['modsubpage']]) && ( !isset($TOP_MENU[$PAGE]['submenu'][$_REQUEST['hide']]) || $TOP_MENU[$PAGE]['submenu'][$_REQUEST['modsubpage']]['hide'] != false))
 {
+    // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyXSS.EasyXSSwarn
     echo '<i class="icon-'.$TOP_MENU[$PAGE]['icon'].'"></i>'.'<a href="'.$MODULE_URL.'&modpage='.$PAGE.'">'.($PAGE_HEADING ? $PAGE_HEADING : $TOP_MENU[$PAGE]['title']).'</a>';
 }
 else
-{ 
+{
+    // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyXSS
     echo '<i class="icon-'.($TOP_MENU[$PAGE]['submenu'][$_REQUEST['modsubpage']]['icon'] ? $TOP_MENU[$PAGE]['submenu'][$_REQUEST['modsubpage']]['icon'] : $TOP_MENU[$PAGE]['icon']).'"></i>'.( $PAGE_HEADING ? $PAGE_HEADING : '<a href="'.$MODULE_URL.'&modpage='.$PAGE.'">'.$TOP_MENU[$PAGE]['title'].'</a>' ).' -> '.($PAGE_SUBMODULE_HEADING ? $PAGE_SUBMODULE_HEADING : $TOP_MENU[$PAGE]['submenu'][$_REQUEST['modsubpage']]['title']);
 }
 
@@ -61,6 +69,7 @@ echo '</h2>';
 $infos = getInfos();
 if($infos)
 {
+    // phpcs:disable PHPCS_SecurityAudit.BadFunctions.EasyXSS.EasyXSSwarn
     foreach($infos as $info)
     {
         echo '<div class="alert alert-success">
@@ -68,12 +77,14 @@ if($infos)
                     '.$info.'
                 </div>';
     }
+    // phpcs:enable PHPCS_SecurityAudit.BadFunctions.EasyXSS.EasyXSSwarn
 }
 
     
 $errors = getErrors();
 if($errors)
 {
+    // phpcs:disable PHPCS_SecurityAudit.BadFunctions.EasyXSS.EasyXSSwarn
     foreach($errors as $error)
     {
         echo '<div class="alert alert-error">
@@ -81,10 +92,13 @@ if($errors)
                     '.$error.'
                 </div>';
     }
+    // phpcs:enable PHPCS_SecurityAudit.BadFunctions.EasyXSS.EasyXSSwarn
 }
 
+// phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyXSS.EasyXSSwarn
 echo $CONTENT;
 
+// phpcs:disable PHPCS_SecurityAudit.BadFunctions.EasyXSS.EasyXSSwarn
 echo '
         </div><!-- end of INNER -->
         <div class="overlay hide">
@@ -103,4 +117,5 @@ echo '
     
         
 ';
+// phpcs:enable PHPCS_SecurityAudit.BadFunctions.EasyXSS.EasyXSSwarn
 ?>

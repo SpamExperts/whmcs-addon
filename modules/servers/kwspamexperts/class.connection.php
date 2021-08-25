@@ -54,6 +54,7 @@ class kwspamexperts_api
 	    curl_setopt($ch, CURLOPT_USERPWD, $this->user.":".$this->pass);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
 	    $this->response     = json_decode(curl_exec($ch),true);
         $this->http_code    = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $this->curl_error   = curl_error($ch);

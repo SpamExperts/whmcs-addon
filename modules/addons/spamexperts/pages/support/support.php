@@ -1,5 +1,7 @@
 <?php
 
+use WHMCS\Database\Capsule;
+
 /* * ********************************************************************
  * Customization Services by ModulesGarden.com
  * Copyright  ModulesGarden, INBS Group Brand, All Rights Reserved 
@@ -30,9 +32,13 @@ if (!defined("WHMCS"))
   die("This file cannot be accessed directly");
 }
 
+// phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
 include_once(ROOTDIR.DS.'modules'.DS.'servers'.DS.'kwspamexperts'.DS.'class.connection.php');
 global $CONFIG;
-$addon = mysql_fetch_assoc(mysql_query("SELECT `value` as `version` FROM  `tbladdonmodules` WHERE `module`='spamexperts' LIMIT 1"));
+$addon = (array)Capsule::table('tbladdonmodules')
+    ->select('value as version')
+    ->where('module', 'spamexperts')
+    ->first();
 $api   = getWHMCSconfig('kwspamexperts_api');
 $data  = unserialize($api);
 $curl  = curl_version();

@@ -57,6 +57,7 @@ if ($reseller_id)
     if($api->isSuccess())
     {
         $result = $api->getResponse();
+        // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.CallbackFunctions.WarnFringestuff
         $lines  = array_filter(explode("\n",$result['result']));
         $data   = array();
 

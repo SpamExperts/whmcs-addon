@@ -7,16 +7,16 @@ if (!defined("WHMCS"))
   die("This file cannot be accessed directly");
 }
 
-if(isset($_GET['_debug']) && $_GET['_debug'] == 'turnon')
+if(isset($_GET['_debug']) && $_GET['_debug'] === 'turnon')
 {
     error_reporting(E_ALL);
     ini_set('display_errors',1);
 }
 
-if(!defined('DS')) 
-    define ('DS', DIRECTORY_SEPARATOR);
+defined('DS') or define ('DS', DIRECTORY_SEPARATOR);
 
-include_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'class.connection.php');
+// phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
+include_once(__DIR__.DIRECTORY_SEPARATOR.'class.connection.php');
 
 
 /**
@@ -26,36 +26,36 @@ include_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'class.connection.php');
 */
 function kwspamexperts_ConfigOptions() {
     $configarray = array(
-	 "ProductType"      => array( 
+     "ProductType"      => array(
              "Type"         => "dropdown", 
              "Options"      => "Incoming,Outgoing,Both",
              "FriendlyName" => "Product Type",
              "Description"  => ""
          ),
-	 "SpampanelURL"     => array( 
+     "SpampanelURL"     => array(
              "Type"         => "text", 
              "Size"         => "25",
              "FriendlyName" => "Spam Panel URL",
              "Description"  => ""
          ),
-	 "APIUsername"      => array( 
+     "APIUsername"      => array(
              "Type"         => "text", 
              "Size"         => "25",
              "FriendlyName" => "API Username",
              "Description"  => ""
          ),
-	 "APIPassword"      => array( 
+     "APIPassword"      => array(
              "Type"         => "password", 
              "Size"         => "25",
              "FriendlyName" => "API Password",
              "Description"  => ""
          ),
-	 "EditRoute"      => array(
+     "EditRoute"      => array(
              "Type"         => "yesno",
              "FriendlyName" => "Disable user access to manage routes page",
              "Description"  => ""
          ),
-	 "ChangeContact"      => array(
+     "ChangeContact"      => array(
              "Type"         => "yesno",
              "FriendlyName" => "Disable user access to edit contact e-mail page",
              "Description"  => ""
@@ -81,6 +81,7 @@ function kwspamexperts_CreateAccount($params)
 
 
     // update password
+    // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.CryptoFunctions.WarnCryptoFunc
     update_query("tblhosting", array("password" => encrypt($password)), array("id" => $params['serviceid']));
 
     // add domain
@@ -94,26 +95,26 @@ function kwspamexperts_CreateAccount($params)
     }
         
         // add email
-	$api->call("domainuser/add/domain/".$domain."/password/".rawurlencode($password)."/email/".rawurlencode($email)."/");
-	if ($api->isError())
+    $api->call("domainuser/add/domain/".$domain."/password/".rawurlencode($password)."/email/".rawurlencode($email)."/");
+    if ($api->isError())
     {
         return $api->error();
-	}
+    }
         
     $outgoing = $params["configoption1"] != 'Incoming' ? 1 : 0;
     $incoming = $params["configoption1"] != 'Outgoing' ? 1 : 0;
 
-	$api->call("domain/setproducts/domain/".$domain."/incoming/".$incoming."/outgoing/".$outgoing."/archiving/$archiving/");
-	if ($api->isError())
+    $api->call("domain/setproducts/domain/".$domain."/incoming/".$incoming."/outgoing/".$outgoing."/archiving/$archiving/");
+    if ($api->isError())
         {
             return $api->error();
-	}
+    }
         
         $res = kwspamexperts_ChangePackage($params);
         if (!$res)
         {
             return $res;
-	}
+    }
         
         return "success";
         
@@ -137,10 +138,10 @@ function kwspamexperts_TerminateAccount($params)
         if ($api->isError())
         {
             return $api->error();
-	}
+    }
         
         return "success";
-	
+
 }
 
 
@@ -151,8 +152,8 @@ function kwspamexperts_TerminateAccount($params)
 * @return string
 */
 function kwspamexperts_ChangePackage($params) {
-	$domain   = !empty($params["customfields"]["Domain"])   ? $params["customfields"]["Domain"] : $params['domain'];
-	$outgoing = $params["configoption1"] != 'Incoming'      ? 1                                 : 0;
+    $domain   = !empty($params["customfields"]["Domain"])   ? $params["customfields"]["Domain"] : $params['domain'];
+    $outgoing = $params["configoption1"] != 'Incoming'      ? 1                                 : 0;
         $incoming = $params["configoption1"] != 'Outgoing'      ? 1                                 : 0;
         $archiving  = (int)(!empty($params["configoptions"]["archiving"]) && $params["configoptions"]["archiving"]);
         
@@ -165,14 +166,14 @@ function kwspamexperts_ChangePackage($params) {
         if ($api->isSuccess())
         {
             return "success";
-	}
+    }
         
         return $api->error();
 }
 
 function kwspamexperts_SuspendAccount($params)
 {
-	$domain   = !empty($params["customfields"]["Domain"])   ? $params["customfields"]["Domain"] : $params['domain'];
+    $domain   = !empty($params["customfields"]["Domain"])   ? $params["customfields"]["Domain"] : $params['domain'];
         $api = new kwspamexperts_api($params);
         
         if(empty($domain)){
@@ -183,14 +184,14 @@ function kwspamexperts_SuspendAccount($params)
         if ($api->isSuccess())
         {
             return "success";
-	}
+    }
 
         return $api->error();
 }
 
 function kwspamexperts_UnsuspendAccount($params)
 {
-	$domain   = !empty($params["customfields"]["Domain"])   ? $params["customfields"]["Domain"] : $params['domain'];
+    $domain   = !empty($params["customfields"]["Domain"])   ? $params["customfields"]["Domain"] : $params['domain'];
         $api = new kwspamexperts_api($params);
         if(empty($domain)){
             return "Domain cannot be empty. Please enter domain name in Domain field.";
@@ -200,7 +201,7 @@ function kwspamexperts_UnsuspendAccount($params)
         if ($api->isSuccess())
         {
             return "success";
-	}
+    }
         
         return $api->error();
 }
@@ -210,30 +211,33 @@ function kwspamexperts_UnsuspendAccount($params)
 * Get user language
 * @params array
 * @return string
-*/ 
+*/
 if(!function_exists('kwspamexperts_getLang')){
     function kwspamexperts_getLang($params){
-         global $CONFIG;
-         if(!empty($_SESSION['Language']))
-             $language = strtolower($_SESSION['Language']);
-         else if(isset($params['clientsdetails']['language']) && strtolower($params['clientsdetails']['language'])!='')
-             $language = strtolower($params['clientsdetails']['language']);
-         else
-             $language = $CONFIG['Language'];
+        global $CONFIG;
+        if(!empty($_SESSION['Language']))
+            $language = strtolower($_SESSION['Language']);
+        else if(isset($params['clientsdetails']['language']) && strtolower($params['clientsdetails']['language'])!='')
+            $language = strtolower($params['clientsdetails']['language']);
+        else
+            $language = $CONFIG['Language'];
 
-         $langfilename = dirname(__FILE__).DS.'language'.DS.$language.'.php';
-         if(file_exists($langfilename)) 
+        $langfilename = __DIR__.DS.'language'.DS.$language.'.php';
+        // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
+        if(file_exists($langfilename))
+            // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt
             require($langfilename);
-         else
-            require(dirname(__FILE__).DS.'language'.DS.'english.php');
+        else
+            // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
+            require(__DIR__.DS.'language'.DS.'english.php');
 
-         if (isset($lang)) {
-             return $lang;
-         } elseif (isset($LANG)) {
-             return $LANG;
-         } else {
-             return array();
-         }
+        if (isset($lang)) {
+            return $lang;
+        } elseif (isset($LANG)) {
+            return $LANG;
+        } else {
+            return array();
+        }
     }
 }
 
@@ -244,11 +248,10 @@ if(!function_exists('kwspamexperts_getLang')){
 * @return array
 */
 function kwspamexperts_ClientAreaCustomButtonArray() {
-      
-        $buttonarray = array(
-           'Management' => 'management'
-        );
-	return $buttonarray;
+    $buttonarray = array(
+        'Management' => 'management'
+    );
+    return $buttonarray;
 }
 
 /**
@@ -270,7 +273,8 @@ if (!function_exists('kwspamexperts_management')){
          
          $allowPages = array('EditEmail','ManageRoutes','ManageAliases');
 
-         if(empty($page) || !file_exists(dirname(__FILE__).DS.$page.'.php') || !file_exists(dirname(__FILE__).DS.'templates'.DS.$page.'.tpl') || !in_array($page, $allowPages))
+         // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
+         if(empty($page) || !in_array($page, $allowPages) || !file_exists(__DIR__.DS.$page.'.php') || !file_exists(__DIR__.DS.'templates'.DS.$page.'.tpl'))
          {
              $vars['_status']    = array('code' => 1, 'msg' => $lang['mainsite']['notfound']);
              return array('vars' => $vars);
@@ -282,11 +286,11 @@ if (!function_exists('kwspamexperts_management')){
              unset($_SESSION['spam_status']);
          }
 
-         require_once(dirname(__FILE__).DS.$page.'.php');
+         require_once(__DIR__.DS.$page.'.php');
          return array(
-               'templatefile' => 'templates/'.$page,
-               'breadcrumb'   => ' > <a href="#">Server Details</a>',
-               'vars'         => $vars
+             'templatefile' => 'templates/'.$page,
+             'breadcrumb'   => ' > <a href="#">Server Details</a>',
+             'vars'         => $vars
          );
      }
 }

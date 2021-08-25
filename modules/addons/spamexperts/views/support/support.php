@@ -38,23 +38,23 @@ if (!defined("WHMCS"))
     </thead>
     <tr>
         <td>WHMCS Version</td>
-        <td><?php echo $CONFIG['Version'];?></td>
+        <td><?php echo htmlentities($CONFIG['Version'], ENT_QUOTES, 'UTF-8');?></td>
     </tr>
     <tr>
         <td>PHP Version</td>
-        <td><?php echo phpversion();?></td>
+        <td><?php echo htmlentities(PHP_VERSION, ENT_QUOTES, 'UTF-8');?></td>
     </tr>
     <tr>
         <td>Curl Version</td>
-        <td><?php echo $curl['version'];?></td>
+        <td><?php echo htmlentities($curl['version'], ENT_QUOTES, 'UTF-8');?></td>
     </tr>
     <tr>
         <td>Addon Version</td>
-        <td><?php echo $addon['version'];?></td>
+        <td><?php echo htmlentities($addon['version'], ENT_QUOTES, 'UTF-8');?></td>
     </tr>
     <tr>
         <td>SpamExperts Version</td>
-        <td><?php echo $spam['result'];?></td>
+        <td><?php echo htmlentities($spam['result'], ENT_QUOTES, 'UTF-8');?></td>
     </tr>
     <tr>
         <th colspan="2">Diagnostic</th>
@@ -69,15 +69,39 @@ if (!defined("WHMCS"))
     </tr>
     <tr>
         <td>SpamExperts API Connection</td>
-        <td><?php if($api->isSuccess()) echo '<span class="success">OK</span>'; else echo '<span class="error">'.$api->error().'</span>';?></td>
+        <td>
+            <?php if($api->isSuccess()) { ?>
+                <span class="success">OK</span>';
+            <?php } else { ?>
+                <span class="error">
+                    <?php echo htmlentities($api->error(), ENT_QUOTES, 'UTF-8'); ?>
+                </span>
+            <?php } ?>
+        </td>
     </tr>
     <tr>
         <td>SpamExperts Module</td>
-        <td><?php if(file_exists(ROOTDIR.DS.'modules'.DS.'servers'.DS.'kwspamexperts'.DS.'kwspamexperts.php')) echo '<span class="success">OK</span>'; else echo '<span class="error">Module not exists.</span>';?></td>
+        <td>
+            <?php
+            // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
+            if(file_exists(ROOTDIR.DS.'modules'.DS.'servers'.DS.'kwspamexperts'.DS.'kwspamexperts.php'))
+                echo '<span class="success">OK</span>';
+            else
+                echo '<span class="error">Module not exists.</span>';
+            ?>
+        </td>
     </tr>
     <tr>
         <td>SpamExperts Reseller Module</td>
-        <td><?php if(file_exists(ROOTDIR.DS.'modules'.DS.'servers'.DS.'spamexpertsreseller'.DS.'spamexpertsreseller.php')) echo '<span class="success">OK</span>'; else echo '<span class="error">Module not exists.</span>';?></td>
+        <td>
+            <?php
+            // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
+            if(file_exists(ROOTDIR.DS.'modules'.DS.'servers'.DS.'spamexpertsreseller'.DS.'spamexpertsreseller.php'))
+                echo '<span class="success">OK</span>';
+            else
+                echo '<span class="error">Module not exists.</span>';
+            ?>
+        </td>
     </tr>
 </table>
 
@@ -85,4 +109,3 @@ if (!defined("WHMCS"))
     .error {color:red;}
     .success {color:green;}
 </style>
-    
