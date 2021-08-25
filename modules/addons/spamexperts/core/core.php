@@ -12,8 +12,6 @@ require_once CORE_DIR.DS.'functions.php';
 // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
 require_once CORE_DIR.DS.'class.MG_Pagination.php';
 //Include ModulesGarden class
-// phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-require_once CORE_DIR.DS.'class.ModulesGarden.php';
 
 //INCLUDE USER FUNCTIONS IF FILE EXISTS
 // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
@@ -23,7 +21,8 @@ if(file_exists(ADDON_DIR.DS.'core.php'))
     require_once ADDON_DIR.DS.'core.php';
 }
 //GET MODULE NAME
-$module = ModulesGarden::getModuleClass(ADDON_DIR.DS.$ROOT_DIR);
+// phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
+$module = basename(dirname(ADDON_DIR.DS.$ROOT_DIR));
 //CREATE MODULE CONFIG
 $MGC = new $module();
 //DEFINE MODULE NAME
