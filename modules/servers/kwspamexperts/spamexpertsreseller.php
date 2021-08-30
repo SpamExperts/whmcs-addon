@@ -1,5 +1,8 @@
 <?php
 
+use Carbon\Carbon;
+use WHMCS\Database\Capsule;
+
 /* * ********************************************************************
  * Customization Services by ModulesGarden.com
  * Copyright  ModulesGarden, INBS Group Brand, All Rights Reserved 
@@ -102,8 +105,14 @@ function spamexpertsreseller_CreateAccount($params)
     $api->call('/reseller/add/username/'.$username.'/password/'.rawurlencode($password).'/email/'.rawurlencode($email).'/domainslimit/'.$params['configoption4'].'/api_usage/'.$api_usage);
     if ($api->isSuccess()) {
         // update password & username
-        // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.CryptoFunctions.WarnCryptoFunc
-        update_query("tblhosting", array("password" => encrypt($password),"username"=>$username), array("id" => $params['serviceid']));
+        Capsule::table('tblhosting')
+            ->where(["id" => $params['serviceid']])
+            ->update([
+                // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.CryptoFunctions.WarnCryptoFunc
+                'password' => encrypt($password),
+                'username' => $username,
+                'updated_at' => Carbon::now()
+            ]);
         return "success";
     }
     return $api->error();
