@@ -91,21 +91,22 @@ function spamexpertsreseller_CreateAccount($params)
     // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
     include_once(__DIR__.DIRECTORY_SEPARATOR.'class.connection.php');
     $api        = new spamexperts_api($params);
-    $domain     = !empty($params["customfields"]["Domain"])  ? $params["customfields"]["Domain"] : $params['domain'];
     $password   = !empty($params['password'])                ? $params["password"]               : createServerPassword();
     $email      = !empty($params["customfields"]["Email"])   ? $params["customfields"]["Email"]  : $params['clientsdetails']['email'];
     $username   = !empty($params['username'])                ? $params['username']               : uniqid();
 
-
-    $api->call('/reseller/add/username/'.$username.'/password/'.rawurlencode($password).'/email/'.rawurlencode($email).'/domainslimit/'.$params['configoption4'].'/api_usage/'.($params['configoption5']=='on' ? 1 : 0));
-    if($api->isSuccess())
-    {
+    // for add, the optional value needed for api_usage is the inverse of the config option to disable api access
+    //  - "1" passed as the value enables the API access
+    //  - "0" passed as the value or nothing passed disables the API access
+    $api_usage = ($params['configoption5'] === 'on' ? 0 : 1);
+    $api->call('/reseller/add/username/' . $username . '/password/' . rawurlencode($password) . '/email/' . rawurlencode($email) . '/domainslimit/' . $params['configoption4'] . '/api_usage/' . $api_usage);
+    if ($api->isSuccess()) {
         // update password & username
         // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.CryptoFunctions.WarnCryptoFunc
         update_query("tblhosting", array("password" => encrypt($password),"username"=>$username), array("id" => $params['serviceid']));
         return "success";
-    } else return $api->error();
-
+    }
+    return $api->error();
 }
 
 
@@ -139,7 +140,11 @@ function spamexpertsreseller_ChangePackage($params) {
     // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
     include_once(__DIR__.DIRECTORY_SEPARATOR.'class.connection.php');
     $api = new spamexperts_api($params);
-    $api ->call("reseller/update/username/".$params['username']."/password/".rawurlencode($params['password'])."/domainslimit/".$params['configoption4']."/api_usage/".($params['configoption5']=='on' ? 1 : 0)."/");
+    // for update, the optional value needed for api_usage matches the config option to disable api access
+    //  - "0" passed as the value enables the API access
+    //  - "1" passed as the value disables the API access
+    $api_usage = ($params['configoption5'] === 'on' ? 1 : 0);
+    $api ->call("reseller/update/username/".$params['username']."/password/".rawurlencode($params['password'])."/domainslimit/".$params['configoption4']."/api_usage/".$api_usage."/");
 
     if ($api->isSuccess())
     {
