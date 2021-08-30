@@ -46,9 +46,8 @@ class spamexperts_api
         }
     }
 
-    public function call($api_action)
+    public function call($action)
     {
-        $action = preg_replace('#(^/|/$)#', '', $api_action);
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $this->url."/api/".$action."/format/json/");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
