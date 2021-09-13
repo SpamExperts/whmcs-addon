@@ -3,6 +3,7 @@
 require_once 'core.php';
 
 #ATTACH STYLES
+// phpcs:disable PHPCS_SecurityAudit.BadFunctions.EasyXSS.EasyXSSwarn
 echo '
    
 <link href="'.$ASSETS_DIR.'/css/bootstrap.css" rel="stylesheet">
@@ -22,13 +23,16 @@ echo '
 <!--[if IE 7]>
   <link rel="stylesheet" href="assets/css/font-awesome-ie7.css">
 <![endif]-->';
+// phpcs:enable PHPCS_SecurityAudit.BadFunctions.EasyXSS.EasyXSSwarn
 
 echo '<div class="body" data-target=".body" data-spy="scroll" data-twttr-rendered="true" id="mg-wrapper">';
 
 #SHOW SIDEBAR
+// phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
 require_once CORE_DIR.DS.'views'.DS.'sidebar.php';
 
 #SHOW BODY
+// phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
 require_once CORE_DIR.DS.'views'.DS.'body.php';
 
 echo '</div>';

@@ -48,16 +48,16 @@ if(! $params['configoption6']){
     }
 
 
-    $api ->call("domaincontact/get/domain/".$domain."/");
+    $api ->call("domaincontact/get/domain/$domain/");
     if ($api->isSuccess())
     {
-        $vars['primarycontact'] = $api->getResponse();
+        $vars['primarycontact'] = $api->getResponse()['result'];
     }
 
-    $api ->call("domainadmincontact/get/domain/'.$domain.'/");
+    $api ->call("domainadmincontact/get/domain/$domain/");
     if ($api->isSuccess())
     {
-        $vars['admincontact'] = $api->getResponse();
+        $vars['admincontact'] = $api->getResponse()['result'];
     }
 } else {   
     $vars['_status'] = array('code'=>2,'msg'=>$vars['lang']['email_denied']);

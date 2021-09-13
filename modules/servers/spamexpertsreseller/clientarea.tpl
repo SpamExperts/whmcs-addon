@@ -25,6 +25,6 @@
 <div class="buttons">
     <h3 style="text-align:left;margin-bottom: 5px;">{$lang.management}</h3>
         <button class="btn" onclick="window.location.href='clientarea.php?action=productdetails&id={$serviceid}&modop=custom&a=management&page=managedomains';return false;"><i class="icon-globe"></i> {$lang.manage_domains}</button>
-        <button class="btn" onclick="window.location.href='clientarea.php?action=productdetails&id={$serviceid}&modop=custom&a=management&page=stats';return false;"><i class="icon-th-list"></i> {$lang.stats}</button>
+{*        <button class="btn" onclick="window.location.href='clientarea.php?action=productdetails&id={$serviceid}&modop=custom&a=management&page=stats';return false;"><i class="icon-th-list"></i> {$lang.stats}</button>*}
         <button class="btn" onclick="window.open('{$api_url}','_blank'); return false;"><i class="icon-user"></i> {$lang.login}</button>
 </div> 

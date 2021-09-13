@@ -1,5 +1,8 @@
 <?php
 
+use Carbon\Carbon;
+use WHMCS\Database\Capsule;
+
 /* * ********************************************************************
  * Customization Services by ModulesGarden.com
  * Copyright  ModulesGarden, INBS Group Brand, All Rights Reserved 
@@ -45,19 +48,19 @@ if(isset($_GET['_debug']) && $_GET['debug']=='turnon')
 function spamexpertsreseller_ConfigOptions() 
 {
     $configarray = array(
-	 "SpampanelURL"     => array( 
+     "SpampanelURL"     => array(
              "Type"         => "text", 
              "Size"         => "25",
              "FriendlyName" => "Spam Panel URL",
              "Description"  => ""
          ),
-	 "APIUsername"      => array( 
+     "APIUsername"      => array(
              "Type"         => "text", 
              "Size"         => "25",
              "FriendlyName" => "API Username",
              "Description"  => ""
          ),
-	 "APIPassword"      => array( 
+     "APIPassword"      => array(
              "Type"         => "password", 
              "Size"         => "25",
              "FriendlyName" => "API Password",
@@ -73,7 +76,7 @@ function spamexpertsreseller_ConfigOptions()
              "Type"         => "yesno", 
              "Size"         => "25",
              "FriendlyName" => "Usage Limits",
-             "Description"  => "Tick to allow access to the API for the reseller"
+             "Description"  => "Tick to disallow access to the API for the reseller"
          ),
     );
     return $configarray;
@@ -88,22 +91,31 @@ function spamexpertsreseller_ConfigOptions()
 */
 function spamexpertsreseller_CreateAccount($params) 
 {
-        include_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'class.connection.php');
-        $api        = new spamexperts_api($params);
-        $domain     = !empty($params["customfields"]["Domain"])  ? $params["customfields"]["Domain"] : $params['domain'];
-        $password   = !empty($params['password'])                ? $params["password"]               : createServerPassword();
-	$email      = !empty($params["customfields"]["Email"])   ? $params["customfields"]["Email"]  : $params['clientsdetails']['email'];
-        $username   = !empty($params['username'])                ? $params['username']               : uniqid();
-        
-       
-        $api->call('/reseller/add/username/'.$username.'/password/'.rawurlencode($password).'/email/'.rawurlencode($email).'/domainslimit/'.$params['configoption4'].'/api_usage/'.($params['configoption5']=='on' ? 1 : 0));
-        if($api->isSuccess())
-        {   
-            // update password & username
-            update_query("tblhosting", array("password" => encrypt($password),"username"=>$username), array("id" => $params['serviceid']));
-            return "success";
-        } else return $api->error();
-        
+    // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
+    include_once(__DIR__.DIRECTORY_SEPARATOR.'class.connection.php');
+    $api        = new spamexperts_api($params);
+    $password   = !empty($params['password'])                ? $params["password"]               : createServerPassword();
+    $email      = !empty($params["customfields"]["Email"])   ? $params["customfields"]["Email"]  : $params['clientsdetails']['email'];
+    $username   = !empty($params['username'])                ? $params['username']               : uniqid();
+
+    // for add, the optional value needed for api_usage is the inverse of the config option to disable api access
+    //  - "1" passed as the value enables the API access
+    //  - "0" passed as the value or nothing passed disables the API access
+    $api_usage = ($params['configoption5'] === 'on' ? 0 : 1);
+    $api->call('/reseller/add/username/'.$username.'/password/'.rawurlencode($password).'/email/'.rawurlencode($email).'/domainslimit/'.$params['configoption4'].'/api_usage/'.$api_usage);
+    if ($api->isSuccess()) {
+        // update password & username
+        Capsule::table('tblhosting')
+            ->where(["id" => $params['serviceid']])
+            ->update([
+                // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.CryptoFunctions.WarnCryptoFunc
+                'password' => encrypt($password),
+                'username' => $username,
+                'updated_at' => Carbon::now()
+            ]);
+        return "success";
+    }
+    return $api->error();
 }
 
 
@@ -115,15 +127,15 @@ function spamexpertsreseller_CreateAccount($params)
 */
 function spamexpertsreseller_TerminateAccount($params) 
 {
-        include_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'class.connection.php');
-        $api = new spamexperts_api($params);
-        $api ->call("reseller/remove/username/".$params['username']."/");
-        
-        if ($api->isSuccess())
-            return "success";
-        
-        return $api->error();
-	
+    // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
+    include_once(__DIR__.DIRECTORY_SEPARATOR.'class.connection.php');
+    $api = new spamexperts_api($params);
+    $api ->call("reseller/remove/username/".$params['username']."/");
+
+    if ($api->isSuccess())
+        return "success";
+
+    return $api->error();
 }
 
 
@@ -134,16 +146,21 @@ function spamexpertsreseller_TerminateAccount($params)
 * @return string
 */
 function spamexpertsreseller_ChangePackage($params) {
-        include_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'class.connection.php');
-        $api = new spamexperts_api($params);
-        $api ->call("reseller/update/username/".$params['username']."/password/".rawurlencode($params['password'])."/domainslimit/".$params['configoption4']."/api_usage/".($params['configoption5']=='on' ? 1 : 0)."/");
-        
-        if ($api->isSuccess())
-        {
-            return "success";
-	}
-        
-        return $api->error();
+    // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
+    include_once(__DIR__.DIRECTORY_SEPARATOR.'class.connection.php');
+    $api = new spamexperts_api($params);
+    // for update, the optional value needed for api_usage matches the config option to disable api access
+    //  - "0" passed as the value enables the API access
+    //  - "1" passed as the value disables the API access
+    $api_usage = ($params['configoption5'] === 'on' ? 1 : 0);
+    $api ->call("reseller/update/username/".$params['username']."/password/".rawurlencode($params['password'])."/domainslimit/".$params['configoption4']."/api_usage/".$api_usage."/");
+
+    if ($api->isSuccess())
+    {
+        return "success";
+    }
+
+    return $api->error();
 }
 
 
@@ -156,7 +173,8 @@ function spamexpertsreseller_ChangePackage($params) {
 function spamexpertsreseller_ClientArea($params) {
     $output = array('vars' => array());
 
-    include_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'class.connection.php');
+    // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
+    include_once(__DIR__.DIRECTORY_SEPARATOR.'class.connection.php');
     $lang = spamexpertsreseller_getLang($params);
     $auth = '';
 
@@ -196,11 +214,14 @@ if(!function_exists('spamexpertsreseller_getLang')){
          else
              $language = $CONFIG['Language'];
 
-         $langfilename = dirname(__FILE__).DIRECTORY_SEPARATOR.'language'.DIRECTORY_SEPARATOR.$language.'.php';
-         if(file_exists($langfilename)) 
-            require_once($langfilename);
+         $langfilename = __DIR__.DIRECTORY_SEPARATOR.'language'.DIRECTORY_SEPARATOR.$language.'.php';
+         // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
+         if(file_exists($langfilename))
+             // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt
+             require_once($langfilename);
          else
-            require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'language'.DIRECTORY_SEPARATOR.'english.php');
+             // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
+             require_once(__DIR__.DIRECTORY_SEPARATOR.'language'.DIRECTORY_SEPARATOR.'english.php');
 
          if(isset($lang))
              return $lang;
@@ -218,7 +239,7 @@ function spamexpertsreseller_ClientAreaCustomButtonArray() {
         $buttonarray = array(
            'Management' => 'management'
         );
-	return $buttonarray;
+    return $buttonarray;
 }
 
 
@@ -229,8 +250,9 @@ function spamexpertsreseller_ClientAreaCustomButtonArray() {
 * @return array
 */ 
 if (!function_exists('spamexpertsreseller_management')){
-     function spamexpertsreseller_management($params){	
-         include_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'class.connection.php');
+     function spamexpertsreseller_management($params){
+         // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
+         include_once(__DIR__.DIRECTORY_SEPARATOR.'class.connection.php');
          global $CONFIG;	
          $lang              = spamexpertsreseller_getLang($params); 
          $api               = new spamexperts_api($params);
@@ -238,8 +260,9 @@ if (!function_exists('spamexpertsreseller_management')){
          $vars['main_lang'] = $lang['mainsite'];
          $vars['lang']      = $lang[(!isset($lang[$page])                ? 'mainsite'                         : $page)];
          $vars['serviceid'] = $params['serviceid'];
-        
-         if(empty($page) || !file_exists(dirname(__FILE__).DIRECTORY_SEPARATOR.$page.'.php') || !file_exists(dirname(__FILE__).DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.$page.'.tpl'))
+
+         // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
+         if(empty($page) || !file_exists(__DIR__.DIRECTORY_SEPARATOR.$page.'.php') || !file_exists(__DIR__.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.$page.'.tpl'))
          {
              $vars['_status']   = array('code' => 1, 'msg' => $lang['mainsite']['notfound']);
              return array('vars'=> $vars);
@@ -250,12 +273,11 @@ if (!function_exists('spamexpertsreseller_management')){
              $vars['_status'] = $_SESSION['spam_status'];
              unset($_SESSION['spam_status']);
          }
-         
-        
-         require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.$page.'.php');
+
+         require_once(__DIR__.DIRECTORY_SEPARATOR.$page.'.php');
 
          return array(
-               'templatefile' => 'templates/'.$page,
+             'templatefile' => 'templates/'.$page,
                'breadcrumb'   => ' > <a href="#">Server Details</a>',
                'vars'         => $vars
          );

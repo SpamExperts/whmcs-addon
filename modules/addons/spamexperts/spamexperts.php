@@ -1,8 +1,8 @@
 <?php
 
 //SOME DEFINES
-defined('DS') ? null : define('DS',DIRECTORY_SEPARATOR);
-defined('WHMCS_MAIN_DIR') ? null : define('WHMCS_MAIN_DIR', substr(dirname(__FILE__), 0, strpos(dirname(__FILE__), 'modules'.DS.'addons')));
+defined('DS') or define('DS', DIRECTORY_SEPARATOR);
+defined('WHMCS_MAIN_DIR') or define('WHMCS_MAIN_DIR', substr(__DIR__, 0, strpos(__DIR__, 'modules'.DS.'addons')));
 //Use module in admin mode
 $IS_CLIENTAREA = false;
 
@@ -14,9 +14,11 @@ $IS_CLIENTAREA = false;
 function spamexperts_config()
 {
     //SOME USEFUL STUFF
-    require_once dirname(__FILE__).DS.'core'.DS.'functions.php';
-    
-    require_once dirname(__FILE__).DS.'config.php';
+    // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
+    require_once __DIR__.DS.'core'.DS.'functions.php';
+
+    // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
+    require_once __DIR__.DS.'config.php';
     
     $module = spamexperts_getModuleClass(__FILE__);
     $MGC = new $module();
@@ -32,9 +34,11 @@ function spamexperts_config()
 function spamexperts_activate()
 {
     //SOME USEFUL STUFF
-    require_once dirname(__FILE__).DS.'core'.DS.'functions.php';
-    
-    require_once dirname(__FILE__).DS.'config.php';
+    // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
+    require_once __DIR__.DS.'core'.DS.'functions.php';
+
+    // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
+    require_once __DIR__.DS.'config.php';
 
     $module = spamexperts_getModuleClass(__FILE__);
     $MGC = new $module();
@@ -44,9 +48,11 @@ function spamexperts_activate()
 function spamexperts_deactivate()
 {
     //SOME USEFUL STUFF
-    require_once dirname(__FILE__).DS.'core'.DS.'functions.php';
-    
-    require_once dirname(__FILE__).DS.'config.php';
+    // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
+    require_once __DIR__.DS.'core'.DS.'functions.php';
+
+    // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
+    require_once __DIR__.DS.'config.php';
 
     $module = spamexperts_getModuleClass(__FILE__);
     $MGC = new $module();
@@ -57,9 +63,11 @@ function spamexperts_deactivate()
 function spamexperts_upgrade($vars)
 {
     //SOME USEFUL STUFF
-    require_once dirname(__FILE__).DS.'core'.DS.'functions.php';
-    
-    require_once dirname(__FILE__).DS.'config.php';
+    // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
+    require_once __DIR__.DS.'core'.DS.'functions.php';
+
+    // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
+    require_once __DIR__.DS.'config.php';
 
     $module = spamexperts_getModuleClass(__FILE__);
     $MGC = new $module();
@@ -72,8 +80,10 @@ function spamexperts_upgrade($vars)
  */
 function spamexperts_output($vars)
 {
-    require_once dirname(__FILE__).DS.'config.php';
-    require_once dirname(__FILE__).DS.'core'.DS.'output.php';
+    // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
+    require_once __DIR__.DS.'config.php';
+    // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
+    require_once __DIR__.DS.'core'.DS.'output.php';
 }
 
 function spamexperts_clientarea($vars) 
@@ -81,9 +91,11 @@ function spamexperts_clientarea($vars)
     //Enable Client Area
     global $IS_CLIENTAREA;
     $IS_CLIENTAREA = true;
-    
-    require_once dirname(__FILE__).DS.'config.php';
-    $content = require_once dirname(__FILE__).DS.'core'.DS.'output_client.php';
+
+    // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
+    require_once __DIR__.DS.'config.php';
+    // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
+    $content = require_once __DIR__.DS.'core'.DS.'output_client.php';
     
     return array(
         'pagetitle'     => 'Addon',
@@ -101,8 +113,7 @@ function spamexperts_clientarea($vars)
 /**** HELPER ****/
 function spamexperts_getModuleClass($file)
 {
-    $dirname = dirname($file);
-    $basename = basename($dirname);
-    return $basename;
+    // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
+    return basename(dirname($file));
 }
 ?>

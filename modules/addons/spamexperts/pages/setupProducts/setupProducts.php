@@ -1,5 +1,9 @@
 <?php
 
+use Carbon\Carbon;
+use Illuminate\Database\QueryException;
+use WHMCS\Database\Capsule;
+
 /* * ********************************************************************
  * Customization Services by ModulesGarden.com
  * Copyright  ModulesGarden, INBS Group Brand, All Rights Reserved 
@@ -30,49 +34,52 @@ if (!defined("WHMCS"))
   die("This file cannot be accessed directly");
 }
 
-if(isset($_POST['action']) && $_POST['action'] == 'addProduct')
+if(isset($_POST['action']) && $_POST['action'] === 'addProduct')
 {
-    if(mysql_num_rows(mysql_query_safe("SELECT `id` FROM tblproductgroups WHERE `name`='SpamExperts'"))==0)
-    {
-        mysql_safequery("INSERT INTO tblproductgroups (`name`) VALUES(?)",array('SpamExperts'));
-    } 
-    
-    $group  = mysql_fetch_assoc(mysql_query("SELECT `id` FROM tblproductgroups WHERE `name`='SpamExperts'"));     
+    try {
+        if (!Capsule::table('tblproductgroups')->where('name', 'SpamExperts')->exists()) {
+            Capsule::table('tblproductgroups')
+                ->insert([
+                    'name' => 'SpamExperts',
+                    'created_at' => Carbon::now()
+                ]);
+        }
+    } catch (Exception $e) {
+        addError('Product group cannot be set');
+    }
+
+    $group_id = Capsule::table('tblproductgroups')->where('name', 'SpamExperts')->value('id');
     $api    = getWHMCSconfig('kwspamexperts_api');
     $data   = unserialize($api);
-    if(mysql_safequery("INSERT INTO tblproducts 
-        (
-            `type`,
-            `name`,
-            `gid`,
-            `configoption1`,
-            `configoption2`,
-            `configoption3`,
-            `configoption4`,
-            `configoption5`,
-            `configoption6`,
-            `servertype`,
-            `showdomainoptions`,
-            `paytype`
-        ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
-            array
-            (
-                'hostingaccount',
-                $_POST['product']['name'],
-                $group['id'],
-                $_POST['product']['type'],
-                $data['url'],
-                $data['user'],
-                $data['password'],
-                $data['disable_manage_routes'],
-                $data['disable_edit_contact'],
-                'kwspamexperts',
-                'on',
-                'free'
-            )
-     ))
-        addInfo('Product has been added');
-     else
-        addError(mysql_error ());
+    try {
+        if (empty($_POST['product']['name'])) {
+            throw new Exception('Product name cannot be empty');
+        }
 
+        Capsule::table('tblproducts')
+            ->updateOrInsert(
+                [
+                    'type' => 'hostingaccount',
+                    'gid' => $group_id,
+                    'configoption1' => $_POST['product']['type'],
+                    'servertype' => 'kwspamexperts',
+                    'showdomainoptions' => 'on',
+                    'paytype' => 'free',
+                ],
+                [
+                    'name' => $_POST['product']['name'],
+                    'configoption2' => $data['url'],
+                    'configoption3' => $data['user'],
+                    'configoption4' => $data['password'],
+                    'configoption5' => $data['disable_manage_routes'] ?: 0,
+                    'configoption6' => $data['disable_edit_contact'] ?: 0,
+                    'updated_at' => Carbon::now(),
+                ]
+            );
+        addInfo('Product has been configured');
+    } catch (QueryException $e) {
+        addError("Error when trying to add the product");
+    } catch (Exception $e) {
+        addError($e->getMessage());
+    }
 }

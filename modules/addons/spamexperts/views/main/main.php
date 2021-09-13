@@ -8,15 +8,15 @@ if (!defined("WHMCS"))
     <table class="table table-bordered table-striped configtable">
         <tr>
             <td>API URL:</td>
-            <td><input type="text" name="conf[url]" style="width:304px;" value="<?php echo $data['url']; ?>" /></td>
+            <td><input type="text" name="conf[url]" style="width:304px;" value="<?php echo htmlentities($data['url'], ENT_QUOTES, 'UTF-8'); ?>" /></td>
         </tr>
         <tr>
             <td>API Username</td>
-            <td><input type="text" name="conf[user]" style="width:304px;" value="<?php echo $data['user']; ?>" /></td>
+            <td><input type="text" name="conf[user]" style="width:304px;" value="<?php echo htmlentities($data['user'], ENT_QUOTES, 'UTF-8'); ?>" /></td>
         </tr>
         <tr>
             <td>API Password</td>
-            <td><input type="password" name="conf[password]" value="<?php echo $data['password']; ?>" /></td>
+            <td><input type="password" name="conf[password]" value="<?php echo htmlentities($data['password'], ENT_QUOTES, 'UTF-8'); ?>" /></td>
         </tr>
         <tr>
             <td>Disable user access to manage routes page</td>

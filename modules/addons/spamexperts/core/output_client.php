@@ -9,6 +9,7 @@ require_once 'core.php';
 
 ob_start();
 #ATTACH STYLES
+// phpcs:disable PHPCS_SecurityAudit.BadFunctions.EasyXSS.EasyXSSwarn
 echo  '
 <link href="'.$ASSETS_DIR.'/css/bootstrap.css" rel="stylesheet">
 <link href="'.$ASSETS_DIR.'/css/bootstrap-responsive.css" rel="stylesheet">
@@ -35,11 +36,13 @@ if($infos)
 {
     echo '<div class="border-box">';
     foreach($infos as $info)
-    {
-        echo '<div class="control-group success">
-                    <span class="help-block center">'.$info.'</span>
-                </div>';
-    }
+    { ?>
+        <div class="control-group success">
+            <span class="help-block center">
+                <?php echo htmlentities($info, ENT_QUOTES, 'UTF-8'); ?>
+            </span>
+        </div>
+    <?php }
     echo '</div>';
 }
 
@@ -48,14 +51,17 @@ if($errors)
 {
     echo '<div class="border-box">';
     foreach($errors as $error)
-    {
-        echo '<div class="control-group error">
-                    <span class="help-block center">'.$error.'</span>
-                </div>';
-    }
+    { ?>
+        <div class="control-group error">
+            <span class="help-block center">
+                <?php echo htmlentities($error, ENT_QUOTES, 'UTF-8'); ?>
+            </span>
+        </div>';
+    <?php }
     echo '</div>';
 }
 
+// phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyXSS.EasyXSSwarn
 echo $CONTENT;
 
 echo '</div>';
