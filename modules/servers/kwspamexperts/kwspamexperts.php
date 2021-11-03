@@ -223,14 +223,17 @@ if(!function_exists('kwspamexperts_getLang')){
         else
             $language = $CONFIG['Language'];
 
+        $available_languages = array('english');
+        // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
         $langfilename = __DIR__.DS.'language'.DS.$language.'.php';
         // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
-        if(file_exists($langfilename))
-            // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt
-            require($langfilename);
-        else
+        if(in_array($language, $available_languages) && file_exists($langfilename)) {
             // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-            require(__DIR__.DS.'language'.DS.'english.php');
+            require($langfilename);
+        } else {
+            // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
+            require(__DIR__ . DS . 'language' . DS . 'english.php');
+        }
 
         if (isset($lang)) {
             return $lang;
@@ -272,14 +275,16 @@ if (!function_exists('kwspamexperts_management')){
          $vars['serviceid'] = $params['serviceid'];
          $domain            = !empty($params["customfields"]["Domain"])  ? $params["customfields"]["Domain"]  : $params['domain'];
 
-         $allowPages = array('EditEmail','ManageRoutes','ManageAliases');
-
-         // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
-         if(empty($page) || !in_array($page, $allowPages) || !file_exists(__DIR__.DS.$page.'.php') || !file_exists(__DIR__.DS.'templates'.DS.$page.'.tpl'))
-         {
+         $available_pages = array('EditEmail', 'ManageRoutes', 'ManageAliases');
+         // phpcs:disable PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
+         if(empty($page) || !in_array($page, $available_pages)
+             || !file_exists(__DIR__.DS.$page.'.php')
+             || !file_exists(__DIR__.DS.'templates'.DS.$page.'.tpl')
+         ) {
              $vars['_status']    = array('code' => 1, 'msg' => $lang['mainsite']['notfound']);
              return array('vars' => $vars);
          }
+         // phpcs:enable PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
 
          if(isset($_SESSION['spam_status']))
          {
@@ -287,6 +292,7 @@ if (!function_exists('kwspamexperts_management')){
              unset($_SESSION['spam_status']);
          }
 
+         // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
          require_once(__DIR__.DS.$page.'.php');
          return array(
              'templatefile' => 'templates/'.$page,
