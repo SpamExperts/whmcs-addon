@@ -213,14 +213,17 @@ if(!function_exists('spamexpertsreseller_getLang')){
         else
             $language = $CONFIG['Language'];
 
+        $available_languages = array('english');
+        // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
         $langfilename = __DIR__.DIRECTORY_SEPARATOR.'language'.DIRECTORY_SEPARATOR.$language.'.php';
         // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
-        if(file_exists($langfilename))
-            // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt
-            require($langfilename);
-        else
+        if(in_array($language, $available_languages, true) && file_exists($langfilename)) {
             // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-            require(__DIR__.DIRECTORY_SEPARATOR.'language'.DIRECTORY_SEPARATOR.'english.php');
+            require($langfilename);
+        } else {
+            // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
+            require(__DIR__ . DIRECTORY_SEPARATOR . 'language' . DIRECTORY_SEPARATOR . 'english.php');
+        }
 
         if(isset($lang))
             return $lang;
@@ -259,19 +262,24 @@ if (!function_exists('spamexpertsreseller_management')){
          $vars['lang']      = $lang[(!isset($lang[$page])                ? 'mainsite'                         : $page)];
          $vars['serviceid'] = $params['serviceid'];
 
-         // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
-         if(empty($page) || !file_exists(__DIR__.DIRECTORY_SEPARATOR.$page.'.php') || !file_exists(__DIR__.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.$page.'.tpl'))
-         {
+         $available_pages = array('EditEmail', 'ManageAliases', 'managedomains', 'ManageRoutes', 'stats');
+         // phpcs:disable PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
+         if(empty($page) || !in_array($page, $available_pages)
+             || !file_exists(__DIR__.DIRECTORY_SEPARATOR.$page.'.php')
+             || !file_exists(__DIR__.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.$page.'.tpl')
+         ) {
              $vars['_status']   = array('code' => 1, 'msg' => $lang['mainsite']['notfound']);
              return array('vars'=> $vars);
-         }     
-         
+         }
+         // phpcs:enable PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
+
          if(isset($_SESSION['spam_status']))
          {
              $vars['_status'] = $_SESSION['spam_status'];
              unset($_SESSION['spam_status']);
          }
-         
+
+         // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
          require_once(__DIR__.DIRECTORY_SEPARATOR.$page.'.php');
 
          return array(

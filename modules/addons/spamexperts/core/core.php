@@ -162,68 +162,72 @@ ob_start();
 
 global $lerror;
 
+$available_pages = array('main', 'setupProducts', 'support');
+
 if(!$lerror)
 {
     //CONTROLLER
-    // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
-    if (!$IS_CLIENTAREA && isset($_REQUEST['modsubpage']) && file_exists(ADDON_DIR.DS.'pages'.DS.$PAGE.DS.$_REQUEST['modsubpage'].'.php'))
-    {
-        // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt
-        require ADDON_DIR.DS.'pages'.DS.$PAGE.DS.$_REQUEST['modsubpage'].'.php';
-
-    }
-    // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
-    elseif ($IS_CLIENTAREA && isset($_REQUEST['modsubpage']) && file_exists(ADDON_DIR.DS.'pages_client'.DS.$PAGE.DS.$_REQUEST['modsubpage'].'.php'))
-    {
-        // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt
-        require ADDON_DIR.DS.'pages_client'.DS.$PAGE.DS.$_REQUEST['modsubpage'].'.php';
-
-    }
-    // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
-    elseif (!$IS_CLIENTAREA && file_exists(ADDON_DIR.DS.'pages'.DS.$PAGE.DS.$PAGE.'.php'))
-    {
+    // phpcs:disable PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
+    if (!$IS_CLIENTAREA && isset($_REQUEST['modsubpage'])
+        && in_array($PAGE, $available_pages)
+        && in_array($_REQUEST['modsubpage'], $available_pages)
+        && file_exists(ADDON_DIR . DS . 'pages' . DS . $PAGE . DS . $_REQUEST['modsubpage'] . '.php')
+    ) {
+        // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI,PHPCS_SecurityAudit.BadFunctions.EasyRFI.ErrEasyRFI
+        require ADDON_DIR . DS . 'pages' . DS . $PAGE . DS . $_REQUEST['modsubpage'] . '.php';
+    } elseif ($IS_CLIENTAREA && isset($_REQUEST['modsubpage'])
+        && in_array($PAGE, $available_pages)
+        && in_array($_REQUEST['modsubpage'], $available_pages)
+        && file_exists(ADDON_DIR . DS . 'pages_client' . DS . $PAGE . DS . $_REQUEST['modsubpage'] . '.php')
+    ) {
+        // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI,PHPCS_SecurityAudit.BadFunctions.EasyRFI.ErrEasyRFI
+        require ADDON_DIR . DS . 'pages_client' . DS . $PAGE . DS . $_REQUEST['modsubpage'] . '.php';
+    } elseif (!$IS_CLIENTAREA
+        && in_array($PAGE, $available_pages)
+        && file_exists(ADDON_DIR . DS . 'pages' . DS . $PAGE . DS . $PAGE . '.php')
+    ) {
         // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-        require ADDON_DIR.DS.'pages'.DS.$PAGE.DS.$PAGE.'.php';
-    }
-    // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
-    elseif ($IS_CLIENTAREA && file_exists(ADDON_DIR.DS.'pages_client'.DS.$PAGE.DS.$PAGE.'.php'))
-    {
+        require ADDON_DIR . DS . 'pages' . DS . $PAGE . DS . $PAGE . '.php';
+    } elseif ($IS_CLIENTAREA
+        && in_array($PAGE, $available_pages)
+        && file_exists(ADDON_DIR . DS . 'pages_client' . DS . $PAGE . DS . $PAGE . '.php')
+    ) {
         // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-        require ADDON_DIR.DS.'pages_client'.DS.$PAGE.DS.$PAGE.'.php';
-    }
-    else
-    {
+        require ADDON_DIR . DS . 'pages_client' . DS . $PAGE . DS . $PAGE . '.php';
+    } else {
         die('Page does not exist!');
     }
 
     //LOCATE VIEW FILE AND LOAD IT
-    // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
-    if (!$IS_CLIENTAREA && isset($_REQUEST['modsubpage']) && file_exists(ADDON_DIR.DS.'views'.DS.$PAGE.DS.$_REQUEST['modsubpage'].'.php'))
-    {
-        // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt
-        require ADDON_DIR.DS.'views'.DS.$PAGE.DS.$_REQUEST['modsubpage'].'.php';
-    }
-    // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
-    elseif($IS_CLIENTAREA && isset($_REQUEST['modsubpage']) && file_exists(ADDON_DIR.DS.'pages_views'.DS.$PAGE.DS.$_REQUEST['modsubpage'].'.php'))
-    {
-        // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt
-        require ADDON_DIR.DS.'views_client'.DS.$PAGE.DS.$_REQUEST['modsubpage'].'.php';
-    }
-    // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
-    elseif (!$IS_CLIENTAREA && file_exists(ADDON_DIR.DS.'views'.DS.$PAGE.DS.$PAGE.'.php'))
-    {
+    if (!$IS_CLIENTAREA && isset($_REQUEST['modsubpage'])
+        && in_array($PAGE, $available_pages)
+        && in_array($_REQUEST['modsubpage'], $available_pages)
+        && file_exists(ADDON_DIR . DS . 'views' . DS . $PAGE . DS . $_REQUEST['modsubpage'] . '.php')
+    ) {
+        // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI,PHPCS_SecurityAudit.BadFunctions.EasyRFI.ErrEasyRFI
+        require ADDON_DIR . DS . 'views' . DS . $PAGE . DS . $_REQUEST['modsubpage'] . '.php';
+    } elseif ($IS_CLIENTAREA && isset($_REQUEST['modsubpage'])
+        && in_array($PAGE, $available_pages)
+        && in_array($_REQUEST['modsubpage'], $available_pages)
+        && file_exists(ADDON_DIR . DS . 'pages_views' . DS . $PAGE . DS . $_REQUEST['modsubpage'] . '.php')
+    ) {
+        // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI,PHPCS_SecurityAudit.BadFunctions.EasyRFI.ErrEasyRFI
+        require ADDON_DIR . DS . 'views_client' . DS . $PAGE . DS . $_REQUEST['modsubpage'] . '.php';
+    } elseif (!$IS_CLIENTAREA
+        && in_array($PAGE, $available_pages)
+        && file_exists(ADDON_DIR . DS . 'views' . DS . $PAGE . DS . $PAGE . '.php')
+    ) {
         // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-        require ADDON_DIR.DS.'views'.DS.$PAGE.DS.$PAGE.'.php';
-    }
-    // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
-    elseif ($IS_CLIENTAREA && file_exists(ADDON_DIR.DS.'views_client'.DS.$PAGE.DS.$PAGE.'.php'))
-    {
+        require ADDON_DIR . DS . 'views' . DS . $PAGE . DS . $PAGE . '.php';
+    } elseif ($IS_CLIENTAREA
+        && in_array($PAGE, $available_pages)
+        && file_exists(ADDON_DIR . DS . 'views_client' . DS . $PAGE . DS . $PAGE . '.php')
+    ) {
         // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-        require ADDON_DIR.DS.'views_client'.DS.$PAGE.DS.$PAGE.'.php';
+        require ADDON_DIR . DS . 'views_client' . DS . $PAGE . DS . $PAGE . '.php';
     }
-}
-else
-{
+    // phpcs:disable PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
+} else {
     addError($lerror);
 }
 
