@@ -186,7 +186,7 @@ function spamexpertsreseller_ClientArea($params) {
     }
 
     $url = (strpos($params['configoption1'], 'http') === false)
-        ? 'http://'.$params['configoption1']
+        ? 'https://'.$params['configoption1']
         : $params['configoption1'];
 
     $output['vars']['api_url'] = $url.'/?authticket='.$auth;

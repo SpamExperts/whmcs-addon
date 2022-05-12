@@ -43,7 +43,7 @@
                 {if $domainroute.0}
                     <tr>
                         <td><input type="checkbox" class="select-all" name="routes[old_list][]" value="{$domainroute.0}" /></td>
-                        <td><a href="http://{$domainroute.0}" target="_blank">{$domainroute.0}</a></td>
+                        <td><a href="https://{$domainroute.0}" target="_blank">{$domainroute.0}</a></td>
                         <td>{$domainroute.2}</td>
                         <td>
                             {if $domainroutes|@count ne 1}

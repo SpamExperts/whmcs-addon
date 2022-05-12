@@ -44,7 +44,7 @@ if($TOP_MENU)
 echo '
             
             <!--<div class="clear"></div>-->
-        <a class="slogan nblue-box" href="http://www.modulesgarden.com" target="_blank" alt="ModulesGarden Custom Development">
+        <a class="slogan nblue-box" href="https://www.modulesgarden.com" target="_blank" alt="ModulesGarden Custom Development">
             <span class="mg-logo"></span>
             <small>We are here to help you, just click!</small>
         </a>
