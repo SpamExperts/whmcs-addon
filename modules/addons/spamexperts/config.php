@@ -34,7 +34,7 @@ class spamexperts
     public $version = '1.0';
     
     //Module Author
-    public $author = '<a href="http://spamexperts.com" target="_blank">SpamExperts.com</a>';
+    public $author = '<a href="https://spamexperts.com" target="_blank">SpamExperts.com</a>';
     
     //Default Page
     public $default_page = 'main';

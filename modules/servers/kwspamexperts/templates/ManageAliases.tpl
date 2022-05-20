@@ -40,7 +40,7 @@
     {foreach from=$domainaliases|@array_filter key=k item=domainalias}
         <tr>
             <td><input type="checkbox" class="select-all" name="alias[old_list][]" value="{$domainalias}" /></td>
-            <td><a href="http://{$domainalias}" target="_blank">{$domainalias}</a></td>
+            <td><a href="https://{$domainalias}" target="_blank">{$domainalias}</a></td>
             <td>
                  <input type="submit" name="delete-item[{$domainalias}]" onclick="return confirm('{$lang.confirm_delete}');" class="btn btn-danger btn-small" value="{$lang.delete}" />
             </td>
