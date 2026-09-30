@@ -31,24 +31,13 @@ if (!function_exists('hide_pass_in_clientarea_spamexperts')) {
     function hide_pass_in_clientarea_spamexperts() {
         global $smarty;
 
-        if (!defined('Smarty::SMARTY_VERSION')) {
-            if($smarty->_tpl_vars['filename'] == 'clientarea' &&
-                (
-                    $smarty->_tpl_vars['modulename'] == 'kwspamexperts' ||
-                    $smarty->_tpl_vars['modulename'] == 'spamexpertsreseller'
-                )
-            ) {
-                $smarty->_tpl_vars['password'] = '********';
-            }
-        } else {
-            if ($smarty->getTemplateVars('filename') == 'clientarea' &&
-                (
-                    $smarty->getTemplateVars('modulename') == 'kwspamexperts' ||
-                    $smarty->getTemplateVars('modulename') == 'spamexpertsreseller'
-                )
-            ) {
-                $smarty->assign('password', '********');
-            }
+        if ($smarty->getTemplateVars('filename') == 'clientarea' &&
+            (
+                $smarty->getTemplateVars('modulename') == 'kwspamexperts' ||
+                $smarty->getTemplateVars('modulename') == 'spamexpertsreseller'
+            )
+        ) {
+            $smarty->assign('password', '********');
         }
     }
 }
