@@ -37,7 +37,7 @@
             <th>{$lang.alias}</th>
             <th style="width:50px;">{$lang.action}</th>
         </tr>
-    {foreach from=$domainaliases|@array_filter key=k item=domainalias}
+    {foreach from=$domainaliases key=k item=domainalias}
         <tr>
             <td><input type="checkbox" class="select-all" name="alias[old_list][]" value="{$domainalias}" /></td>
             <td><a href="https://{$domainalias}" target="_blank">{$domainalias}</a></td>

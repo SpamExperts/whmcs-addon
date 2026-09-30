@@ -81,7 +81,7 @@ if ($api->isSuccess())
             unset($data['result'][$key]);
     }
     
-    $vars['domainaliases'] = $data['result'];
+    $vars['domainaliases'] = array_filter((array) $data['result']);
 } else {
     $vars['_status']       = array('code'=>0,'msg'=>$api->error());
 }
