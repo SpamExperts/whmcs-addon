@@ -41,10 +41,10 @@ if (!function_exists('hide_pass_in_clientarea_spamexperts')) {
                 $smarty->_tpl_vars['password'] = '********';
             }
         } else {
-            if ($smarty->getVariable('filename')->value == 'clientarea' &&
+            if ($smarty->getTemplateVars('filename') == 'clientarea' &&
                 (
-                    $smarty->getVariable('modulename')->value == 'kwspamexperts' ||
-                    $smarty->getVariable('modulename')->value == 'spamexpertsreseller'
+                    $smarty->getTemplateVars('modulename') == 'kwspamexperts' ||
+                    $smarty->getTemplateVars('modulename') == 'spamexpertsreseller'
                 )
             ) {
                 $smarty->assign('password', '********');
