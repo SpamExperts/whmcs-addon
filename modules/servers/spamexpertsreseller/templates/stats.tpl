@@ -39,7 +39,7 @@
             <th>{$lang.outgoing_bandwidth_yearly}</th>
         </tr>
     </tbody>
-    {foreach from=$data key="k" item="entry"}
+    {foreach $data as $entry}
         <tr>
             <td>{$entry[0]}</td>
             <td>{$entry[2]} B</td>

@@ -39,7 +39,7 @@
                 <th style="width:60px;">{$lang.action}</th>
             </tr>
         </thead>
-        {foreach from=$domains_list item="entry" key="k"}
+        {foreach $domains_list as $entry}
             <tr>
                 <td><a href="https://{$entry}" taget="_blank">{$entry}</a></td>
                 <td><button name="unbind-domain" value="{$entry}" class="btn btn-danger">{$lang.unbind}</button></td>

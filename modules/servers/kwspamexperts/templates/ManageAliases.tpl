@@ -37,7 +37,7 @@
             <th>{$lang.alias}</th>
             <th style="width:50px;">{$lang.action}</th>
         </tr>
-    {foreach from=$domainaliases key=k item=domainalias}
+    {foreach $domainaliases as $domainalias}
         <tr>
             <td><input type="checkbox" class="select-all" name="alias[old_list][]" value="{$domainalias}" /></td>
             <td><a href="https://{$domainalias}" target="_blank">{$domainalias}</a></td>
@@ -51,7 +51,7 @@
         </tr>
     {/foreach}
 </table>
-   {if $domainaliases|@count > 0}
+   {if $domainaliases|count > 0}
         <input type="submit" onclick="return confirm('{$lang.confirm_delete}');" name="delete-all" class="btn btn-danger btn-small" value="{$lang.delete}" />
    {/if}
 </form>

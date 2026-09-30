@@ -39,14 +39,14 @@
                 <th>{$lang.port}</th>
                 <th style="width:50px;">{$lang.action}</th>
             </tr>
-            {foreach from=$domainroutes key=k item=domainroute}
+            {foreach $domainroutes as $domainroute}
                 {if $domainroute.0}
                     <tr>
                         <td><input type="checkbox" class="select-all" name="routes[old_list][]" value="{$domainroute.0}" /></td>
                         <td><a href="https://{$domainroute.0}" target="_blank">{$domainroute.0}</a></td>
                         <td>{$domainroute.2}</td>
                         <td>
-                            {if $domainroutes|@count ne 1}
+                            {if $domainroutes|count ne 1}
                                 <a href="#" onclick="onDelete('{$domainroute.0}', '{$domainroute.2}');return false" class="btn btn-danger btn-small">{$lang.delete}</a>
                             {else}
                                 <i class="icon-info-sign" title="{$lang.remove_info}"></i>
@@ -60,7 +60,7 @@
                 </tr>
             {/foreach}
         </table>
-        {if $domainroutes|@count > 0}
+        {if $domainroutes|count > 0}
              <input type="submit" onclick="return confirm('{$lang.confirm_delete}');" name="delete-all" class="btn btn-danger btn-small" value="{$lang.delete}" />
         {/if}
     </form>
