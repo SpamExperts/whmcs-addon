@@ -23,15 +23,20 @@
 * @author Maciej Husak <maciej@modulesgarden.com>
 *}
 <h1 style="margin-bottom:5px;">{$lang.header}</h1>
-<p style="margin-bottom: 8px;"><button onclick="window.location.href='clientarea.php?action=productdetails&id={$serviceid}&modop=custom&a=management';return false" class="btn btn-small"><i class="icon-arrow-left"></i> {$main_lang.back}</button></p>
+<p style="margin-bottom: 8px;"><a href="clientarea.php?action=productdetails&id={$serviceid}" class="btn btn-small"><i class="icon-arrow-left"></i> {$main_lang.back}</a></p>
 {if $_status && $_status.code==2}
     <div class="alert alert-danger">{$_status.msg}</div>
 {else}
     {if $_status}
         <div class="alert {if $_status.code==1}alert-success{else}alert-danger{/if}">{$_status.msg}</div>
     {/if}
-    <form action="" method="post">
-        <input type="hidden" name="_action" value="deleteroute" />  
+    <form action="clientarea.php?action=productdetails&id={$serviceid}" method="post">
+        <input type="hidden" name="id" value="{$serviceid}" />
+        <input type="hidden" name="modop" value="custom" />
+        <input type="hidden" name="a" value="management" />
+        <input type="hidden" name="page" value="ManageRoutes" />
+        <input type="hidden" name="token" value="{$token}" />
+        <input type="hidden" name="_action" value="deleteroute" />
         <table class="table table-bordered table-striped">
             <tr>
                 <th style="width:20px;"><input type="checkbox" class="selectall" /></th>
@@ -65,7 +70,12 @@
         {/if}
     </form>
 
-    <form action="" method="post">
+    <form action="clientarea.php?action=productdetails&id={$serviceid}" method="post">
+        <input type="hidden" name="id" value="{$serviceid}" />
+        <input type="hidden" name="modop" value="custom" />
+        <input type="hidden" name="a" value="management" />
+        <input type="hidden" name="page" value="ManageRoutes" />
+        <input type="hidden" name="token" value="{$token}" />
         <fieldset>
             <legend style="margin-bottom:17px;">{$lang.add_route}</legend>
             <input type="text" size="30" name="route[hostname]" value="" placeholder="{$lang.hostname}" /> 
@@ -75,12 +85,26 @@
         </fieldset> 
     </form>
 
+    <form action="clientarea.php?action=productdetails&id={$serviceid}" method="post" id="se-delete-route">
+        <input type="hidden" name="id" value="{$serviceid}" />
+        <input type="hidden" name="modop" value="custom" />
+        <input type="hidden" name="a" value="management" />
+        <input type="hidden" name="page" value="ManageRoutes" />
+        <input type="hidden" name="token" value="{$token}" />
+        <input type="hidden" name="_action" value="deleteroute" />
+        <input type="hidden" name="routetodel" value="" />
+        <input type="hidden" name="routeporttodel" value="" />
+    </form>
+
     <p style="clear:both;margin-bottom: 10px;"></p>
     <script type="text/javascript">
         {literal}
         function onDelete(route, port) {
                 if (confirm("{/literal}{$lang.confirm_delete}{literal}")) {
-                    window.location = 'clientarea.php?action=productdetails&id={/literal}{$serviceid}{literal}&modop=custom&a=management&_action=deleteroute&page=ManageRoutes&routetodel=' + route + '&routeporttodel=' + port;
+                    var form = document.getElementById('se-delete-route');
+                    form.elements['routetodel'].value = route;
+                    form.elements['routeporttodel'].value = port;
+                    form.submit();
                 }
                 return false;
         }    

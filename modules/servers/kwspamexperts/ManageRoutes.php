@@ -31,9 +31,10 @@ if (!defined("WHMCS"))
 }
 
 if(! $params['configoption5']){
+    if($handle_actions){
     $api ->call("domain/getroute/domain/".$domain."/");
     $routes = $api->getResponse();
-    switch($_REQUEST['_action'])
+    switch(isset($_POST['_action']) ? $_POST['_action'] : '')
     {
         case 'deleteroute':
             $found = false;
@@ -51,10 +52,10 @@ if(! $params['configoption5']){
                          $found = true;
                      }
                  }
-            } else if(isset($_GET['routetodel']))
+            } else if(isset($_POST['routetodel']))
             {
                 foreach($routes['result'] as $key => $val){
-                    if($val == $_GET['routetodel'].'::'.$_GET['routeporttodel'])
+                    if($val == $_POST['routetodel'].'::'.$_POST['routeporttodel'])
                     {
                         $found = true;
                         unset($routes['result'][$key]);
@@ -68,11 +69,9 @@ if(! $params['configoption5']){
                 $api ->call("domain/edit/domain/".$domain."/destinations/".str_replace('::',':',json_encode($routes['result']))."/");
 
                 if($api->isSuccess())
-                    $_SESSION['spam_status'] = array('code'=>1,'msg'=>$vars['lang']['route_removed']);
+                    $vars['_status'] = array('code'=>1,'msg'=>$vars['lang']['route_removed']);
                 else
-                    $_SESSION['spam_status'] = array('code'=>0,'msg'=>$api->error());
-
-                $api->redirect("clientarea.php?action=productdetails&id=".$params['serviceid']."&modop=custom&a=management&page=ManageRoutes");         
+                    $vars['_status'] = array('code'=>0,'msg'=>$api->error());
             } else {
                 $vars['_status'] =  array('code'=>0,'msg'=>'Resource not found!');
             }
@@ -90,17 +89,16 @@ if(! $params['configoption5']){
                 $routes['result'][] = $_POST['route']['hostname'].":".$_POST['route']['port'];
                 $api ->call("domain/edit/domain/".$domain."/destinations/".json_encode($routes['result'])."/");
                 if($api->isSuccess())
-                    $_SESSION['spam_status'] = array('code'=>1,'msg'=>$vars['lang']['route_added']);
+                    $vars['_status'] = array('code'=>1,'msg'=>$vars['lang']['route_added']);
                 else 
-                    $_SESSION['spam_status'] = array('code'=>0,'msg'=>$api->error());
-
-                $api->redirect("clientarea.php?action=productdetails&id=".$params['serviceid']."&modop=custom&a=management&page=ManageRoutes");
+                    $vars['_status'] = array('code'=>0,'msg'=>$api->error());
             }
         break;
 
     }
 
-
+    return;
+    }
 
     $api ->call("domain/getroute/domain/".$domain."/");
     if ($api->isSuccess())

@@ -31,7 +31,9 @@ if (!defined("WHMCS"))
   die("This file cannot be accessed directly");
 }
 
-switch($_REQUEST['_action'])
+if($handle_actions)
+{
+switch(isset($_POST['_action']) ? $_POST['_action'] : '')
 {
     case 'addalias':
 	$api->call("domainalias/add/domain/".$domain."/alias/".$_POST['alias']['new']."/");
@@ -67,6 +69,9 @@ switch($_REQUEST['_action'])
             
     break;
         
+}
+
+return;
 }
 
 $api ->call("domainalias/list/domain/".$domain."/");

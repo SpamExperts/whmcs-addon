@@ -23,8 +23,7 @@
  * @author Maciej Husak <maciej@modulesgarden.com>
  *}
 <h1>{$lang.header}</h1>
-<p><button onclick="window.location.href = 'clientarea.php?action=productdetails&id={$serviceid}&modop=custom&a=management';
-        return false" class="btn btn-small"><i class="icon-arrow-left"></i> {$main_lang.back}</button></p>
+<p><a href="clientarea.php?action=productdetails&id={$serviceid}" class="btn btn-small"><i class="icon-arrow-left"></i> {$main_lang.back}</a></p>
 {if $_status && $_status.code==2}
     <div class="alert alert-danger">{$_status.msg}</div>
 {else}
@@ -32,7 +31,12 @@
         <div class="alert {if $_status.code==1}alert-success{else}alert-danger{/if}">{$_status.msg}</div>
     {/if}
     <p>{$lang.description}</p>
-    <form action="" method="post">
+    <form action="clientarea.php?action=productdetails&id={$serviceid}" method="post">
+        <input type="hidden" name="id" value="{$serviceid}" />
+        <input type="hidden" name="modop" value="custom" />
+        <input type="hidden" name="a" value="management" />
+        <input type="hidden" name="page" value="EditEmail" />
+        <input type="hidden" name="token" value="{$token}" />
         {$lang.cotactemail}
         <table class="se-email-table">
             <tr>

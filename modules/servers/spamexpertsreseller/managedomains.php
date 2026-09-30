@@ -32,8 +32,9 @@ if (!defined("WHMCS"))
 
 $api = new spamexperts_api($params, true);
 
-if(isset($_POST['_action']))
-    switch($_POST['_action'])
+if($handle_actions)
+{
+    switch(isset($_POST['_action']) ? $_POST['_action'] : '')
     {
         case 'unbind':
             $api->call('/auth/getrole/');
@@ -96,6 +97,9 @@ if(isset($_POST['_action']))
             
             break;    
     }
+
+    return;
+}
 
 $api->call('/domainslist/get/');
 if($api->isSuccess())

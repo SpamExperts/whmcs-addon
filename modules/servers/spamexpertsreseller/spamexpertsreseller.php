@@ -172,6 +172,9 @@ function spamexpertsreseller_ChangePackage($params) {
 */ 
 function spamexpertsreseller_ClientArea($params) {
     $output = array('vars' => array());
+    if (function_exists('generate_token')) {
+        $output['vars']['token'] = generate_token('plain');
+    }
     // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
     include_once(__DIR__.DIRECTORY_SEPARATOR.'class.connection.php');
     $lang = spamexpertsreseller_getLang($params);
@@ -245,35 +248,38 @@ function spamexpertsreseller_ClientAreaCustomButtonArray() {
 
 
 /**
-* FUNCTION spamexpertsreseller_management
-* Display extended pages in clientarea
-* @params array
-* @return array
-*/ 
-if (!function_exists('spamexpertsreseller_management')){
-     function spamexpertsreseller_management($params){
+* FUNCTION spamexpertsreseller_page
+* Run a management page script and collect its template vars
+* @param array $params
+* @param string $page
+* @param bool $handle_actions Run the posted action instead of loading the page data
+* @return array|null Null when the page does not exist
+*/
+if (!function_exists('spamexpertsreseller_page')){
+     function spamexpertsreseller_page($params, $page, $handle_actions){
          // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
          include_once(__DIR__.DIRECTORY_SEPARATOR.'class.connection.php');
-         global $CONFIG;	
-         $lang              = spamexpertsreseller_getLang($params); 
+         $lang              = spamexpertsreseller_getLang($params);
          $api               = new spamexperts_api($params);
-         $page              = (isset($_GET['page'])                      ? addslashes($_GET['page'])          : 'mainsite');
          $vars['main_lang'] = $lang['mainsite'];
          $vars['lang']      = $lang[(!isset($lang[$page])                ? 'mainsite'                         : $page)];
          $vars['serviceid'] = $params['serviceid'];
 
-         $available_pages = array('EditEmail', 'ManageAliases', 'managedomains', 'ManageRoutes', 'stats');
+         if (function_exists('generate_token')) {
+             $vars['token'] = generate_token('plain');
+         }
+
+         $available_pages = array('managedomains', 'stats');
          // phpcs:disable PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
-         if(empty($page) || !in_array($page, $available_pages)
+         if(empty($page) || !in_array($page, $available_pages, true)
              || !file_exists(__DIR__.DIRECTORY_SEPARATOR.$page.'.php')
              || !file_exists(__DIR__.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.$page.'.tpl')
          ) {
-             $vars['_status']   = array('code' => 1, 'msg' => $lang['mainsite']['notfound']);
-             return array('vars'=> $vars);
+             return null;
          }
          // phpcs:enable PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
 
-         if(isset($_SESSION['spam_status']))
+         if(!$handle_actions && isset($_SESSION['spam_status']))
          {
              $vars['_status'] = $_SESSION['spam_status'];
              unset($_SESSION['spam_status']);
@@ -281,11 +287,51 @@ if (!function_exists('spamexpertsreseller_management')){
 
          // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
          require_once(__DIR__.DIRECTORY_SEPARATOR.$page.'.php');
+         return $vars;
+     }
+}
 
-         return array(
-               'templatefile' => 'templates/'.$page,
-               'breadcrumb'   => ' > <a href="#">Server Details</a>',
-               'vars'         => $vars
-         );
+/**
+* FUNCTION spamexpertsreseller_management
+* Display extended pages in clientarea. A posted action is run first, then
+* redirected to the page so the result is shown by a GET request.
+* @params array
+* @return array
+*/
+if (!function_exists('spamexpertsreseller_management')){
+     function spamexpertsreseller_management($params){
+         $page = isset($_REQUEST['page']) ? $_REQUEST['page'] : '';
+
+         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+             $vars = spamexpertsreseller_page($params, $page, false);
+             if ($vars === null) {
+                 $lang = spamexpertsreseller_getLang($params);
+                 return array('vars' => array(
+                     '_status' => array('code' => 1, 'msg' => $lang['mainsite']['notfound'])
+                 ));
+             }
+
+             return array(
+                 'templatefile' => 'templates/'.$page,
+                 'breadcrumb'   => ' > <a href="#">Server Details</a>',
+                 'vars'         => $vars
+             );
+         }
+
+         $url  = 'clientarea.php?action=productdetails&id='.$params['serviceid'];
+         $vars = spamexpertsreseller_page($params, $page, true);
+         if ($vars !== null) {
+             if (isset($vars['_status'])) {
+                 $_SESSION['spam_status'] = $vars['_status'];
+             }
+             $url .= '&modop=custom&a=management&page='.urlencode($page)
+                  .'&token='.urlencode(isset($vars['token']) ? $vars['token'] : '');
+         }
+
+         if (ob_get_length()) {
+             ob_clean();
+         }
+         header('Location: '.$url);
+         exit;
      }
 }

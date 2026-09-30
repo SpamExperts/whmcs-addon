@@ -30,6 +30,7 @@ if (!defined("WHMCS")) {
 }
 
 if(! $params['configoption6']){
+    if($handle_actions){
     if(isset($_POST['primaryemail'])){
 
         $api->call('domaincontact/set/domain/'.$domain.'/email/'.$_POST['primaryemail'].'/');
@@ -47,6 +48,8 @@ if(! $params['configoption6']){
             $vars['_status'] = array('code'=>0,'msg'=>$api->error());
     }
 
+    return;
+    }
 
     $api ->call("domaincontact/get/domain/$domain/");
     if ($api->isSuccess())

@@ -24,13 +24,17 @@
 *}
 
 <h1 style="margin-bottom:5px;">{$lang.header}</h1>
-<p style="margin-bottom: 8px;"><button onclick="window.location.href = 'clientarea.php?action=productdetails&id={$serviceid}&modop=custom&a=management';
-        return false" class="btn btn-small"><i class="icon-arrow-left"></i> {$main_lang.back}</button></p>
+<p style="margin-bottom: 8px;"><a href="clientarea.php?action=productdetails&id={$serviceid}" class="btn btn-small"><i class="icon-arrow-left"></i> {$main_lang.back}</a></p>
 {if $_status}
     <div class="alert {if $_status.code==1}alert-success{else}alert-danger{/if}">{$_status.msg}</div>
 {/if}
 
-<form action="" method="post">
+<form action="clientarea.php?action=productdetails&id={$serviceid}" method="post">
+    <input type="hidden" name="id" value="{$serviceid}" />
+    <input type="hidden" name="modop" value="custom" />
+    <input type="hidden" name="a" value="management" />
+    <input type="hidden" name="page" value="managedomains" />
+    <input type="hidden" name="token" value="{$token}" />
     <input type="hidden" name="_action" value="unbind" />
     <table class="table table-bordered table-striped">
         <thead>
@@ -53,7 +57,12 @@
 </form>
     
 
-<form action="" method="post">
+<form action="clientarea.php?action=productdetails&id={$serviceid}" method="post">
+    <input type="hidden" name="id" value="{$serviceid}" />
+    <input type="hidden" name="modop" value="custom" />
+    <input type="hidden" name="a" value="management" />
+    <input type="hidden" name="page" value="managedomains" />
+    <input type="hidden" name="token" value="{$token}" />
     <fieldset>
         <legend style="margin-bottom:17px;">{$lang.bind_domain}</legend>
         <input type="text" size="30" name="bind[domain]" value="" placeholder="{$lang.example}" /> 

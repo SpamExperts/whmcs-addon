@@ -23,8 +23,7 @@
 * @author Maciej Husak <maciej@modulesgarden.com>
 *}
 <h1 style="margin-bottom:5px;">{$lang.header}</h1>
-<p style="margin-bottom: 8px;"><button onclick="window.location.href = 'clientarea.php?action=productdetails&id={$serviceid}&modop=custom&a=management';
-        return false" class="btn btn-small"><i class="icon-arrow-left"></i> {$main_lang.back}</button></p>
+<p style="margin-bottom: 8px;"><a href="clientarea.php?action=productdetails&id={$serviceid}" class="btn btn-small"><i class="icon-arrow-left"></i> {$main_lang.back}</a></p>
 {if $_status}
     <div class="alert {if $_status.code==1}alert-success{else}alert-danger{/if}">{$_status.msg}</div>
 {/if}
