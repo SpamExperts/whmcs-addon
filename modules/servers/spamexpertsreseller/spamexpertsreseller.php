@@ -235,11 +235,12 @@ if(!function_exists('spamexpertsreseller_getLang')){
 
 
 /**
-* FUNCTION spamexpertsreseller_ClientAreaCustomButtonArray()
-* Display buttons in clientarea
+* FUNCTION spamexpertsreseller_ClientAreaAllowedFunctions()
+* Allow the management pages to be called from the clientarea without
+* adding a button for them
 * @return array
 */
-function spamexpertsreseller_ClientAreaCustomButtonArray() {
+function spamexpertsreseller_ClientAreaAllowedFunctions() {
     $buttonarray = array(
         'Management' => 'management'
     );
