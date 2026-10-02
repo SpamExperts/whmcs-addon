@@ -178,21 +178,20 @@ function spamexpertsreseller_ClientArea($params) {
     // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
     include_once(__DIR__.DIRECTORY_SEPARATOR.'class.connection.php');
     $lang = spamexpertsreseller_getLang($params);
-    $auth = '';
-     
+
     $api = new spamexperts_api($params);
     $api->call("authticket/create/username/".$params['username']."/");
-
-    if ($api->isSuccess()) {
-        $res  = $api->getResponse();
-        $auth = $res['result'];
-    }
 
     $url = (strpos($params['configoption1'], 'http') === false)
         ? 'https://'.$params['configoption1']
         : $params['configoption1'];
 
-    $output['vars']['api_url'] = $url.'/?authticket='.$auth;
+    if ($api->isSuccess()) {
+        $res = $api->getResponse();
+        $output['vars']['api_url'] = $url.'/?authticket='.$res['result'];
+    } else {
+        $output['vars']['api_error'] = sprintf($lang['mainsite']['notadded'], $params['username']);
+    }
     $output['vars']['lang'] = $lang['mainsite'];
 
     return $output;

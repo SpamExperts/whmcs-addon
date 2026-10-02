@@ -32,6 +32,7 @@ $lang['mainsite']['management']             = 'Management';
 $lang['mainsite']['manage_domains']         = 'Domains Management';
 $lang['mainsite']['stats']                  = 'Bandwidth Usage';
 $lang['mainsite']['notfound']               = 'Page not found';
+$lang['mainsite']['notadded']               = "The reseller account '%s' has not been added to this spam filter account.";
 $lang['mainsite']['back']                   = 'Back';
 
 
