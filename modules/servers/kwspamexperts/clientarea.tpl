@@ -26,7 +26,7 @@
 <div class="buttons">
     <h3 style="text-align:left;margin-bottom: 5px;">{$lang.management}</h3>
     {if $api_error}
-    <div class="alert alert-danger">{$api_error}</div>
+    <div class="alert alert-danger">{$api_error|escape}</div>
     {else}
     {*<button class="btn" onclick="window.location.href='clientarea.php?action=productdetails&id={$serviceid}&modop=custom&a=management&page=logintopanel';return false">{$lang.logintopanel}</button>*}
     {if !$disable_edit_contact}

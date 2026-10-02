@@ -35,6 +35,7 @@ $lang['mainsite']['managealiases']          = "Manage Aliases";
 $lang['mainsite']['sso']                    = "SSO";
 $lang['mainsite']['back']                   = 'Back';
 $lang['mainsite']['notfound']               = 'Page not found.';
+$lang['mainsite']['unavailable']            = "The domain '%s' cannot be managed in the spam filter: %s";
 
 
 $lang['ManageRoutes']['header']             = 'Manage Routes';
