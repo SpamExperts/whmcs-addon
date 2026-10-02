@@ -113,11 +113,6 @@ function kwspamexperts_CreateAccount($params)
         return $api->error();
     }
 
-    $res = kwspamexperts_ChangePackage($params);
-    if (!$res) {
-        return $res;
-    }
-
     return "success";
 }
 
