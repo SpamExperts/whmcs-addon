@@ -74,6 +74,7 @@ switch(isset($_POST['_action']) ? $_POST['_action'] : '')
 return;
 }
 
+$vars['domainaliases'] = array();
 $api ->call("domainalias/list/domain/".$domain."/");
 
 if ($api->isSuccess())

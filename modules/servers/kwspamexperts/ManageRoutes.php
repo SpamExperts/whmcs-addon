@@ -100,10 +100,10 @@ if(! $params['configoption5']){
     return;
     }
 
+    $vars['domainroutes'] = array();
     $api ->call("domain/getroute/domain/".$domain."/");
     if ($api->isSuccess())
     {
-        $vars['domainroutes'] = array();
         $data                 = $api->getResponse();
 
         foreach($data['result'] as $key => $val){
