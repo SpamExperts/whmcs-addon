@@ -36,6 +36,9 @@ $lang['mainsite']['sso']                    = "SSO";
 $lang['mainsite']['back']                   = 'Back';
 $lang['mainsite']['notfound']               = 'Page not found.';
 $lang['mainsite']['notadded']               = "The domain '%s' has not been added to this spam filter account.";
+$lang['mainsite']['notconfigured']          = 'This product is not configured properly. Please contact support.';
+$lang['mainsite']['notsetup']               = 'This service has not been set up yet. Please contact support.';
+$lang['mainsite']['unavailable']            = 'The spam filter cannot be reached at the moment. Please contact support.';
 
 
 $lang['ManageRoutes']['header']             = 'Manage Routes';

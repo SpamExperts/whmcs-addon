@@ -361,21 +361,30 @@ function kwspamexperts_ClientArea($params) {
 
     $lang = kwspamexperts_getLang($params);
 
-    $api = new kwspamexperts_api($params);
     $output['vars']['lang'] = $lang['mainsite'];
     $domain = !empty($params["customfields"]["Domain"]) ? $params["customfields"]["Domain"] : $params['domain'];
-    $api->call("authticket/create/username/{$domain}/");
 
-    $api_url = (strpos($params['configoption2'], 'http') !== false)
-        ? $params['configoption2']
-        : 'https://'.$params['configoption2'];
-
-    $auth = $api->getResponse();
-    if ($api->isSuccess()) {
-        $output['vars']['api_url'] = $api_url;
-        $output['vars']['api_auth'] = $auth['result'];
+    if (empty($params['configoption2']) || empty($params['configoption3']) || empty($params['configoption4'])) {
+        $output['vars']['api_error'] = $lang['mainsite']['notconfigured'];
+    } elseif (empty($domain)) {
+        $output['vars']['api_error'] = $lang['mainsite']['notsetup'];
     } else {
-        $output['vars']['api_error'] = sprintf($lang['mainsite']['notadded'], $domain);
+        $api = new kwspamexperts_api($params);
+        $api->call("authticket/create/username/{$domain}/");
+
+        $api_url = (strpos($params['configoption2'], 'http') !== false)
+            ? $params['configoption2']
+            : 'https://'.$params['configoption2'];
+
+        $auth = $api->getResponse();
+        if ($api->isSuccess()) {
+            $output['vars']['api_url'] = $api_url;
+            $output['vars']['api_auth'] = $auth['result'];
+        } elseif (isset($auth['messages']['error'][0])) {
+            $output['vars']['api_error'] = sprintf($lang['mainsite']['notadded'], $domain);
+        } else {
+            $output['vars']['api_error'] = $lang['mainsite']['unavailable'];
+        }
     }
 
     $output['vars']['disable_manage_routes'] = $params['configoption5'];

@@ -179,18 +179,26 @@ function spamexpertsreseller_ClientArea($params) {
     include_once(__DIR__.DIRECTORY_SEPARATOR.'class.connection.php');
     $lang = spamexpertsreseller_getLang($params);
 
-    $api = new spamexperts_api($params);
-    $api->call("authticket/create/username/".$params['username']."/");
-
-    $url = (strpos($params['configoption1'], 'http') === false)
-        ? 'https://'.$params['configoption1']
-        : $params['configoption1'];
-
-    if ($api->isSuccess()) {
-        $res = $api->getResponse();
-        $output['vars']['api_url'] = $url.'/?authticket='.$res['result'];
+    if (empty($params['configoption1']) || empty($params['configoption2']) || empty($params['configoption3'])) {
+        $output['vars']['api_error'] = $lang['mainsite']['notconfigured'];
+    } elseif (empty($params['username'])) {
+        $output['vars']['api_error'] = $lang['mainsite']['notsetup'];
     } else {
-        $output['vars']['api_error'] = sprintf($lang['mainsite']['notadded'], $params['username']);
+        $api = new spamexperts_api($params);
+        $api->call("authticket/create/username/".$params['username']."/");
+
+        $url = (strpos($params['configoption1'], 'http') === false)
+            ? 'https://'.$params['configoption1']
+            : $params['configoption1'];
+
+        $res = $api->getResponse();
+        if ($api->isSuccess()) {
+            $output['vars']['api_url'] = $url.'/?authticket='.$res['result'];
+        } elseif (isset($res['messages']['error'][0])) {
+            $output['vars']['api_error'] = sprintf($lang['mainsite']['notadded'], $params['username']);
+        } else {
+            $output['vars']['api_error'] = $lang['mainsite']['unavailable'];
+        }
     }
     $output['vars']['lang'] = $lang['mainsite'];
 
