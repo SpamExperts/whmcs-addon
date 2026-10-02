@@ -55,12 +55,16 @@ if(! $params['configoption6']){
     if ($api->isSuccess())
     {
         $vars['primarycontact'] = $api->getResponse()['result'];
+    } else {
+        $vars['_status'] = array('code'=>0,'msg'=>$api->error());
     }
 
     $api ->call("domainadmincontact/get/domain/$domain/");
     if ($api->isSuccess())
     {
         $vars['admincontact'] = $api->getResponse()['result'];
+    } else {
+        $vars['_status'] = array('code'=>0,'msg'=>$api->error());
     }
 } else {   
     $vars['_status'] = array('code'=>2,'msg'=>$vars['lang']['email_denied']);

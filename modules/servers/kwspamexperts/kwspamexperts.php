@@ -373,6 +373,8 @@ function kwspamexperts_ClientArea($params) {
     if ($api->isSuccess()) {
         $output['vars']['api_url'] = $api_url;
         $output['vars']['api_auth'] = $auth['result'];
+    } else {
+        $output['vars']['api_error'] = $api->error();
     }
 
     $output['vars']['disable_manage_routes'] = $params['configoption5'];

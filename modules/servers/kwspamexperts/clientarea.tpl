@@ -25,6 +25,9 @@
 
 <div class="buttons">
     <h3 style="text-align:left;margin-bottom: 5px;">{$lang.management}</h3>
+    {if $api_error}
+    <div class="alert alert-danger">{$api_error}</div>
+    {else}
     {*<button class="btn" onclick="window.location.href='clientarea.php?action=productdetails&id={$serviceid}&modop=custom&a=management&page=logintopanel';return false">{$lang.logintopanel}</button>*}
     {if !$disable_edit_contact}
         <a href="clientarea.php?action=productdetails&id={$serviceid}&modop=custom&a=management&page=EditEmail&token={$token}" class="btn"><i class="icon-edit"></i> {$lang.editcontactemail}</a>
@@ -39,6 +42,7 @@
     <button class="btn" onclick="window.open('{$api_url}/?authticket={$api_auth}');return false;">
         <i class="icon-user"></i> {$lang.logintopanel}
     </button>
+    {/if}
 </div>
 
 <style>
