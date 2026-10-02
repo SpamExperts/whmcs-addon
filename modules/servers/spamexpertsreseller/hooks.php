@@ -19,7 +19,7 @@ add_hook('ClientAreaFooterOutput', 1, function ($vars) {
     }
 
     $service = Service::find($vars['serviceid']);
-    if (!$service || !$service->product || $service->product->module !== 'spamexpertsreseller') {
+    if (!$service || !$service->product || $service->product->servertype !== 'spamexpertsreseller') {
         return '';
     }
 
