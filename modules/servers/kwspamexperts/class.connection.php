@@ -72,7 +72,7 @@ class kwspamexperts_api
         }
 
         if ($this->debug) {
-            logModuleCall('spamexpertsresller', $action, $this->url . "/api/" . $action . ($format ? "/format/json/" : ""), print_r($this->response, true));
+            logModuleCall('kwspamexperts', $action, $this->url . "/api/" . $action . ($format ? "/format/json/" : ""), print_r($this->response, true));
         }
     }
 

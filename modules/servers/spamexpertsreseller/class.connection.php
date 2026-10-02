@@ -77,7 +77,7 @@ class spamexperts_api
         }
 
         if ($this->debug) {
-            logModuleCall('spamexpertsresller', $action, $this->url . "/api/" . $action . "/format/json/", print_r($this->response, true));
+            logModuleCall('spamexpertsreseller', $action, $this->url . "/api/" . $action . "/format/json/", print_r($this->response, true));
         }
     }
 
