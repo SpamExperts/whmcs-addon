@@ -41,8 +41,8 @@ class spamexperts_api
             $this->user = $params['username'];
             $this->pass = $params['password'];
         } else {
-            $this->user = $params['configoption2'];
-            $this->pass = $params['configoption3'];
+            $this->user = html_entity_decode($params['configoption2']);
+            $this->pass = html_entity_decode($params['configoption3']);
         }
     }
 
