@@ -29,18 +29,7 @@ $MGC = new $module();
 define('ADDON_NAME', $module);
 
 //ENABLE DEBUG
-if(isset($_GET['debug']) && $_GET['debug'] == 1)
-{
-    $_SESSION['MODULESGARDEN_DEBUG'] = 1;
-}
-
-//DISABLE DEBUG
-if(isset($_GET['debug']) && $_GET['debug'] == 0)
-{
-    $_SESSION['MODULESGARDEN_DEBUG'] = 0;
-}
-
-if((isset($_SESSION['MODULESGARDEN_DEBUG']) && $_SESSION['MODULESGARDEN_DEBUG']) || $MGC->debug)
+if($MGC->debug)
 {
     error_reporting(E_ALL);
     ini_set('display_errors', 1);
