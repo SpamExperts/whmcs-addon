@@ -41,8 +41,10 @@ class spamexperts_api
             $this->user = $params['username'];
             $this->pass = $params['password'];
         } else {
-            $this->user = html_entity_decode($params['configoption2']);
-            $this->pass = html_entity_decode($params['configoption3']);
+            // WHMCS stores the password field HTML-encoded. Text fields are stored raw
+            // on WHMCS 9 but may be encoded on older versions, so decode both.
+            $this->user = html_entity_decode($params['configoption2'], ENT_QUOTES);
+            $this->pass = html_entity_decode($params['configoption3'], ENT_QUOTES);
         }
     }
 

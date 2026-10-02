@@ -37,8 +37,10 @@ class kwspamexperts_api
     public function __construct($params)
     {
         $this->url = $params['configoption2'];
-        $this->user = html_entity_decode($params['configoption3']);
-        $this->pass = html_entity_decode($params['configoption4']);
+        // WHMCS stores the password field HTML-encoded. Text fields are stored raw
+        // on WHMCS 9 but may be encoded on older versions, so decode both.
+        $this->user = html_entity_decode($params['configoption3'], ENT_QUOTES);
+        $this->pass = html_entity_decode($params['configoption4'], ENT_QUOTES);
     }
 
     public function call($action, $format = true)
