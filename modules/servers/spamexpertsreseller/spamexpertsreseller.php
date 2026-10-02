@@ -84,6 +84,22 @@ function spamexpertsreseller_ConfigOptions()
 
 
 /**
+* FUNCTION spamexpertsreseller_configError
+* Message for the admin when the product has no API settings
+* @param array $params
+* @return string|null
+*/
+function spamexpertsreseller_configError($params)
+{
+    if (empty($params['configoption1']) || empty($params['configoption2']) || empty($params['configoption3'])) {
+        return "Set the Spam Panel URL, API Username and API Password in the product's Module Settings.";
+    }
+
+    return null;
+}
+
+
+/**
 * FUNCTION spamexpertsreseller_CreateAccount
 * Create Reseller Account
 * @param array $params
@@ -91,6 +107,9 @@ function spamexpertsreseller_ConfigOptions()
 */
 function spamexpertsreseller_CreateAccount($params)
 {
+    if ($error = spamexpertsreseller_configError($params)) {
+        return $error;
+    }
     // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
     include_once(__DIR__.DIRECTORY_SEPARATOR.'class.connection.php');
     $api        = new spamexperts_api($params);
@@ -127,6 +146,12 @@ function spamexpertsreseller_CreateAccount($params)
 */
 function spamexpertsreseller_TerminateAccount($params)
 {
+    if ($error = spamexpertsreseller_configError($params)) {
+        return $error;
+    }
+    if (empty($params['username'])) {
+        return "Username cannot be empty. Please enter the reseller username in the Username field.";
+    }
     // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
     include_once(__DIR__.DIRECTORY_SEPARATOR.'class.connection.php');
     $api = new spamexperts_api($params);
@@ -146,6 +171,12 @@ function spamexpertsreseller_TerminateAccount($params)
 * @return string
 */
 function spamexpertsreseller_ChangePackage($params) {
+    if ($error = spamexpertsreseller_configError($params)) {
+        return $error;
+    }
+    if (empty($params['username'])) {
+        return "Username cannot be empty. Please enter the reseller username in the Username field.";
+    }
     // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
     include_once(__DIR__.DIRECTORY_SEPARATOR.'class.connection.php');
     $api = new spamexperts_api($params);
@@ -312,7 +343,7 @@ if (!function_exists('spamexpertsreseller_page')){
 * @return string|null
 */
 function spamexpertsreseller_setupError($params, $lang) {
-    if (empty($params['configoption1']) || empty($params['configoption2']) || empty($params['configoption3'])) {
+    if (spamexpertsreseller_configError($params)) {
         return $lang['mainsite']['notconfigured'];
     }
 

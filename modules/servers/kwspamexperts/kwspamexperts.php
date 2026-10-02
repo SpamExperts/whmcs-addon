@@ -67,6 +67,21 @@ function kwspamexperts_ConfigOptions() {
 
 
 /**
+* FUNCTION kwspamexperts_configError
+* Message for the admin when the product has no API settings
+* @param array $params
+* @return string|null
+*/
+function kwspamexperts_configError($params) {
+    if (empty($params['configoption2']) || empty($params['configoption3']) || empty($params['configoption4'])) {
+        return "Set the Spam Panel URL, API Username and API Password in the product's Module Settings.";
+    }
+
+    return null;
+}
+
+
+/**
 * FUNCTION kwspamexperts_CreateAccount
 * Create Account
 * @param array $params
@@ -74,6 +89,9 @@ function kwspamexperts_ConfigOptions() {
 */
 function kwspamexperts_CreateAccount($params)
 {
+    if ($error = kwspamexperts_configError($params)) {
+        return $error;
+    }
     $api        = new kwspamexperts_api($params);
     $domain     = !empty($params["customfields"]["Domain"])  ? $params["customfields"]["Domain"] : $params['domain'];
     $password   = !empty($params['password'])                ? $params["password"]               : createServerPassword();
@@ -124,6 +142,9 @@ function kwspamexperts_CreateAccount($params)
 */
 function kwspamexperts_TerminateAccount($params)
 {
+    if ($error = kwspamexperts_configError($params)) {
+        return $error;
+    }
         $api    = new kwspamexperts_api($params);
         $domain = !empty($params["customfields"]["Domain"])  ? $params["customfields"]["Domain"] : $params['domain'];
         if(empty($domain)){
@@ -148,6 +169,9 @@ function kwspamexperts_TerminateAccount($params)
 * @return string
 */
 function kwspamexperts_ChangePackage($params) {
+    if ($error = kwspamexperts_configError($params)) {
+        return $error;
+    }
     $domain   = !empty($params["customfields"]["Domain"])   ? $params["customfields"]["Domain"] : $params['domain'];
     $outgoing = $params["configoption1"] != 'Incoming'      ? 1                                 : 0;
         $incoming = $params["configoption1"] != 'Outgoing'      ? 1                                 : 0;
@@ -169,6 +193,9 @@ function kwspamexperts_ChangePackage($params) {
 
 function kwspamexperts_SuspendAccount($params)
 {
+    if ($error = kwspamexperts_configError($params)) {
+        return $error;
+    }
     $domain   = !empty($params["customfields"]["Domain"])   ? $params["customfields"]["Domain"] : $params['domain'];
         $api = new kwspamexperts_api($params);
 
@@ -187,6 +214,9 @@ function kwspamexperts_SuspendAccount($params)
 
 function kwspamexperts_UnsuspendAccount($params)
 {
+    if ($error = kwspamexperts_configError($params)) {
+        return $error;
+    }
     $domain   = !empty($params["customfields"]["Domain"])   ? $params["customfields"]["Domain"] : $params['domain'];
         $api = new kwspamexperts_api($params);
         if(empty($domain)){
@@ -311,7 +341,7 @@ if (!function_exists('kwspamexperts_page')){
 * @return string|null
 */
 function kwspamexperts_setupError($params, $lang) {
-    if (empty($params['configoption2']) || empty($params['configoption3']) || empty($params['configoption4'])) {
+    if (kwspamexperts_configError($params)) {
         return $lang['mainsite']['notconfigured'];
     }
 
