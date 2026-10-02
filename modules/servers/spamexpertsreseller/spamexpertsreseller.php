@@ -33,13 +33,6 @@ if (!defined("WHMCS"))
   die("This file cannot be accessed directly");
 }
 
-if(isset($_GET['_debug']) && $_GET['debug']=='turnon')
-{
-    error_reporting(E_ALL);
-    ini_set('display_errors',1);
-}
-
-
 /**
 * FUNCTION spamexpertsreseller_ConfigOptions
 * Display Configuration fields

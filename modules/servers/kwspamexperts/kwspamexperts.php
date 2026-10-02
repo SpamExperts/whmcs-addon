@@ -3,15 +3,8 @@
 use Carbon\Carbon;
 use WHMCS\Database\Capsule;
 
-ini_set('display_errors',0);
-
 if (!defined("WHMCS")) {
     die("This file cannot be accessed directly");
-}
-
-if (isset($_GET['_debug']) && $_GET['_debug'] === 'turnon') {
-    error_reporting(E_ALL);
-    ini_set('display_errors', 1);
 }
 
 defined('DS') or define ('DS', DIRECTORY_SEPARATOR);
