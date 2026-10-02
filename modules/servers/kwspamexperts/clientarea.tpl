@@ -50,3 +50,16 @@
         .buttons .btn {margin-bottom:5px;}
     {/literal}
 </style>
+
+<script type="text/javascript">
+    {literal}
+    // The six theme strips the active class from every tab pane when the
+    // URL has a hash, which hides the tab holding this output.
+    jQuery(document).ready(function(){
+        var pane = jQuery('.module-client-area').closest('.tab-pane');
+        if (pane.length && !pane.siblings('.tab-pane.active').length) {
+            pane.addClass('active');
+        }
+    });
+    {/literal}
+</script>
