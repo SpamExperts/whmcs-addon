@@ -24,6 +24,9 @@
 *}
 <h1 style="margin-bottom:5px;">{$lang.header}</h1>
 <p style="margin-bottom: 8px;"><a href="clientarea.php?action=productdetails&id={$serviceid}" class="btn btn-small"><i class="icon-arrow-left"></i> {$main_lang.back}</a></p>
+{if $_status && $_status.code==2}
+    <div class="alert alert-danger">{$_status.msg}</div>
+{else}
 {if $_status}
     <div class="alert {if $_status.code==1}alert-success{else}alert-danger{/if}">{$_status.msg}</div>
 {/if}
@@ -52,3 +55,4 @@
         </tr>
     {/foreach}
 </table>
+{/if}

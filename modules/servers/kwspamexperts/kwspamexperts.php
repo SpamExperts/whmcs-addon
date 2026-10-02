@@ -296,10 +296,36 @@ if (!function_exists('kwspamexperts_page')){
              unset($_SESSION['spam_status']);
          }
 
+         $error = kwspamexperts_setupError($params, $lang);
+         if ($error) {
+             $vars['_status'] = array('code' => 2, 'msg' => $error);
+             return $vars;
+         }
+
          // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
          require_once(__DIR__.DS.$page.'.php');
          return $vars;
      }
+}
+
+/**
+* FUNCTION kwspamexperts_setupError
+* Message for a product without API settings or a service without a domain
+* @param array $params
+* @param array $lang
+* @return string|null
+*/
+function kwspamexperts_setupError($params, $lang) {
+    if (empty($params['configoption2']) || empty($params['configoption3']) || empty($params['configoption4'])) {
+        return $lang['mainsite']['notconfigured'];
+    }
+
+    $domain = !empty($params["customfields"]["Domain"]) ? $params["customfields"]["Domain"] : $params['domain'];
+    if (empty($domain)) {
+        return $lang['mainsite']['notsetup'];
+    }
+
+    return null;
 }
 
 /**
@@ -364,10 +390,9 @@ function kwspamexperts_ClientArea($params) {
     $output['vars']['lang'] = $lang['mainsite'];
     $domain = !empty($params["customfields"]["Domain"]) ? $params["customfields"]["Domain"] : $params['domain'];
 
-    if (empty($params['configoption2']) || empty($params['configoption3']) || empty($params['configoption4'])) {
-        $output['vars']['api_error'] = $lang['mainsite']['notconfigured'];
-    } elseif (empty($domain)) {
-        $output['vars']['api_error'] = $lang['mainsite']['notsetup'];
+    $error = kwspamexperts_setupError($params, $lang);
+    if ($error) {
+        $output['vars']['api_error'] = $error;
     } else {
         $api = new kwspamexperts_api($params);
         $api->call("authticket/create/username/{$domain}/");

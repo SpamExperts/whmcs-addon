@@ -179,10 +179,9 @@ function spamexpertsreseller_ClientArea($params) {
     include_once(__DIR__.DIRECTORY_SEPARATOR.'class.connection.php');
     $lang = spamexpertsreseller_getLang($params);
 
-    if (empty($params['configoption1']) || empty($params['configoption2']) || empty($params['configoption3'])) {
-        $output['vars']['api_error'] = $lang['mainsite']['notconfigured'];
-    } elseif (empty($params['username'])) {
-        $output['vars']['api_error'] = $lang['mainsite']['notsetup'];
+    $error = spamexpertsreseller_setupError($params, $lang);
+    if ($error) {
+        $output['vars']['api_error'] = $error;
     } else {
         $api = new spamexperts_api($params);
         $api->call("authticket/create/username/".$params['username']."/");
@@ -293,10 +292,35 @@ if (!function_exists('spamexpertsreseller_page')){
              unset($_SESSION['spam_status']);
          }
 
+         $error = spamexpertsreseller_setupError($params, $lang);
+         if ($error) {
+             $vars['_status'] = array('code' => 2, 'msg' => $error);
+             return $vars;
+         }
+
          // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
          require_once(__DIR__.DIRECTORY_SEPARATOR.$page.'.php');
          return $vars;
      }
+}
+
+/**
+* FUNCTION spamexpertsreseller_setupError
+* Message for a product without API settings or a service without a username
+* @param array $params
+* @param array $lang
+* @return string|null
+*/
+function spamexpertsreseller_setupError($params, $lang) {
+    if (empty($params['configoption1']) || empty($params['configoption2']) || empty($params['configoption3'])) {
+        return $lang['mainsite']['notconfigured'];
+    }
+
+    if (empty($params['username'])) {
+        return $lang['mainsite']['notsetup'];
+    }
+
+    return null;
 }
 
 /**
