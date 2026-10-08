@@ -32,7 +32,6 @@ class spamexperts_api
     private $user = null;
     private $pass = null;
     private $response = null;
-    private $debug = true;
 
     public function __construct($params, $user = false)
     {
@@ -76,9 +75,7 @@ class spamexperts_api
             }
         }
 
-        if ($this->debug) {
-            logModuleCall('spamexpertsreseller', $action, $this->url . "/api/" . $action . "/format/json/", print_r($this->response, true));
-        }
+        logModuleCall('spamexpertsreseller', $action, $this->url . "/api/" . $action . "/format/json/", print_r($this->response, true));
     }
 
     public function isError()

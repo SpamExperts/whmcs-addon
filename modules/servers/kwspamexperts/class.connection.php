@@ -32,7 +32,6 @@ class kwspamexperts_api
     private $user = null;
     private $pass = null;
     private $response = null;
-    private $debug = true;
 
     public function __construct($params)
     {
@@ -71,9 +70,7 @@ class kwspamexperts_api
             }
         }
 
-        if ($this->debug) {
-            logModuleCall('kwspamexperts', $action, $this->url . "/api/" . $action . ($format ? "/format/json/" : ""), print_r($this->response, true));
-        }
+        logModuleCall('kwspamexperts', $action, $this->url . "/api/" . $action . ($format ? "/format/json/" : ""), print_r($this->response, true));
     }
 
     public function isError()
