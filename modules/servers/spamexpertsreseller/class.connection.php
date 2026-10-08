@@ -75,7 +75,28 @@ class spamexperts_api
             }
         }
 
-        logModuleCall('spamexpertsreseller', $action, $this->url . "/api/" . $action . "/format/json/", print_r($this->response, true));
+        $secrets = $this->secretsToMask($action);
+        // replaceVars is only documented to mask the request and response, so
+        // mask the action here too.
+        logModuleCall('spamexpertsreseller', str_replace($secrets, '********', $action), $this->url . "/api/" . $action . "/format/json/", print_r($this->response, true), '', $secrets);
+    }
+
+    // Values masked in the module log: the password in the
+    // request path and the SSO ticket returned by authticket/create.
+    private function secretsToMask($action)
+    {
+        $secrets = array();
+        if (preg_match('#/password/([^/]+)#', $action, $match)) {
+            $secrets[] = $match[1];
+        }
+        if (strpos($action, 'authticket/') !== false
+            && isset($this->response['result'])
+            && is_string($this->response['result'])
+            && $this->response['result'] !== ''
+        ) {
+            $secrets[] = $this->response['result'];
+        }
+        return $secrets;
     }
 
     public function isError()
