@@ -308,10 +308,10 @@ if (!function_exists('kwspamexperts_page')){
          }
          // phpcs:enable PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
 
-         if(!$handle_actions && isset($_SESSION['spam_status']))
-         {
-             $vars['_status'] = $_SESSION['spam_status'];
-             unset($_SESSION['spam_status']);
+         $serviceid = $params['serviceid'];
+         if (!$handle_actions && isset($_SESSION['kwspamexperts_result'][$serviceid])) {
+             $vars['_result'] = $_SESSION['kwspamexperts_result'][$serviceid];
+             unset($_SESSION['kwspamexperts_result'][$serviceid]);
          }
 
          $error = kwspamexperts_setupError($params, $lang);
@@ -322,6 +322,14 @@ if (!function_exists('kwspamexperts_page')){
 
          // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
          require_once(__DIR__.DS.$page.'.php');
+
+         // The same API error can come from the action and from loading the page
+         if (isset($vars['_result'], $vars['_status'])
+             && $vars['_result']['msg'] === $vars['_status']['msg']
+         ) {
+             unset($vars['_result']);
+         }
+
          return $vars;
      }
 }
@@ -376,8 +384,9 @@ if (!function_exists('kwspamexperts_management')){
          $url  = 'clientarea.php?action=productdetails&id='.$params['serviceid'];
          $vars = kwspamexperts_page($params, $page, true);
          if ($vars !== null) {
-             if (isset($vars['_status'])) {
-                 $_SESSION['spam_status'] = $vars['_status'];
+             // Code 2 marks the page as unavailable, which the GET shows again itself
+             if (isset($vars['_status']) && $vars['_status']['code'] !== 2) {
+                 $_SESSION['kwspamexperts_result'][$params['serviceid']] = $vars['_status'];
              }
              $url .= '&modop=custom&a=management&page='.urlencode($page)
                   .'&token='.urlencode(isset($vars['token']) ? $vars['token'] : '');
