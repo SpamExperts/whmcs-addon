@@ -61,16 +61,14 @@ switch(isset($_POST['_action']) ? $_POST['_action'] : '')
             foreach($_POST['alias']['old_list'] as $val)
             {
                 $api->call("domainalias/remove/domain/".$domain."/alias/".rawurlencode($val)."/");
-                if ($api->isSuccess())
+                if (!$api->isSuccess())
                 {
-                    $status .= $vars['lang']['alias_removed']."<br />";
-                } else {
-                    $vars['_status']  = array('code'=>0,'msg'=>$api->error()); 
-                    break;
+                    $vars['_status']  = array('code'=>0,'msg'=>$api->error());
+                    break 2;
                 }
             }
-            
-            $vars['_status']  = array('code'=>1,'msg'=> $status);
+
+            $vars['_status']  = array('code'=>1,'msg'=>$vars['lang']['alias_removed']);
         } else if(isset($_POST['delete-item'])) {
             $alias = key((array) $_POST['delete-item']);
             if (!kwspamexperts_isHostname($alias)) {
