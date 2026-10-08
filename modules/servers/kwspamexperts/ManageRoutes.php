@@ -34,6 +34,12 @@ if(! $params['configoption5']){
     if($handle_actions){
     $api ->call("domain/getroute/domain/".$domain."/");
     $routes = $api->getResponse();
+    // Both actions rewrite the full route list. call() treats any HTTP 200
+    // as success, even when the body isn't JSON, so check the list too.
+    if (!$api->isSuccess() || !isset($routes['result']) || !is_array($routes['result'])) {
+        $vars['_status'] = array('code'=>0,'msg'=>$api->isSuccess() ? 'Resource not found!' : $api->error());
+        return;
+    }
     switch(isset($_POST['_action']) ? $_POST['_action'] : '')
     {
         case 'deleteroute':
