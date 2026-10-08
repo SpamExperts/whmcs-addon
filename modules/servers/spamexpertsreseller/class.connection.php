@@ -118,11 +118,4 @@ class spamexperts_api
     {
         return $this->error;
     }
-
-    public function redirect($url)
-    {
-        ob_clean();
-        header("Location: " . $url);
-        die();
-    }
 }
