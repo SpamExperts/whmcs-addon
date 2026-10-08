@@ -31,24 +31,36 @@ if (!defined("WHMCS")) {
 
 if(! $params['configoption6']){
     if($handle_actions){
-    if(isset($_POST['primaryemail']) && !kwspamexperts_isEmail($_POST['primaryemail'])){
-        $vars['_status'] = array('code'=>0,'msg'=>$vars['lang']['invalid_email']);
-    } else if(isset($_POST['primaryemail'])){
-        $api->call('domaincontact/set/domain/'.$domain.'/email/'.rawurlencode($_POST['primaryemail']).'/');
-        if ($api->isSuccess())
-            $vars['_status'] = array('code'=>1,'msg'=>$vars['lang']['email_changed']);
-        else 
-            $vars['_status'] = array('code'=>0,'msg'=>$api->error());
+    // Each contact is updated on its own, so report each result
+    $contacts = array(
+        'primaryemail' => array('domaincontact', 'primarycontact'),
+        'adminemail'   => array('domainadmincontact', 'admincontact'),
+    );
+    $statuses = array();
+    foreach ($contacts as $field => $contact) {
+        list($endpoint, $label) = $contact;
+        if (!isset($_POST[$field])) {
+            continue;
+        }
+        if (!kwspamexperts_isEmail($_POST[$field])) {
+            $status = array('code'=>0,'msg'=>$vars['lang']['invalid_email']);
+        } else {
+            $api->call($endpoint.'/set/domain/'.$domain.'/email/'.rawurlencode($_POST[$field]).'/');
+            if ($api->isSuccess())
+                $status = array('code'=>1,'msg'=>$vars['lang']['email_changed']);
+            else
+                $status = array('code'=>0,'msg'=>$api->error());
+        }
+        $status['msg'] = $vars['lang'][$label].' '.$status['msg'];
+        $statuses[] = $status;
     }
-
-    if(isset($_POST['adminemail']) && !kwspamexperts_isEmail($_POST['adminemail'])){
-        $vars['_status'] = array('code'=>0,'msg'=>$vars['lang']['invalid_email']);
-    } else if(isset($_POST['adminemail'])){
-        $api->call('domainadmincontact/set/domain/'.$domain.'/email/'.rawurlencode($_POST['adminemail']).'/');
-        if ($api->isSuccess())
-            $vars['_status'] = array('code'=>1,'msg'=>$vars['lang']['email_changed']);
-        else 
-            $vars['_status'] = array('code'=>0,'msg'=>$api->error());
+    if ($statuses) {
+        $codes = array_column($statuses, 'code');
+        $vars['_status'] = array(
+            'code' => min($codes),
+            'msg'  => implode(' ', array_column($statuses, 'msg')),
+            'list' => $statuses,
+        );
     }
 
     return;

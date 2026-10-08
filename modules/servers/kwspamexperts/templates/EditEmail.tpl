@@ -24,7 +24,11 @@
  *}
 <h1>{$lang.header}</h1>
 <p><a href="clientarea.php?action=productdetails&id={$serviceid}" class="btn btn-small"><i class="icon-arrow-left"></i> {$main_lang.back}</a></p>
-{if $_result}
+{if $_result && isset($_result.list)}
+    {foreach $_result.list as $item}
+        <div class="alert {if $item.code==1}alert-success{else}alert-danger{/if}">{$item.msg|escape}</div>
+    {/foreach}
+{elseif $_result}
     <div class="alert {if $_result.code==1}alert-success{else}alert-danger{/if}">{$_result.msg|escape}</div>
 {/if}
 {if $_status && $_status.code==2}
