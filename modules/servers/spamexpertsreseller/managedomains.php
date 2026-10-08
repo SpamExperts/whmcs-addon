@@ -37,14 +37,19 @@ if($handle_actions)
     switch(isset($_POST['_action']) ? $_POST['_action'] : '')
     {
         case 'unbind':
+            $unbindDomain = isset($_POST['unbind-domain']) ? $_POST['unbind-domain'] : '';
+            if (!spamexpertsreseller_isHostname($unbindDomain)) {
+                $vars['_status'] = array('code'=>0,'msg'=>$vars['lang']['invalid_domain']);
+                break;
+            }
             $api->call('/auth/getrole/');
             $role = $api->getResponse();
             if($role['result'] == 'admin')
             {
-                $api->call('/reseller/unbinddomains/username/'.$params['username'].'/domains/'.$_POST['unbind-domain'].'/');
+                $api->call('/reseller/unbinddomains/username/'.$params['username'].'/domains/'.rawurlencode($unbindDomain).'/');
             } else
             {
-                $api->call('/domain/remove/domain/'.$_POST['unbind-domain'].'/');
+                $api->call('/domain/remove/domain/'.rawurlencode($unbindDomain).'/');
             }
 
             if ($api->isSuccess())
@@ -53,27 +58,32 @@ if($handle_actions)
                 $vars['_status']  = array('code'=>0,'msg'=>$api->error());
             break;
         case 'bind':
+            $bindDomain = isset($_POST['bind']['domain']) ? $_POST['bind']['domain'] : '';
+            if (!spamexpertsreseller_isHostname($bindDomain)) {
+                $vars['_status'] = array('code'=>0,'msg'=>$vars['lang']['invalid_domain']);
+                break;
+            }
             $api->call('/auth/getrole/');
             $role = $api->getResponse();
             
             if($role['result'] == 'admin')
             {
-                $api->call('/domain/exists/domain/'.$_POST['bind']['domain'].'/');
+                $api->call('/domain/exists/domain/'.rawurlencode($bindDomain).'/');
                 if($api->isSuccess())
                 {
                     $res = $api->getResponse();
                     if($res['result']['present'] != 1)
                     {
-                        $api->call('/domain/add/domain/'.$_POST['bind']['domain'].'/');
+                        $api->call('/domain/add/domain/'.rawurlencode($bindDomain).'/');
                     }
                 }  
-                $api->call('/domain/getowner/domain/'.$_POST['bind']['domain']);
+                $api->call('/domain/getowner/domain/'.rawurlencode($bindDomain));
                 if($api->isSuccess())
                 {
                     $owner = $api->getResponse();
                     if(empty($owner['result']) || $owner['result']['username'] == $params['username'])
                     {
-                        $api->call('/reseller/binddomains/username/'.$params['username'].'/domains/'.$_POST['bind']['domain'].'/');
+                        $api->call('/reseller/binddomains/username/'.$params['username'].'/domains/'.rawurlencode($bindDomain).'/');
                         if ($api->isSuccess())
                             $vars['_status']  = array('code'=>1,'msg'=>$vars['lang']['domain_binded']);
                         else 
@@ -88,7 +98,7 @@ if($handle_actions)
                 }      
             } else 
             {
-                $api->call('/domain/add/domain/'.$_POST['bind']['domain'].'/');
+                $api->call('/domain/add/domain/'.rawurlencode($bindDomain).'/');
                 if ($api->isSuccess())
                     $vars['_status']  = array('code'=>1,'msg'=>$vars['lang']['domain_binded']);
                 else 

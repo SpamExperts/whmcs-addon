@@ -66,7 +66,7 @@ if(! $params['configoption5']){
 
 
             if($found){
-                $api ->call("domain/edit/domain/".$domain."/destinations/".str_replace('::',':',json_encode($routes['result']))."/");
+                $api ->call("domain/edit/domain/".$domain."/destinations/".rawurlencode(str_replace('::',':',json_encode($routes['result'])))."/");
 
                 if($api->isSuccess())
                     $vars['_status'] = array('code'=>1,'msg'=>$vars['lang']['route_removed']);
@@ -81,13 +81,24 @@ if(! $params['configoption5']){
         case 'addroute':
             if(isset($_POST['route']['hostname']) && isset($_POST['route']['port']))
             {
+                $hostname = $_POST['route']['hostname'];
+                $port     = $_POST['route']['port'];
+                $validHost = kwspamexperts_isHostname($hostname) || filter_var($hostname, FILTER_VALIDATE_IP) !== false;
+                if ($port !== '') {
+                    $port = filter_var($port, FILTER_VALIDATE_INT, array('options' => array('min_range' => 1, 'max_range' => 65535)));
+                }
+                if (!$validHost || $port === false) {
+                    $vars['_status'] = array('code'=>0,'msg'=>$vars['lang']['invalid_route']);
+                    break;
+                }
+
                 foreach($routes['result'] as $key => $val)
                 {
                     $routes['result'][$key] = str_replace('::', ':', $val);
                 }
 
-                $routes['result'][] = $_POST['route']['hostname'].":".$_POST['route']['port'];
-                $api ->call("domain/edit/domain/".$domain."/destinations/".json_encode($routes['result'])."/");
+                $routes['result'][] = $port === '' ? $hostname : $hostname.":".$port;
+                $api ->call("domain/edit/domain/".$domain."/destinations/".rawurlencode(json_encode($routes['result']))."/");
                 if($api->isSuccess())
                     $vars['_status'] = array('code'=>1,'msg'=>$vars['lang']['route_added']);
                 else 

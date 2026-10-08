@@ -36,7 +36,12 @@ if($handle_actions)
 switch(isset($_POST['_action']) ? $_POST['_action'] : '')
 {
     case 'addalias':
-	$api->call("domainalias/add/domain/".$domain."/alias/".$_POST['alias']['new']."/");
+        $alias = isset($_POST['alias']['new']) ? $_POST['alias']['new'] : '';
+        if (!kwspamexperts_isHostname($alias)) {
+            $vars['_status'] = array('code'=>0,'msg'=>$vars['lang']['invalid_alias']);
+            break;
+        }
+	$api->call("domainalias/add/domain/".$domain."/alias/".rawurlencode($alias)."/");
 	if ($api->isSuccess())
             $vars['_status']  = array('code'=>1,'msg'=>$vars['lang']['alias_added']);
         else 
@@ -47,7 +52,15 @@ switch(isset($_POST['_action']) ? $_POST['_action'] : '')
         {
             foreach($_POST['alias']['old_list'] as $val)
             {
-                $api->call("domainalias/remove/domain/".$domain."/alias/".$val."/");
+                if (!kwspamexperts_isHostname($val)) {
+                    $vars['_status'] = array('code'=>0,'msg'=>$vars['lang']['invalid_alias']);
+                    break 2;
+                }
+            }
+
+            foreach($_POST['alias']['old_list'] as $val)
+            {
+                $api->call("domainalias/remove/domain/".$domain."/alias/".rawurlencode($val)."/");
                 if ($api->isSuccess())
                 {
                     $status .= $vars['lang']['alias_removed']."<br />";
@@ -59,7 +72,12 @@ switch(isset($_POST['_action']) ? $_POST['_action'] : '')
             
             $vars['_status']  = array('code'=>1,'msg'=> $status);
         } else if(isset($_POST['delete-item'])) {
-            $api->call("domainalias/remove/domain/".$domain."/alias/".array_shift(array_keys($_POST['delete-item']))."/");
+            $alias = key((array) $_POST['delete-item']);
+            if (!kwspamexperts_isHostname($alias)) {
+                $vars['_status'] = array('code'=>0,'msg'=>$vars['lang']['invalid_alias']);
+                break;
+            }
+            $api->call("domainalias/remove/domain/".$domain."/alias/".rawurlencode($alias)."/");
             if ($api->isSuccess())
                 $vars['_status']  = array('code'=>1,'msg'=>$vars['lang']['alias_removed']);
             else 

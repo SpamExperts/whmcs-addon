@@ -38,6 +38,7 @@ $lang['mainsite']['notfound']               = 'Page not found.';
 $lang['mainsite']['notadded']               = "The domain '%s' has not been added to this spam filter account.";
 $lang['mainsite']['notconfigured']          = 'This product is not configured properly. Please contact support.';
 $lang['mainsite']['notsetup']               = 'This service has not been set up yet. Please contact support.';
+$lang['mainsite']['invaliddomain']          = 'The domain of this service is not valid. Please contact support.';
 $lang['mainsite']['unavailable']            = 'The spam filter cannot be reached at the moment. Please contact support.';
 
 
@@ -58,6 +59,7 @@ $lang['ManageRoutes']['remove_info']        = 'You are not allowed to delete thi
 $lang['ManageRoutes']['selectall']          = 'Select All';
 $lang['ManageRoutes']['delete']             = 'Delete';
 $lang['ManageRoutes']['route_denied']       = 'You are not allowed to change this data.';
+$lang['ManageRoutes']['invalid_route']      = 'Please enter a valid hostname or IP address and a port between 1 and 65535.';
 
 
   
@@ -73,6 +75,7 @@ $lang['ManageAliases']['delete']            = 'Delete';
 $lang['ManageAliases']['alias_removed']     = 'Alias has been removed';
 $lang['ManageAliases']['alias_added']       = 'Alias has been added';
 $lang['ManageAliases']['selectall']         = 'Select All';
+$lang['ManageAliases']['invalid_alias']     = 'Please enter a valid domain name.';
 
 
 $lang['EditEmail']['header']                = 'Edit Contact E-mail';
@@ -86,5 +89,6 @@ $lang['EditEmail']['email_changed']         = 'E-mail has been changed.';
 $lang['EditEmail']['primarycontact']        = 'Primary contact e-mail:';
 $lang['EditEmail']['admincontact']          = 'Administrator\'s contact:';
 $lang['EditEmail']['email_denied']          = 'You are not allowed to change this data.';
+$lang['EditEmail']['invalid_email']         = 'Please enter a valid e-mail address.';
 
 ?>

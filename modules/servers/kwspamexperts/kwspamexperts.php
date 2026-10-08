@@ -75,6 +75,36 @@ function kwspamexperts_configError($params) {
 
 
 /**
+* FUNCTION kwspamexperts_isHostname
+* Check a client supplied domain or hostname before it goes into an API path.
+* IDNs are converted to punycode first. WHMCS bundles
+* symfony/polyfill-intl-idn, so idn_to_ascii exists even without intl.
+* @param mixed $value
+* @return bool
+*/
+function kwspamexperts_isHostname($value) {
+    if (!is_string($value) || $value === '') {
+        return false;
+    }
+    $ascii = idn_to_ascii($value, IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
+    return $ascii !== false
+        && filter_var($ascii, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME) !== false;
+}
+
+/**
+* FUNCTION kwspamexperts_isEmail
+* Check a client supplied e-mail address before it goes into an API path. The
+* API splits its path on slashes, even encoded ones, so those are rejected too.
+* @param mixed $value
+* @return bool
+*/
+function kwspamexperts_isEmail($value) {
+    return is_string($value) && strpos($value, '/') === false
+        && filter_var($value, FILTER_VALIDATE_EMAIL) !== false;
+}
+
+
+/**
 * FUNCTION kwspamexperts_CreateAccount
 * Create Account
 * @param array $params
@@ -102,8 +132,8 @@ function kwspamexperts_CreateAccount($params)
         ]);
 
     // add domain
-    if (empty($domain)) {
-        return "Domain cannot be empty. Please enter domain name in Domain field.";
+    if (!kwspamexperts_isHostname($domain)) {
+        return "Domain is empty or invalid. Please enter a valid domain name in the Domain field.";
     }
     $api->call("domain/add/domain/".$domain."/");
     if ($api->isError()) {
@@ -140,8 +170,8 @@ function kwspamexperts_TerminateAccount($params)
     }
         $api    = new kwspamexperts_api($params);
         $domain = !empty($params["customfields"]["Domain"])  ? $params["customfields"]["Domain"] : $params['domain'];
-        if(empty($domain)){
-            return "Domain cannot be empty. Please enter domain name in Domain field.";
+        if (!kwspamexperts_isHostname($domain)) {
+            return "Domain is empty or invalid. Please enter a valid domain name in the Domain field.";
         }
         $api ->call("domain/remove/domain/".$domain."/");
 
@@ -171,8 +201,8 @@ function kwspamexperts_ChangePackage($params) {
         $archiving  = (int)(!empty($params["configoptions"]["archiving"]) && $params["configoptions"]["archiving"]);
 
         $api = new kwspamexperts_api($params);
-        if(empty($domain)){
-            return "Domain cannot be empty. Please enter domain name in Domain field.";
+        if (!kwspamexperts_isHostname($domain)) {
+            return "Domain is empty or invalid. Please enter a valid domain name in the Domain field.";
         }
         $api ->call("domain/setproducts/domain/".$domain."/incoming/".$incoming."/outgoing/".$outgoing."/archiving/$archiving/");
 
@@ -192,8 +222,8 @@ function kwspamexperts_SuspendAccount($params)
     $domain   = !empty($params["customfields"]["Domain"])   ? $params["customfields"]["Domain"] : $params['domain'];
         $api = new kwspamexperts_api($params);
 
-        if(empty($domain)){
-            return "Domain cannot be empty. Please enter domain name in Domain field.";
+        if (!kwspamexperts_isHostname($domain)) {
+            return "Domain is empty or invalid. Please enter a valid domain name in the Domain field.";
         }
         $api ->call("domain/whitelistrecipient/domain/".$domain."/recipient/*/",false);
 
@@ -212,8 +242,8 @@ function kwspamexperts_UnsuspendAccount($params)
     }
     $domain   = !empty($params["customfields"]["Domain"])   ? $params["customfields"]["Domain"] : $params['domain'];
         $api = new kwspamexperts_api($params);
-        if(empty($domain)){
-            return "Domain cannot be empty. Please enter domain name in Domain field.";
+        if (!kwspamexperts_isHostname($domain)) {
+            return "Domain is empty or invalid. Please enter a valid domain name in the Domain field.";
         }
         $api ->call("domain/unwhitelistrecipient/domain/".$domain."/recipient/*/",false);
 
@@ -349,6 +379,9 @@ function kwspamexperts_setupError($params, $lang) {
     $domain = !empty($params["customfields"]["Domain"]) ? $params["customfields"]["Domain"] : $params['domain'];
     if (empty($domain)) {
         return $lang['mainsite']['notsetup'];
+    }
+    if (!kwspamexperts_isHostname($domain)) {
+        return $lang['mainsite']['invaliddomain'];
     }
 
     return null;

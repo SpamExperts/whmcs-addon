@@ -31,17 +31,20 @@ if (!defined("WHMCS")) {
 
 if(! $params['configoption6']){
     if($handle_actions){
-    if(isset($_POST['primaryemail'])){
-
-        $api->call('domaincontact/set/domain/'.$domain.'/email/'.$_POST['primaryemail'].'/');
+    if(isset($_POST['primaryemail']) && !kwspamexperts_isEmail($_POST['primaryemail'])){
+        $vars['_status'] = array('code'=>0,'msg'=>$vars['lang']['invalid_email']);
+    } else if(isset($_POST['primaryemail'])){
+        $api->call('domaincontact/set/domain/'.$domain.'/email/'.rawurlencode($_POST['primaryemail']).'/');
         if ($api->isSuccess())
             $vars['_status'] = array('code'=>1,'msg'=>$vars['lang']['email_changed']);
         else 
             $vars['_status'] = array('code'=>0,'msg'=>$api->error());
     }
 
-    if(isset($_POST['adminemail'])){
-        $api->call('domainadmincontact/set/domain/'.$domain.'/email/'.$_POST['adminemail'].'/');
+    if(isset($_POST['adminemail']) && !kwspamexperts_isEmail($_POST['adminemail'])){
+        $vars['_status'] = array('code'=>0,'msg'=>$vars['lang']['invalid_email']);
+    } else if(isset($_POST['adminemail'])){
+        $api->call('domainadmincontact/set/domain/'.$domain.'/email/'.rawurlencode($_POST['adminemail']).'/');
         if ($api->isSuccess())
             $vars['_status'] = array('code'=>1,'msg'=>$vars['lang']['email_changed']);
         else 

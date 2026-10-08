@@ -51,6 +51,7 @@ $lang['managedomains']['bind_domain']       = 'Bind Domain';
 $lang['managedomains']['bind']              = 'Bind';
 $lang['managedomains']['example']           = 'exampledomain.com';
 $lang['managedomains']['invalid_owner']     = 'Domain is assigned to the another Reseller.';
+$lang['managedomains']['invalid_domain']    = 'Please enter a valid domain name.';
 
 
 

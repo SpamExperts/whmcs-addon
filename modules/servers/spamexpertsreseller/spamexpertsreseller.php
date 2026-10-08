@@ -93,6 +93,24 @@ function spamexpertsreseller_configError($params)
 
 
 /**
+* FUNCTION spamexpertsreseller_isHostname
+* Check a client supplied domain or hostname before it goes into an API path.
+* IDNs are converted to punycode first. WHMCS bundles
+* symfony/polyfill-intl-idn, so idn_to_ascii exists even without intl.
+* @param mixed $value
+* @return bool
+*/
+function spamexpertsreseller_isHostname($value) {
+    if (!is_string($value) || $value === '') {
+        return false;
+    }
+    $ascii = idn_to_ascii($value, IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
+    return $ascii !== false
+        && filter_var($ascii, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME) !== false;
+}
+
+
+/**
 * FUNCTION spamexpertsreseller_CreateAccount
 * Create Reseller Account
 * @param array $params
