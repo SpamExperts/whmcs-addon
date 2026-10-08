@@ -52,8 +52,7 @@ if(! $params['configoption5']){
                  }
                  foreach($routes['result'] as $key => $val)
                  {
-                     $source = explode('::',$val);
-                     if(in_array($source[0],$_POST['routes']['old_list'])){
+                     if(in_array($val, $_POST['routes']['old_list'], true)){
                          unset($routes['result'][$key]);
                          $found = true;
                      }

@@ -50,7 +50,7 @@
             {foreach $domainroutes as $domainroute}
                 {if $domainroute.0}
                     <tr>
-                        <td><input type="checkbox" class="select-all" name="routes[old_list][]" value="{$domainroute.0|escape}" /></td>
+                        <td><input type="checkbox" class="select-all" name="routes[old_list][]" value="{$domainroute.0|escape}::{$domainroute.2|escape}" /></td>
                         <td><a href="https://{$domainroute.0|escape}" target="_blank">{$domainroute.0|escape}</a></td>
                         <td>{$domainroute.2|escape}</td>
                         <td>
