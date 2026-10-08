@@ -25,13 +25,13 @@
 <h1>{$lang.header}</h1>
 <p><a href="clientarea.php?action=productdetails&id={$serviceid}" class="btn btn-small"><i class="icon-arrow-left"></i> {$main_lang.back}</a></p>
 {if $_result}
-    <div class="alert {if $_result.code==1}alert-success{else}alert-danger{/if}">{$_result.msg}</div>
+    <div class="alert {if $_result.code==1}alert-success{else}alert-danger{/if}">{$_result.msg|escape}</div>
 {/if}
 {if $_status && $_status.code==2}
-    <div class="alert alert-danger">{$_status.msg}</div>
+    <div class="alert alert-danger">{$_status.msg|escape}</div>
 {else}
     {if $_status}
-        <div class="alert {if $_status.code==1}alert-success{else}alert-danger{/if}">{$_status.msg}</div>
+        <div class="alert {if $_status.code==1}alert-success{else}alert-danger{/if}">{$_status.msg|escape}</div>
     {/if}
     <p>{$lang.description}</p>
     <form action="clientarea.php?action=productdetails&id={$serviceid}" method="post">
@@ -44,11 +44,11 @@
         <table class="se-email-table">
             <tr>
                 <td>{$lang.primarycontact}</td>
-                <td><input type="text" size="30" name="primaryemail" value="{$primarycontact}" /></td>
+                <td><input type="text" size="30" name="primaryemail" value="{$primarycontact|escape}" /></td>
             </tr>
             <tr>
                 <td>{$lang.admincontact}</td>
-                <td><input type="text" size="30" name="adminemail" value="{$admincontact}" /></td>
+                <td><input type="text" size="30" name="adminemail" value="{$admincontact|escape}" /></td>
             </tr>
             <tr>
                 <td></td>

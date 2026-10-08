@@ -25,13 +25,13 @@
 <h1 style="margin-bottom:5px;">{$lang.header}</h1>
 <p style="margin-bottom: 8px;"><a href="clientarea.php?action=productdetails&id={$serviceid}" class="btn btn-small"><i class="icon-arrow-left"></i> {$main_lang.back}</a></p>
 {if $_result}
-    <div class="alert {if $_result.code==1}alert-success{else}alert-danger{/if}">{$_result.msg}</div>
+    <div class="alert {if $_result.code==1}alert-success{else}alert-danger{/if}">{$_result.msg|escape}</div>
 {/if}
 {if $_status && $_status.code==2}
-    <div class="alert alert-danger">{$_status.msg}</div>
+    <div class="alert alert-danger">{$_status.msg|escape}</div>
 {else}
     {if $_status}
-        <div class="alert {if $_status.code==1}alert-success{else}alert-danger{/if}">{$_status.msg}</div>
+        <div class="alert {if $_status.code==1}alert-success{else}alert-danger{/if}">{$_status.msg|escape}</div>
     {/if}
     <form action="clientarea.php?action=productdetails&id={$serviceid}" method="post">
         <input type="hidden" name="id" value="{$serviceid}" />
@@ -50,12 +50,12 @@
             {foreach $domainroutes as $domainroute}
                 {if $domainroute.0}
                     <tr>
-                        <td><input type="checkbox" class="select-all" name="routes[old_list][]" value="{$domainroute.0}" /></td>
-                        <td><a href="https://{$domainroute.0}" target="_blank">{$domainroute.0}</a></td>
-                        <td>{$domainroute.2}</td>
+                        <td><input type="checkbox" class="select-all" name="routes[old_list][]" value="{$domainroute.0|escape}" /></td>
+                        <td><a href="https://{$domainroute.0|escape}" target="_blank">{$domainroute.0|escape}</a></td>
+                        <td>{$domainroute.2|escape}</td>
                         <td>
                             {if $domainroutes|count ne 1}
-                                <a href="#" onclick="onDelete('{$domainroute.0}', '{$domainroute.2}');return false" class="btn btn-danger btn-small">{$lang.delete}</a>
+                                <a href="#" onclick="onDelete('{$domainroute.0|escape:'javascript'|escape}', '{$domainroute.2|escape:'javascript'|escape}');return false" class="btn btn-danger btn-small">{$lang.delete}</a>
                             {else}
                                 <i class="icon-info-sign" title="{$lang.remove_info}"></i>
                             {/if}
@@ -69,7 +69,7 @@
             {/foreach}
         </table>
         {if $domainroutes|count > 0}
-             <input type="submit" onclick="return confirm('{$lang.confirm_delete}');" name="delete-all" class="btn btn-danger btn-small" value="{$lang.delete}" />
+             <input type="submit" onclick="return confirm('{$lang.confirm_delete|escape:'javascript'|escape}');" name="delete-all" class="btn btn-danger btn-small" value="{$lang.delete}" />
         {/if}
     </form>
 
@@ -103,7 +103,7 @@
     <script type="text/javascript">
         {literal}
         function onDelete(route, port) {
-                if (confirm("{/literal}{$lang.confirm_delete}{literal}")) {
+                if (confirm("{/literal}{$lang.confirm_delete|escape:'javascript'}{literal}")) {
                     var form = document.getElementById('se-delete-route');
                     form.elements['routetodel'].value = route;
                     form.elements['routeporttodel'].value = port;

@@ -26,13 +26,13 @@
 <h1 style="margin-bottom:5px;">{$lang.header}</h1>
 <p style="margin-bottom: 10px;"><a href="clientarea.php?action=productdetails&id={$serviceid}" class="btn btn-small"><i class="icon-arrow-left"></i> {$main_lang.back}</a></p>
 {if $_result}
-    <div class="alert {if $_result.code==1}alert-success{else}alert-danger{/if}">{$_result.msg}</div>
+    <div class="alert {if $_result.code==1}alert-success{else}alert-danger{/if}">{$_result.msg|escape}</div>
 {/if}
 {if $_status && $_status.code==2}
-    <div class="alert alert-danger">{$_status.msg}</div>
+    <div class="alert alert-danger">{$_status.msg|escape}</div>
 {else}
 {if $_status}
-    <div class="alert {if $_status.code==1}alert-success{else}alert-danger{/if}">{$_status.msg}</div>
+    <div class="alert {if $_status.code==1}alert-success{else}alert-danger{/if}">{$_status.msg|escape}</div>
 {/if}
 <form action="clientarea.php?action=productdetails&id={$serviceid}" method="post">
 <input type="hidden" name="id" value="{$serviceid}" />
@@ -49,10 +49,10 @@
         </tr>
     {foreach $domainaliases as $domainalias}
         <tr>
-            <td><input type="checkbox" class="select-all" name="alias[old_list][]" value="{$domainalias}" /></td>
-            <td><a href="https://{$domainalias}" target="_blank">{$domainalias}</a></td>
+            <td><input type="checkbox" class="select-all" name="alias[old_list][]" value="{$domainalias|escape}" /></td>
+            <td><a href="https://{$domainalias|escape}" target="_blank">{$domainalias|escape}</a></td>
             <td>
-                 <input type="submit" name="delete-item[{$domainalias}]" onclick="return confirm('{$lang.confirm_delete}');" class="btn btn-danger btn-small" value="{$lang.delete}" />
+                 <input type="submit" name="delete-item[{$domainalias|escape}]" onclick="return confirm('{$lang.confirm_delete|escape:'javascript'|escape}');" class="btn btn-danger btn-small" value="{$lang.delete}" />
             </td>
         </tr>
     {foreachelse}
@@ -62,7 +62,7 @@
     {/foreach}
 </table>
    {if $domainaliases|count > 0}
-        <input type="submit" onclick="return confirm('{$lang.confirm_delete}');" name="delete-all" class="btn btn-danger btn-small" value="{$lang.delete}" />
+        <input type="submit" onclick="return confirm('{$lang.confirm_delete|escape:'javascript'|escape}');" name="delete-all" class="btn btn-danger btn-small" value="{$lang.delete}" />
    {/if}
 </form>
 
