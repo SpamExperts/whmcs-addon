@@ -6,6 +6,7 @@ use WHMCS\Database\Capsule;
 //define addons main dir
 // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
 defined('ADDON_DIR') or define('ADDON_DIR', dirname(__DIR__));
+defined('ADDON_NAME') or define('ADDON_NAME', basename(ADDON_DIR));
 
 if(!function_exists('getWHMCSconfig'))
 {
@@ -17,6 +18,7 @@ if(!function_exists('getWHMCSconfig'))
                 ->first();
             $config = $settings->value;
         } catch (\Exception $e) {
+            logModuleCall(ADDON_NAME, __FUNCTION__, $k, $e->getMessage());
             addError("Cannot read configuration.");
             $config = '';
         }
@@ -87,6 +89,8 @@ if(!function_exists('saveWHMCSconfig'))
             addInfo('Configuration has been saved.');
             $saved = true;
         } catch (\Exception $e) {
+            // Only the setting name, the value holds the API password
+            logModuleCall(ADDON_NAME, __FUNCTION__, $k, $e->getMessage());
             addError("Configuration update failed.");
             $saved = false;
         }
@@ -120,6 +124,8 @@ if(!function_exists('updateProductsConfig')){
                 ]);
             $updated = true;
         } catch (\Exception $e) {
+            // Not the settings, they hold the API password
+            logModuleCall(ADDON_NAME, __FUNCTION__, 'tblproducts', $e->getMessage());
             addError("Products configuration update failed.");
             $updated = false;
         }

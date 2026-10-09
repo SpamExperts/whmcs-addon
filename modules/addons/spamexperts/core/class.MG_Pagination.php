@@ -6,8 +6,6 @@ if(!class_exists('MG_Pagination'))
     {
         private $pagination_name;
 
-        private $amount = 0;
-
         private $settings = array();
 
         public function __construct($pagination_name = 'mg_pagination')
@@ -194,7 +192,7 @@ if(!class_exists('MG_Pagination'))
             $this->settings['offset'] = $offset;
         }
 
-        public function getOffset($offset)
+        public function getOffset()
         {
             return $this->settings['offset'];
         }

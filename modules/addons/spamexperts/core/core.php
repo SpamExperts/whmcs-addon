@@ -25,8 +25,6 @@ if(file_exists(ADDON_DIR.DS.'core.php'))
 $module = basename(dirname(ADDON_DIR.DS.$ROOT_DIR));
 //CREATE MODULE CONFIG
 $MGC = new $module();
-//DEFINE MODULE NAME
-define('ADDON_NAME', $module);
 
 //ENABLE DEBUG
 if($MGC->debug)
