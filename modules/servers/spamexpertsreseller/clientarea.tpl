@@ -29,6 +29,6 @@
     {else}
         <a href="clientarea.php?action=productdetails&id={$serviceid}&modop=custom&a=management&page=managedomains&token={$token}" class="btn"><i class="icon-globe"></i> {$lang.manage_domains}</a>
 {*        <button class="btn" onclick="window.location.href='clientarea.php?action=productdetails&id={$serviceid}&modop=custom&a=management&page=stats';return false;"><i class="icon-th-list"></i> {$lang.stats}</button>*}
-        <button class="btn" onclick="window.open('{$api_url}','_blank'); return false;"><i class="icon-user"></i> {$lang.login}</button>
+        <a href="{$api_url|escape}" target="_blank" rel="noopener" class="btn"><i class="icon-user"></i> {$lang.login}</a>
     {/if}
 </div> 

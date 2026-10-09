@@ -246,7 +246,7 @@ function spamexpertsreseller_ClientArea($params)
 
         $res = $api->getResponse();
         if ($api->isSuccess()) {
-            $output['vars']['api_url'] = $url . '/?authticket=' . $res['result'];
+            $output['vars']['api_url'] = $url . '/?authticket=' . urlencode($res['result']);
         } elseif (isset($res['messages']['error'][0])) {
             $output['vars']['api_error'] = sprintf($lang['mainsite']['notadded'], $params['username']);
         } else {

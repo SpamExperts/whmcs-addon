@@ -39,9 +39,9 @@
 
     <a href="clientarea.php?action=productdetails&id={$serviceid}&modop=custom&a=management&page=ManageAliases&token={$token}" class="btn"><i class="icon-globe"></i> {$lang.managealiases}</a>
 
-    <button class="btn" onclick="window.open('{$api_url}/?authticket={$api_auth}');return false;">
+    <a href="{$api_url|escape}/?authticket={$api_auth|escape:'url'}" target="_blank" rel="noopener" class="btn">
         <i class="icon-user"></i> {$lang.logintopanel}
-    </button>
+    </a>
     {/if}
 </div>
 
