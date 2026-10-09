@@ -68,23 +68,6 @@ if (!function_exists('getInfos')) {
     }
 }
 
-if (!function_exists('getAddonUrl')) {
-    function getAddonUrl($modpage = null, $modsubpage = null)
-    {
-        global $IS_CLIENTAREA;
-        if ($IS_CLIENTAREA) {
-            return 'index.php?m=' . ADDON_NAME
-                . ($modpage ? '&modpage=' . $modpage : '')
-                . ($modsubpage ? '&modsubpage=' . $modsubpage : '');
-        } else {
-            return 'addonmodules.php?module=' . ADDON_NAME
-                . ($modpage ? '&modpage=' . $modpage : '')
-                . ($modsubpage ? '&modsubpage=' . $modsubpage : '');
-        }
-    }
-}
-
-
 if (!function_exists('saveWHMCSconfig')) {
     /**
      * @param string $k Setting name in tblconfiguration

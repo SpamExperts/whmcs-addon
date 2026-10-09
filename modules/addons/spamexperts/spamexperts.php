@@ -80,43 +80,11 @@ function spamexperts_upgrade($vars)
  */
 function spamexperts_output($vars)
 {
-    //Use module in admin mode
-    global $IS_CLIENTAREA;
-    $IS_CLIENTAREA = false;
-
     // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
     require_once __DIR__ . DS . 'config.php';
     // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
     require_once __DIR__ . DS . 'core' . DS . 'output.php';
 }
-
-/**
- * Client area output
- * @param array $vars
- * @return array
- */
-function spamexperts_clientarea($vars)
-{
-    //Enable Client Area
-    global $IS_CLIENTAREA;
-    $IS_CLIENTAREA = true;
-
-    // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-    require_once __DIR__ . DS . 'config.php';
-    // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-    $content = require_once __DIR__ . DS . 'core' . DS . 'output_client.php';
-
-    return array(
-        'pagetitle'     => 'Addon',
-        'breadcrumb'    => array('index.php?m=NicIT' => 'NicIT'),
-        'templatefile'  => 'core/base',
-        'requirelogin'  => isset($_SESSION['uid']) ? false : true,
-        'vars' => array(
-            'content'   => $content,
-        ),
-    );
-}
-
 
 /**** HELPER ****/
 /**

@@ -41,9 +41,6 @@ class spamexperts
     //Default Page
     public $default_page = 'main';
 
-    //Default Client Page
-    public $default_client_page = 'main';
-
     //Top Menu
     public $top_menu =  array(
         'main'                  => array(
