@@ -85,7 +85,7 @@ class spamexperts
     {
     }
     
-    public function upgrade($vars)
+    public function upgrade()
     {
       
     }
