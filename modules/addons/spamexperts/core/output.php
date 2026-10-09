@@ -5,7 +5,7 @@
  *
  * @var string $ASSETS_DIR Set by core.php
  */
-require_once 'core.php';
+require_once __DIR__ . DS . 'core.php';
 
 #ATTACH STYLES
 // phpcs:disable PHPCS_SecurityAudit.BadFunctions.EasyXSS.EasyXSSwarn
