@@ -32,6 +32,11 @@ if ($MGC->debug) {
     ini_set('display_errors', 1);
 }
 
+//CHECK CSRF TOKEN. WHMCS adds it to the admin forms but doesn't check it for addon pages
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    check_token('WHMCS.admin.default');
+}
+
 //IS AJAX?
 $AJAX = isset($_REQUEST['ajax']) ? 1 : 0;
 

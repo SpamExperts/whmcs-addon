@@ -67,7 +67,8 @@ if (!defined("WHMCS")) {
                'user'       : jQuery("input[name='conf[user]']").val(),
                'password'   : jQuery("input[name='conf[password]']").val(),
                'url'        : jQuery("input[name='conf[url]']").val(),
-               'action'     : 'testconnection'
+               'action'     : 'testconnection',
+               'token'      : jQuery(this).closest('form').find("input[name='token']").val()
            }, function (data) {
                if(data == 'success'){
                    jQuery("#ajax_response").html("<span style='color:green'>Success</span>");

@@ -65,3 +65,14 @@ function generate_token($type = 'form')
 {
     return '';
 }
+
+/**
+ * Ends the request when the submitted CSRF token is missing or invalid
+ *
+ * @disregard P1003 Stub, the parameters are unused
+ * @param string $namespace 'WHMCS.admin.default' in the admin area
+ * @return void
+ */
+function check_token($namespace = 'WHMCS.default')
+{
+}
