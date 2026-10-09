@@ -34,7 +34,7 @@ echo '<div class="body" data-target=".body" data-spy="scroll" data-twttr-rendere
 
 #SHOW BODY
 // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-require_once CORE_DIR.DS.'views'.DS.'body.php';
+require_once __DIR__.DS.'views'.DS.'body.php';
 
 echo '</div>';
 ?>

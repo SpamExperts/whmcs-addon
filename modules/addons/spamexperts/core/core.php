@@ -1,5 +1,9 @@
 <?php
-const CORE_DIR = __DIR__;
+/**
+ * Page router, loaded by output.php and output_client.php.
+ *
+ * @var bool $IS_CLIENTAREA Set by spamexperts_output() and spamexperts_clientarea()
+ */
 //GET ROOT DIR 
 // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
 $ROOT_DIR = basename(dirname(__DIR__));
@@ -7,10 +11,10 @@ $ROOT_DIR = basename(dirname(__DIR__));
 /*************** INCLUDES **********************/
 //SOME USEFUL STUFF
 // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-require_once CORE_DIR.DS.'functions.php';
+require_once __DIR__.DS.'functions.php';
 //PAGINATION INTERFACE
 // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-require_once CORE_DIR.DS.'class.MG_Pagination.php';
+require_once __DIR__.DS.'class.MG_Pagination.php';
 //Include ModulesGarden class
 
 //INCLUDE USER FUNCTIONS IF FILE EXISTS

@@ -2,9 +2,6 @@
 
 //SOME DEFINES
 defined('DS') or define('DS', DIRECTORY_SEPARATOR);
-defined('WHMCS_MAIN_DIR') or define('WHMCS_MAIN_DIR', substr(__DIR__, 0, strpos(__DIR__, 'modules'.DS.'addons')));
-//Use module in admin mode
-$IS_CLIENTAREA = false;
 
 /**
  * Just change function name. Do not edit anything more.
@@ -84,6 +81,10 @@ function spamexperts_upgrade($vars)
  */
 function spamexperts_output($vars)
 {
+    //Use module in admin mode
+    global $IS_CLIENTAREA;
+    $IS_CLIENTAREA = false;
+
     // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
     require_once __DIR__.DS.'config.php';
     // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
