@@ -32,10 +32,6 @@ echo '
 
 echo '<div class="body" data-target=".body" data-spy="scroll" data-twttr-rendered="true" id="mg-wrapper">';
 
-#SHOW SIDEBAR
-// phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-require_once CORE_DIR.DS.'views'.DS.'sidebar.php';
-
 #SHOW BODY
 // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
 require_once CORE_DIR.DS.'views'.DS.'body.php';

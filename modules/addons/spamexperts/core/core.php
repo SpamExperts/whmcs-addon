@@ -125,9 +125,8 @@ if($AJAX)
 }
 
 //NORMAL REQUEST?
-//GET MENUS
+//GET MENU
 $TOP_MENU = $MGC->top_menu;
-$SIDE_MENU = $MGC->side_menu;
 
 //ASSETS DIR
 if($IS_CLIENTAREA)

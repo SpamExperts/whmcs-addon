@@ -68,9 +68,6 @@ class spamexperts
     //Enable PHP Debug Info
     public $debug = 0;
     
-    //Enable Logger
-    public $logger = 1;
-    
     /**
      * This function is call when administrator will activate your module
      */
