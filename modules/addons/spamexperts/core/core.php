@@ -67,14 +67,9 @@ if ($AJAX) {
 //GET MENU
 $TOP_MENU = $MGC->top_menu;
 
-//ASSETS DIR
-$ASSETS_DIR = '..' . DS . 'modules' . DS . 'addons' . DS . $ROOT_DIR . DS . 'core' . DS . 'assets';
 //MODULE URL
 $MODULE_URL = 'addonmodules.php?module=' . $_GET['module'];
 
-$PAGE_HEADING = null;
-$PAGE_MODULE_HEADING = null;
-$PAGE_SUBMODULE_HEADING = null;
 //GET PAGE CONTENT
 ob_start();
 

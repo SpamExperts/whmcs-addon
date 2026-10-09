@@ -45,17 +45,12 @@ class spamexperts
     public $top_menu =  array(
         'main'                  => array(
             'title'             => 'Configuration',
-            'icon'              => 'wrench'
         ),
         'setupProducts'         =>  array(
             'title'             =>  'Setup Products',
-            'icon'              =>  'tasks',
-
         ),
         'support'               =>  array(
             'title'             =>  'Support',
-            'icon'              =>  'magic',
-
         ),
     );
 
