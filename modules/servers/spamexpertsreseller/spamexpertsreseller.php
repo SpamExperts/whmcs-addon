@@ -110,6 +110,19 @@ function spamexpertsreseller_isHostname($value)
         && filter_var($ascii, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME) !== false;
 }
 
+/**
+* FUNCTION spamexpertsreseller_isEmail
+* Check a client supplied e-mail address before it goes into an API path. The
+* API splits its path on slashes, even encoded ones, so those are rejected too.
+* @param mixed $value
+* @return bool
+*/
+function spamexpertsreseller_isEmail($value)
+{
+    return is_string($value) && strpos($value, '/') === false
+        && filter_var($value, FILTER_VALIDATE_EMAIL) !== false;
+}
+
 
 /**
 * FUNCTION spamexpertsreseller_CreateAccount
@@ -130,6 +143,10 @@ function spamexpertsreseller_CreateAccount($params)
         ? $params["customfields"]["Email"]
         : $params['clientsdetails']['email'];
     $username   = !empty($params['username']) ? $params['username'] : uniqid();
+
+    if (!spamexpertsreseller_isEmail($email)) {
+        return "Email is empty or invalid. Please enter a valid e-mail address in the Email field.";
+    }
 
     // for add, the optional value needed for api_usage is the inverse of the config option to disable api access
     //  - "1" passed as the value enables the API access

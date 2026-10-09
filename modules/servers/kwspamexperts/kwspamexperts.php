@@ -141,6 +141,9 @@ function kwspamexperts_CreateAccount($params)
     if (!kwspamexperts_isHostname($domain)) {
         return "Domain is empty or invalid. Please enter a valid domain name in the Domain field.";
     }
+    if (!kwspamexperts_isEmail($email)) {
+        return "Email is empty or invalid. Please enter a valid e-mail address in the Email field.";
+    }
     $api->call("domain/add/domain/" . $domain . "/");
     if ($api->isError()) {
         return $api->error();
