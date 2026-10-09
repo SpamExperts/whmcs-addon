@@ -21,7 +21,6 @@ echo
         
         	<div id="module-name">
             	<h2>'.$MGC->name.'</h2>
-                <h4>'.$AVAILABLE_PAGES[$PAGE]['title'].'</h4>
             </div>';
 // phpcs:enable PHPCS_SecurityAudit.BadFunctions.EasyXSS.EasyXSSwarn
 if($TOP_MENU)
