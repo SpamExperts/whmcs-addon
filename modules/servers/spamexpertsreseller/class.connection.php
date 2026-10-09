@@ -66,10 +66,9 @@ class spamexperts_api
         curl_setopt($ch, CURLOPT_URL, $this->url . "/api/" . $action . "/format/json/");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_USERPWD, $this->user . ":" . $this->pass);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_UNRESTRICTED_AUTH, true);
         // Fail fast on an unreachable host, so the page shows the error
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
         // Only a guard against a hung API, so it doesn't hold PHP workers and cron forever
