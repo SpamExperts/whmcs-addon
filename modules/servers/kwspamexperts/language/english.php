@@ -47,7 +47,7 @@ $lang['mainsite']['unavailable']            = 'The spam filter cannot be reached
 
 $lang['ManageRoutes']['header']             = 'Manage Routes';
 $lang['ManageRoutes']['destination']        = 'Destination';
-$lang['ManageRoutes']['port']               = 'Port (Optional)';
+$lang['ManageRoutes']['port_optional']      = 'Port (Optional)';
 $lang['ManageRoutes']['action']             = 'Action';
 $lang['ManageRoutes']['nothing']            = 'Nothing to display.';
 $lang['ManageRoutes']['add_route']          = 'Add a route';

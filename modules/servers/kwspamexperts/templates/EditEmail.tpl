@@ -44,7 +44,6 @@
         <input type="hidden" name="a" value="management" />
         <input type="hidden" name="page" value="EditEmail" />
         <input type="hidden" name="token" value="{$token}" />
-        {$lang.cotactemail}
         <table class="se-email-table">
             <tr>
                 <td>{$lang.primarycontact}</td>

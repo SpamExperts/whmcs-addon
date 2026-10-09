@@ -82,7 +82,7 @@
         <fieldset>
             <legend style="margin-bottom:17px;">{$lang.add_route}</legend>
             <input type="text" size="30" name="route[hostname]" value="" placeholder="{$lang.hostname}" /> 
-            <input type="text" name="route[port]" value="" placeholder="{$lang.port}" /> 
+            <input type="text" name="route[port]" value="" placeholder="{$lang.port_optional}" /> 
             <input type="submit" class="btn btn-success" name="submit"  value="{$lang.add}" style="margin-top:-10px;" />
             <input type="hidden" name="_action" value="addroute" />
         </fieldset> 
