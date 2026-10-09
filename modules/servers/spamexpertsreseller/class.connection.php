@@ -70,6 +70,10 @@ class spamexperts_api
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_UNRESTRICTED_AUTH, true);
+        // Fail fast on an unreachable host, so the page shows the error
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+        // Only a guard against a hung API, so it doesn't hold PHP workers and cron forever
+        curl_setopt($ch, CURLOPT_TIMEOUT, 120);
         // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
         $this->response = json_decode(curl_exec($ch), true);
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -77,7 +81,7 @@ class spamexperts_api
         curl_close($ch);
 
         $hasErrorMessage = isset($this->response['messages']['error'][0]);
-        $genericError = 'Something went wrong with this service. Please contact your admin to check its configuration.';
+        $genericError = 'Something went wrong with this service.';
         $apiError = $hasErrorMessage ? $this->response['messages']['error'][0] : $genericError;
 
         $this->error = null;
