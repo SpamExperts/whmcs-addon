@@ -1,5 +1,17 @@
 <?php
 
+/**
+ * Page body, loaded by core/output.php. The variables are set by core.php.
+ *
+ * @var spamexperts $MGC Module configuration
+ * @var string $PAGE Requested page
+ * @var array $TOP_MENU
+ * @var string $MODULE_URL
+ * @var string $ASSETS_DIR
+ * @var string|null $PAGE_HEADING
+ * @var string|null $PAGE_SUBMODULE_HEADING
+ * @var string $CONTENT Output of the page and its view
+ */
 // phpcs:disable PHPCS_SecurityAudit.BadFunctions.EasyXSS.EasyXSSwarn
 echo
     '

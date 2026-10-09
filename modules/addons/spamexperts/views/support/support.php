@@ -23,6 +23,14 @@
  * ******************************************************************** */
 
 /**
+ * Support view, loaded by core.php after pages/support/support.php.
+ *
+ * @var array $CONFIG WHMCS configuration
+ * @var array $addon Addon module row with the installed version
+ * @var array $curl curl_version() output
+ * @var kwspamexperts_api $api
+ * @var array|null $spam SpamExperts version response
+ *
  * @author Maciej Husak <maciej@modulesgarden.com>
  */
 if (!defined("WHMCS")) 

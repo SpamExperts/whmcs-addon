@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Admin area output, loaded by spamexperts_output().
+ *
+ * @var string $ASSETS_DIR Set by core.php
+ */
 require_once 'core.php';
 
 #ATTACH STYLES

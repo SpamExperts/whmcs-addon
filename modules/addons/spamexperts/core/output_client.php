@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * Client area output, loaded by spamexperts_clientarea().
+ *
+ * @var string $ASSETS_DIR Set by core.php
+ * @var string $CONTENT Output of the page and its view, set by core.php
+ *
  * @author Grzegorz Draganik <grzegorz@modulesgarden.com>
  * @modified Mariusz Miodowski <mariusz@modulesgarden.com>
  */

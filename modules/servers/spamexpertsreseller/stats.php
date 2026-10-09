@@ -23,6 +23,12 @@
  * ******************************************************************** */
 
 /**
+ * Management page, loaded by spamexpertsreseller_page() and run in its scope.
+ *
+ * @var array $params Module parameters from WHMCS
+ * @var spamexperts_api $api
+ * @var array $vars Template variables, returned by the page function
+ *
  * @author Maciej Husak <maciej@modulesgarden.com>
  */
 if (!defined("WHMCS"))

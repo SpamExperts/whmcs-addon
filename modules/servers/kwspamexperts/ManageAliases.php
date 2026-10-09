@@ -23,6 +23,13 @@
  * ******************************************************************** */
 
 /**
+ * Management page, loaded by kwspamexperts_page() and run in its scope.
+ *
+ * @var kwspamexperts_api $api
+ * @var string $domain Domain of the service
+ * @var bool $handle_actions Run the posted action instead of loading the page data
+ * @var array $vars Template variables, returned by the page function
+ *
  * @author Maciej Husak <maciej@modulesgarden.com>
  */
 

@@ -1,4 +1,10 @@
 <?php
+
+/**
+ * Settings view, loaded by core.php after pages/main/main.php.
+ *
+ * @var array $data API settings, set by the page
+ */
 if (!defined("WHMCS")) 
 {
   die("This file cannot be accessed directly");
