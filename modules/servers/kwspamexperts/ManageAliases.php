@@ -53,7 +53,7 @@ if ($handle_actions) {
             }
             break;
         case 'deletealias':
-            if (isset($_POST['alias']['old_list']) && count($_POST['alias']['old_list']) > 0) {
+            if (!empty($_POST['alias']['old_list']) && is_array($_POST['alias']['old_list'])) {
                 foreach ($_POST['alias']['old_list'] as $val) {
                     if (!kwspamexperts_isHostname($val)) {
                         $vars['_status'] = array('code' => 0,'msg' => $vars['lang']['invalid_alias']);

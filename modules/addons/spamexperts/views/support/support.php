@@ -67,7 +67,7 @@ $hasResellerModule = file_exists($serversDir . 'spamexpertsreseller' . DS . 'spa
     </tr>
     <tr>
         <td>SpamExperts Version</td>
-        <td><?php echo htmlentities($spam['result'], ENT_QUOTES, 'UTF-8');?></td>
+        <td><?php echo htmlentities($spam['result'] ?? '', ENT_QUOTES, 'UTF-8');?></td>
     </tr>
     <tr>
         <th colspan="2">Diagnostic</th>

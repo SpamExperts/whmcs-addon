@@ -36,14 +36,14 @@ if (!defined("WHMCS")) {
             <td>Disable user access to manage routes page</td>
             <td>
                 <input type="checkbox" name="conf[disable_manage_routes]" value="1"
-                    <?php echo $data['disable_manage_routes'] == '1' ? 'checked' : ''; ?>/>
+                    <?php echo ($data['disable_manage_routes'] ?? '') === '1' ? 'checked' : ''; ?>/>
             </td>
         </tr>
         <tr>
             <td>Disable user access to edit contact e-mail page</td>
             <td>
                 <input type="checkbox" name="conf[disable_edit_contact]" value="1"
-                    <?php echo $data['disable_edit_contact'] == '1' ? 'checked' : ''; ?>/>
+                    <?php echo ($data['disable_edit_contact'] ?? '') === '1' ? 'checked' : ''; ?>/>
             </td>
         </tr>
         <tr>

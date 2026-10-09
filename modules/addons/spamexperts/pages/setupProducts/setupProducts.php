@@ -48,8 +48,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'addProduct') {
     }
 
     $group_id = Capsule::table('tblproductgroups')->where('name', 'SpamExperts')->value('id');
-    $api    = getWHMCSconfig('kwspamexperts_api');
-    $data   = unserialize($api);
+    $data   = getApiSettings();
     try {
         if (empty($_POST['product']['name'])) {
             throw new Exception('Product name cannot be empty');
@@ -70,8 +69,8 @@ if (isset($_POST['action']) && $_POST['action'] === 'addProduct') {
                     'configoption2' => $data['url'],
                     'configoption3' => $data['user'],
                     'configoption4' => $data['password'],
-                    'configoption5' => $data['disable_manage_routes'] ?: 0,
-                    'configoption6' => $data['disable_edit_contact'] ?: 0,
+                    'configoption5' => $data['disable_manage_routes'] ?? 0,
+                    'configoption6' => $data['disable_edit_contact'] ?? 0,
                     'updated_at' => Carbon::now(),
                 ]
             );

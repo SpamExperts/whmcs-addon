@@ -19,13 +19,24 @@ if (!function_exists('getWHMCSconfig')) {
             $settings = Capsule::table('tblconfiguration')
                 ->where('setting', $k)
                 ->first();
-            $config = $settings->value;
+            $config = $settings->value ?? '';
         } catch (\Exception $e) {
             logModuleCall(ADDON_NAME, __FUNCTION__, $k, $e->getMessage());
             addError("Cannot read configuration.");
             $config = '';
         }
         return $config;
+    }
+}
+
+if (!function_exists('getApiSettings')) {
+    /**
+     * @return array The saved API settings, with empty credentials before the first save
+     */
+    function getApiSettings()
+    {
+        $data = unserialize(getWHMCSconfig('kwspamexperts_api'), array('allowed_classes' => false));
+        return is_array($data) ? $data : array('url' => '', 'user' => '', 'password' => '');
     }
 }
 
@@ -53,7 +64,7 @@ if (!function_exists('addInfo')) {
 if (!function_exists('getErrors')) {
     function getErrors()
     {
-        $errors = $_SESSION[ADDON_NAME]['errors'];
+        $errors = $_SESSION[ADDON_NAME]['errors'] ?? null;
         $_SESSION[ADDON_NAME]['errors'] = null;
         return $errors;
     }
@@ -62,7 +73,7 @@ if (!function_exists('getErrors')) {
 if (!function_exists('getInfos')) {
     function getInfos()
     {
-        $infos = $_SESSION[ADDON_NAME]['infos'];
+        $infos = $_SESSION[ADDON_NAME]['infos'] ?? null;
         $_SESSION[ADDON_NAME]['infos'] = null;
         return $infos;
     }

@@ -60,12 +60,14 @@ echo '
         <div class="inner">
         <h2 class="section-heading">';
 
+$modsubpage = $_REQUEST['modsubpage'] ?? '';
+$hide = $_REQUEST['hide'] ?? '';
 if (
     !$PAGE_SUBMODULE_HEADING
-    && !isset($TOP_MENU[$PAGE]['submenu'][$_REQUEST['modsubpage']])
+    && !isset($TOP_MENU[$PAGE]['submenu'][$modsubpage])
     && (
-        !isset($TOP_MENU[$PAGE]['submenu'][$_REQUEST['hide']])
-        || $TOP_MENU[$PAGE]['submenu'][$_REQUEST['modsubpage']]['hide'] != false
+        !isset($TOP_MENU[$PAGE]['submenu'][$hide])
+        || $TOP_MENU[$PAGE]['submenu'][$modsubpage]['hide'] != false
     )
 ) {
     // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyXSS.EasyXSSwarn
@@ -75,8 +77,8 @@ if (
 } else {
     // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyXSS
     echo '<i class="icon-'
-        . ($TOP_MENU[$PAGE]['submenu'][$_REQUEST['modsubpage']]['icon']
-            ? $TOP_MENU[$PAGE]['submenu'][$_REQUEST['modsubpage']]['icon']
+        . ($TOP_MENU[$PAGE]['submenu'][$modsubpage]['icon']
+            ? $TOP_MENU[$PAGE]['submenu'][$modsubpage]['icon']
             : $TOP_MENU[$PAGE]['icon'])
         . '"></i>'
         . ($PAGE_HEADING
@@ -85,7 +87,7 @@ if (
         . ' -> '
         . ($PAGE_SUBMODULE_HEADING
             ? $PAGE_SUBMODULE_HEADING
-            : $TOP_MENU[$PAGE]['submenu'][$_REQUEST['modsubpage']]['title']);
+            : $TOP_MENU[$PAGE]['submenu'][$modsubpage]['title']);
 }
 
 echo '</h2>';

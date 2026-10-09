@@ -50,7 +50,7 @@ if (! $params['configoption5']) {
         switch (isset($_POST['_action']) ? $_POST['_action'] : '') {
             case 'deleteroute':
                 $found = false;
-                if (isset($_POST['routes']['old_list']) && count($_POST['routes']['old_list']) > 0) {
+                if (!empty($_POST['routes']['old_list']) && is_array($_POST['routes']['old_list'])) {
                     if (count($_POST['routes']['old_list']) == count($routes['result'])) {
                         $vars['_status'] = array('code' => 0,'msg' => $vars['lang']['remove_info']);
                         break;

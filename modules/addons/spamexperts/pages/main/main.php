@@ -10,5 +10,4 @@ if (isset($_POST['action']) && $_POST['action'] === 'savechanges') {
     }
 }
 
-$api = getWHMCSconfig('kwspamexperts_api');
-$data = unserialize($api);
+$data = getApiSettings();

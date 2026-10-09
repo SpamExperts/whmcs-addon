@@ -39,8 +39,7 @@ $addon = (array)Capsule::table('tbladdonmodules')
     ->select('value as version')
     ->where('module', 'spamexperts')
     ->first();
-$api   = getWHMCSconfig('kwspamexperts_api');
-$data  = unserialize($api);
+$data  = getApiSettings();
 $curl  = curl_version();
 
 $api   = new kwspamexperts_api(
