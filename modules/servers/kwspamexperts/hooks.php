@@ -12,7 +12,8 @@ if (!defined('WHMCS')) {
  * module's services, whatever their status.
  */
 add_hook('ClientAreaFooterOutput', 1, function ($vars) {
-    if (!isset($vars['templatefile']) || $vars['templatefile'] !== 'clientareaproductdetails'
+    if (
+        !isset($vars['templatefile']) || $vars['templatefile'] !== 'clientareaproductdetails'
         || empty($vars['serviceid'])
     ) {
         return '';

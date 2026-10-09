@@ -1,4 +1,5 @@
 <?php
+
 /**********************************************************************
  *  Addon (11.12.12)
  * *
@@ -23,68 +24,63 @@ class spamexperts
 {
     //Module Name
     public $name = 'SpamExperts Addon';
-    
+
     //System Name
     public $system_name = 'SpamExperts Addon';
-    
+
     //Module Description
+    // phpcs:ignore Generic.Files.LineLength.TooLong
     public $description = 'Allows to simply create products, test connection with SpamExperts API and show WHMCS server configuration.';
-    
+
     //Module Version
     public $version = '1.0';
-    
+
     //Module Author
     public $author = '<a href="https://spamexperts.com" target="_blank">SpamExperts.com</a>';
-    
+
     //Default Page
     public $default_page = 'main';
-    
+
     //Default Client Page
     public $default_client_page = 'main';
-    
+
     //Top Menu
-    public $top_menu =  array
-    (
-        'main'                  => array 
-        (
+    public $top_menu =  array(
+        'main'                  => array(
             'title'             => 'Configuration',
             'icon'              => 'wrench'
         ),
-        'setupProducts'         =>  array
-        (
+        'setupProducts'         =>  array(
             'title'             =>  'Setup Products',
             'icon'              =>  'tasks',
-            
-        ), 
-        'support'               =>  array
-        (
+
+        ),
+        'support'               =>  array(
             'title'             =>  'Support',
             'icon'              =>  'magic',
-            
-        ), 
+
+        ),
     );
-    
-    
+
+
     //Enable PHP Debug Info
     public $debug = 0;
-    
+
     /**
      * This function is call when administrator will activate your module
      */
     public function activate()
     {
     }
-    
+
     /**
      * Functions is called when administrator will deactivate your module
      */
     public function deactivate()
     {
     }
-    
+
     public function upgrade()
     {
-      
     }
 }
-?>

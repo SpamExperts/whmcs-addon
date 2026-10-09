@@ -1,12 +1,10 @@
 <?php
 
-use WHMCS\Database\Capsule;
-
 /* * ********************************************************************
  * Customization Services by ModulesGarden.com
- * Copyright  ModulesGarden, INBS Group Brand, All Rights Reserved 
+ * Copyright  ModulesGarden, INBS Group Brand, All Rights Reserved
  * (2014-02-10, 11:55:42)
- * 
+ *
  *
  *  CREATED BY MODULESGARDEN       ->        http://modulesgarden.com
  *  CONTACT                        ->       contact@modulesgarden.com
@@ -27,13 +25,15 @@ use WHMCS\Database\Capsule;
 /**
  * @author Maciej Husak <maciej@modulesgarden.com>
  */
-if (!defined("WHMCS")) 
-{
-  die("This file cannot be accessed directly");
+
+use WHMCS\Database\Capsule;
+
+if (!defined("WHMCS")) {
+    die("This file cannot be accessed directly");
 }
 
 // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-include_once(ROOTDIR.DS.'modules'.DS.'servers'.DS.'kwspamexperts'.DS.'class.connection.php');
+include_once(ROOTDIR . DS . 'modules' . DS . 'servers' . DS . 'kwspamexperts' . DS . 'class.connection.php');
 global $CONFIG;
 $addon = (array)Capsule::table('tbladdonmodules')
     ->select('value as version')
@@ -44,12 +44,12 @@ $data  = unserialize($api);
 $curl  = curl_version();
 
 $api   = new kwspamexperts_api(
-        array(
+    array(
             'configoption2' => $data['url'],
             'configoption3' => $data['user'],
             'configoption4' => $data['password']
             )
-       );
+);
 $api->call('/version/get/');
 
 $spam = $api->getResponse();

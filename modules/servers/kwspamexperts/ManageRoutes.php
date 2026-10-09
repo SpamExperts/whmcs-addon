@@ -2,9 +2,9 @@
 
 /* * ********************************************************************
  * Customization Services by ModulesGarden.com
- * Copyright  ModulesGarden, INBS Group Brand, All Rights Reserved 
+ * Copyright  ModulesGarden, INBS Group Brand, All Rights Reserved
  * (2014-02-10, 14:09:40)
- * 
+ *
  *
  *  CREATED BY MODULESGARDEN       ->        http://modulesgarden.com
  *  CONTACT                        ->       contact@modulesgarden.com
@@ -33,110 +33,112 @@
  *
  * @author Maciej Husak <maciej@modulesgarden.com>
  */
-if (!defined("WHMCS")) 
-{
-  die("This file cannot be accessed directly");
+if (!defined("WHMCS")) {
+    die("This file cannot be accessed directly");
 }
 
-if(! $params['configoption5']){
-    if($handle_actions){
-    $api ->call("domain/getroute/domain/".$domain."/");
-    $routes = $api->getResponse();
-    // Both actions rewrite the full route list. call() treats any HTTP 200
-    // as success, even when the body isn't JSON, so check the list too.
-    if (!$api->isSuccess() || !isset($routes['result']) || !is_array($routes['result'])) {
-        $vars['_status'] = array('code'=>0,'msg'=>$api->isSuccess() ? 'Resource not found!' : $api->error());
-        return;
-    }
-    switch(isset($_POST['_action']) ? $_POST['_action'] : '')
-    {
-        case 'deleteroute':
-            $found = false;
-            if(isset($_POST['routes']['old_list']) && count($_POST['routes']['old_list']) > 0)
-            {
-                 if(count($_POST['routes']['old_list']) == count($routes['result'])){
-                    $vars['_status'] = array('code' => 0,'msg' => $vars['lang']['remove_info']);
-                    break;
-                 }
-                 foreach($routes['result'] as $key => $val)
-                 {
-                     if(in_array($val, $_POST['routes']['old_list'], true)){
-                         unset($routes['result'][$key]);
-                         $found = true;
-                     }
-                 }
-            } else if(isset($_POST['routetodel']))
-            {
-                foreach($routes['result'] as $key => $val){
-                    if($val == $_POST['routetodel'].'::'.$_POST['routeporttodel'])
-                    {
-                        $found = true;
-                        unset($routes['result'][$key]);
+if (! $params['configoption5']) {
+    if ($handle_actions) {
+        $api ->call("domain/getroute/domain/" . $domain . "/");
+        $routes = $api->getResponse();
+        // Both actions rewrite the full route list. call() treats any HTTP 200
+        // as success, even when the body isn't JSON, so check the list too.
+        if (!$api->isSuccess() || !isset($routes['result']) || !is_array($routes['result'])) {
+            $vars['_status'] = array('code' => 0,'msg' => $api->isSuccess() ? 'Resource not found!' : $api->error());
+            return;
+        }
+        switch (isset($_POST['_action']) ? $_POST['_action'] : '') {
+            case 'deleteroute':
+                $found = false;
+                if (isset($_POST['routes']['old_list']) && count($_POST['routes']['old_list']) > 0) {
+                    if (count($_POST['routes']['old_list']) == count($routes['result'])) {
+                        $vars['_status'] = array('code' => 0,'msg' => $vars['lang']['remove_info']);
                         break;
-                    }  
-                }
-            }
-
-
-            if($found){
-                $api ->call("domain/edit/domain/".$domain."/destinations/".rawurlencode(str_replace('::',':',json_encode($routes['result'])))."/");
-
-                if($api->isSuccess())
-                    $vars['_status'] = array('code'=>1,'msg'=>$vars['lang']['route_removed']);
-                else
-                    $vars['_status'] = array('code'=>0,'msg'=>$api->error());
-            } else {
-                $vars['_status'] =  array('code'=>0,'msg'=>'Resource not found!');
-            }
-
-
-        break;
-        case 'addroute':
-            if(isset($_POST['route']['hostname']) && isset($_POST['route']['port']))
-            {
-                $hostname = $_POST['route']['hostname'];
-                $port     = $_POST['route']['port'];
-                $validHost = kwspamexperts_isHostname($hostname) || filter_var($hostname, FILTER_VALIDATE_IP) !== false;
-                if ($port !== '') {
-                    $port = filter_var($port, FILTER_VALIDATE_INT, array('options' => array('min_range' => 1, 'max_range' => 65535)));
-                }
-                if (!$validHost || $port === false) {
-                    $vars['_status'] = array('code'=>0,'msg'=>$vars['lang']['invalid_route']);
-                    break;
+                    }
+                    foreach ($routes['result'] as $key => $val) {
+                        if (in_array($val, $_POST['routes']['old_list'], true)) {
+                            unset($routes['result'][$key]);
+                            $found = true;
+                        }
+                    }
+                } elseif (isset($_POST['routetodel'])) {
+                    foreach ($routes['result'] as $key => $val) {
+                        if ($val == $_POST['routetodel'] . '::' . $_POST['routeporttodel']) {
+                            $found = true;
+                            unset($routes['result'][$key]);
+                            break;
+                        }
+                    }
                 }
 
-                foreach($routes['result'] as $key => $val)
-                {
-                    $routes['result'][$key] = str_replace('::', ':', $val);
+
+                if ($found) {
+                    $api ->call(
+                        "domain/edit/domain/" . $domain . "/destinations/"
+                        . rawurlencode(str_replace('::', ':', json_encode($routes['result']))) . "/"
+                    );
+
+                    if ($api->isSuccess()) {
+                        $vars['_status'] = array('code' => 1,'msg' => $vars['lang']['route_removed']);
+                    } else {
+                        $vars['_status'] = array('code' => 0,'msg' => $api->error());
+                    }
+                } else {
+                    $vars['_status'] = array('code' => 0,'msg' => 'Resource not found!');
                 }
 
-                $routes['result'][] = $port === '' ? $hostname : $hostname.":".$port;
-                $api ->call("domain/edit/domain/".$domain."/destinations/".rawurlencode(json_encode($routes['result']))."/");
-                if($api->isSuccess())
-                    $vars['_status'] = array('code'=>1,'msg'=>$vars['lang']['route_added']);
-                else 
-                    $vars['_status'] = array('code'=>0,'msg'=>$api->error());
-            }
-        break;
 
-    }
+                break;
+            case 'addroute':
+                if (isset($_POST['route']['hostname']) && isset($_POST['route']['port'])) {
+                    $hostname = $_POST['route']['hostname'];
+                    $port = $_POST['route']['port'];
+                    $validHost = kwspamexperts_isHostname($hostname)
+                        || filter_var($hostname, FILTER_VALIDATE_IP) !== false;
+                    if ($port !== '') {
+                        $port = filter_var(
+                            $port,
+                            FILTER_VALIDATE_INT,
+                            array('options' => array('min_range' => 1, 'max_range' => 65535))
+                        );
+                    }
+                    if (!$validHost || $port === false) {
+                        $vars['_status'] = array('code' => 0,'msg' => $vars['lang']['invalid_route']);
+                        break;
+                    }
 
-    return;
+                    foreach ($routes['result'] as $key => $val) {
+                        $routes['result'][$key] = str_replace('::', ':', $val);
+                    }
+
+                    $routes['result'][] = $port === '' ? $hostname : $hostname . ":" . $port;
+                    $api ->call(
+                        "domain/edit/domain/" . $domain . "/destinations/"
+                        . rawurlencode(json_encode($routes['result'])) . "/"
+                    );
+                    if ($api->isSuccess()) {
+                        $vars['_status'] = array('code' => 1,'msg' => $vars['lang']['route_added']);
+                    } else {
+                        $vars['_status'] = array('code' => 0,'msg' => $api->error());
+                    }
+                }
+                break;
+        }
+
+        return;
     }
 
     $vars['domainroutes'] = array();
-    $api ->call("domain/getroute/domain/".$domain."/");
-    if ($api->isSuccess())
-    {
-        $data                 = $api->getResponse();
+    $api ->call("domain/getroute/domain/" . $domain . "/");
+    if ($api->isSuccess()) {
+        $data = $api->getResponse();
 
-        foreach($data['result'] as $key => $val){
-            $vars['domainroutes'][] = explode(':',$val);
+        foreach ($data['result'] as $key => $val) {
+            $vars['domainroutes'][] = explode(':', $val);
         }
-
     } else {
-        $vars['_status']       = array('code'=>0,'msg'=>$api->error());
-    } 
-}else {   
-    $vars['_status']       = array('code'=>2,'msg'=>$vars['lang']['route_denied']);
+        $vars['_status'] = array('code' => 0,'msg' => $api->error());
+    }
+} else {
+    $vars['_status'] = array('code' => 2,'msg' => $vars['lang']['route_denied']);
 }

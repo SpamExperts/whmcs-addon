@@ -16,15 +16,15 @@ ob_start();
 #ATTACH STYLES
 // phpcs:disable PHPCS_SecurityAudit.BadFunctions.EasyXSS.EasyXSSwarn
 echo  '
-<link href="'.$ASSETS_DIR.'/css/bootstrap.css" rel="stylesheet">
-<link href="'.$ASSETS_DIR.'/css/bootstrap-responsive.css" rel="stylesheet">
+<link href="' . $ASSETS_DIR . '/css/bootstrap.css" rel="stylesheet">
+<link href="' . $ASSETS_DIR . '/css/bootstrap-responsive.css" rel="stylesheet">
     
-<link href="'.$ASSETS_DIR.'/css/template-styles.css" rel="stylesheet">
+<link href="' . $ASSETS_DIR . '/css/template-styles.css" rel="stylesheet">
 
-<link href="'.$ASSETS_DIR.'/css/modulesgarden.css" rel="stylesheet">
+<link href="' . $ASSETS_DIR . '/css/modulesgarden.css" rel="stylesheet">
     
 <!--FONTS-->
-<link href="'.$ASSETS_DIR.'/css/font-awesome.css" rel="stylesheet">
+<link href="' . $ASSETS_DIR . '/css/font-awesome.css" rel="stylesheet">
 
 <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
 <!--[if lt IE 9]>
@@ -37,11 +37,9 @@ echo  '
 <div class="body" id="mg-wrapper" data-target=".body" data-spy="scroll" data-twttr-rendered="true">';
 
 $infos = getInfos();
-if($infos)
-{
+if ($infos) {
     echo '<div class="border-box">';
-    foreach($infos as $info)
-    { ?>
+    foreach ($infos as $info) { ?>
         <div class="control-group success">
             <span class="help-block center">
                 <?php echo htmlentities($info, ENT_QUOTES, 'UTF-8'); ?>
@@ -52,11 +50,9 @@ if($infos)
 }
 
 $errors = getErrors();
-if($errors)
-{
+if ($errors) {
     echo '<div class="border-box">';
-    foreach($errors as $error)
-    { ?>
+    foreach ($errors as $error) { ?>
         <div class="control-group error">
             <span class="help-block center">
                 <?php echo htmlentities($error, ENT_QUOTES, 'UTF-8'); ?>

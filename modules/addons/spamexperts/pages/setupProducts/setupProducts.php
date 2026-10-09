@@ -1,14 +1,10 @@
 <?php
 
-use Carbon\Carbon;
-use Illuminate\Database\QueryException;
-use WHMCS\Database\Capsule;
-
 /* * ********************************************************************
  * Customization Services by ModulesGarden.com
- * Copyright  ModulesGarden, INBS Group Brand, All Rights Reserved 
+ * Copyright  ModulesGarden, INBS Group Brand, All Rights Reserved
  * (2014-02-10, 10:56:37)
- * 
+ *
  *
  *  CREATED BY MODULESGARDEN       ->        http://modulesgarden.com
  *  CONTACT                        ->       contact@modulesgarden.com
@@ -29,13 +25,16 @@ use WHMCS\Database\Capsule;
 /**
  * @author Maciej Husak <maciej@modulesgarden.com>
  */
-if (!defined("WHMCS")) 
-{
-  die("This file cannot be accessed directly");
+
+use Carbon\Carbon;
+use Illuminate\Database\QueryException;
+use WHMCS\Database\Capsule;
+
+if (!defined("WHMCS")) {
+    die("This file cannot be accessed directly");
 }
 
-if(isset($_POST['action']) && $_POST['action'] === 'addProduct')
-{
+if (isset($_POST['action']) && $_POST['action'] === 'addProduct') {
     try {
         if (!Capsule::table('tblproductgroups')->where('name', 'SpamExperts')->exists()) {
             Capsule::table('tblproductgroups')

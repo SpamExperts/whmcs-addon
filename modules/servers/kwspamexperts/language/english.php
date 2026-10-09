@@ -2,9 +2,9 @@
 
 /* * ********************************************************************
  * Customization Services by ModulesGarden.com
- * Copyright  ModulesGarden, INBS Group Brand, All Rights Reserved 
+ * Copyright  ModulesGarden, INBS Group Brand, All Rights Reserved
  * (2014-02-10, 13:56:21)
- * 
+ *
  *
  *  CREATED BY MODULESGARDEN       ->        http://modulesgarden.com
  *  CONTACT                        ->       contact@modulesgarden.com
@@ -25,6 +25,9 @@
 /**
  * @author Maciej Husak <maciej@modulesgarden.com>
  */
+
+// Translation strings are kept on one line
+// phpcs:disable Generic.Files.LineLength.TooLong
 
 $lang                                       = array();
 $lang['mainsite']['management']             = 'Management';
@@ -62,7 +65,7 @@ $lang['ManageRoutes']['route_denied']       = 'You are not allowed to change thi
 $lang['ManageRoutes']['invalid_route']      = 'Please enter a valid hostname or IP address and a port between 1 and 65535.';
 
 
-  
+
 $lang['ManageAliases']['header']            = 'Manage Aliases';
 $lang['ManageAliases']['action']            = 'Action';
 $lang['ManageAliases']['alias']             = 'Alias';
@@ -90,5 +93,3 @@ $lang['EditEmail']['primarycontact']        = 'Primary contact e-mail:';
 $lang['EditEmail']['admincontact']          = 'Administrator\'s contact:';
 $lang['EditEmail']['email_denied']          = 'You are not allowed to change this data.';
 $lang['EditEmail']['invalid_email']         = 'Please enter a valid e-mail address.';
-
-?>

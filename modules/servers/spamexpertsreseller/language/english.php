@@ -2,9 +2,9 @@
 
 /* * ********************************************************************
  * Customization Services by ModulesGarden.com
- * Copyright  ModulesGarden, INBS Group Brand, All Rights Reserved 
+ * Copyright  ModulesGarden, INBS Group Brand, All Rights Reserved
  * (2014-02-11, 12:46:29)
- * 
+ *
  *
  *  CREATED BY MODULESGARDEN       ->        http://modulesgarden.com
  *  CONTACT                        ->       contact@modulesgarden.com
@@ -25,6 +25,9 @@
 /**
  * @author Maciej Husak <maciej@modulesgarden.com>
  */
+
+// Translation strings are kept on one line
+// phpcs:disable Generic.Files.LineLength.TooLong
 
 $lang                                       = array();
 $lang['mainsite']['login']                  = 'Log In To Panel';
@@ -63,4 +66,4 @@ $lang['stats']['outgoing_bandwidth_yearly'] = 'Outgoing Bandwidth Yearly';
 $lang['stats']['domain']                    = 'Domain';
 $lang['stats']['nothing_to_display']        = 'Nothing to display.';
 
-$lang['portal']['auto_redirect']            = 'Please wait, you will be redirected automatically.'; 
+$lang['portal']['auto_redirect']            = 'Please wait, you will be redirected automatically.';

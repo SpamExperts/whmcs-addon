@@ -5,22 +5,21 @@ defined('DS') or define('DS', DIRECTORY_SEPARATOR);
 
 /**
  * Just change function name. Do not edit anything more.
- */ 
+ */
 
 
 function spamexperts_config()
 {
     //SOME USEFUL STUFF
     // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-    require_once __DIR__.DS.'core'.DS.'functions.php';
+    require_once __DIR__ . DS . 'core' . DS . 'functions.php';
 
     // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-    require_once __DIR__.DS.'config.php';
-    
+    require_once __DIR__ . DS . 'config.php';
+
     $module = spamexperts_getModuleClass(__FILE__);
     $MGC = new $module();
-    return array
-    (
+    return array(
         'name'          =>  $MGC->system_name,
         'description'   =>  $MGC->description,
         'version'       =>  $MGC->version,
@@ -32,10 +31,10 @@ function spamexperts_activate()
 {
     //SOME USEFUL STUFF
     // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-    require_once __DIR__.DS.'core'.DS.'functions.php';
+    require_once __DIR__ . DS . 'core' . DS . 'functions.php';
 
     // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-    require_once __DIR__.DS.'config.php';
+    require_once __DIR__ . DS . 'config.php';
 
     $module = spamexperts_getModuleClass(__FILE__);
     $MGC = new $module();
@@ -46,10 +45,10 @@ function spamexperts_deactivate()
 {
     //SOME USEFUL STUFF
     // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-    require_once __DIR__.DS.'core'.DS.'functions.php';
+    require_once __DIR__ . DS . 'core' . DS . 'functions.php';
 
     // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-    require_once __DIR__.DS.'config.php';
+    require_once __DIR__ . DS . 'config.php';
 
     $module = spamexperts_getModuleClass(__FILE__);
     $MGC = new $module();
@@ -65,10 +64,10 @@ function spamexperts_upgrade($vars)
 {
     //SOME USEFUL STUFF
     // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-    require_once __DIR__.DS.'core'.DS.'functions.php';
+    require_once __DIR__ . DS . 'core' . DS . 'functions.php';
 
     // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-    require_once __DIR__.DS.'config.php';
+    require_once __DIR__ . DS . 'config.php';
 
     $module = spamexperts_getModuleClass(__FILE__);
     $MGC = new $module();
@@ -86,9 +85,9 @@ function spamexperts_output($vars)
     $IS_CLIENTAREA = false;
 
     // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-    require_once __DIR__.DS.'config.php';
+    require_once __DIR__ . DS . 'config.php';
     // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-    require_once __DIR__.DS.'core'.DS.'output.php';
+    require_once __DIR__ . DS . 'core' . DS . 'output.php';
 }
 
 /**
@@ -96,27 +95,26 @@ function spamexperts_output($vars)
  * @param array $vars
  * @return array
  */
-function spamexperts_clientarea($vars) 
+function spamexperts_clientarea($vars)
 {
     //Enable Client Area
     global $IS_CLIENTAREA;
     $IS_CLIENTAREA = true;
 
     // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-    require_once __DIR__.DS.'config.php';
+    require_once __DIR__ . DS . 'config.php';
     // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-    $content = require_once __DIR__.DS.'core'.DS.'output_client.php';
-    
+    $content = require_once __DIR__ . DS . 'core' . DS . 'output_client.php';
+
     return array(
         'pagetitle'     => 'Addon',
-        'breadcrumb'	=> array('index.php?m=NicIT' => 'NicIT'),
-        'templatefile'	=> 'core/base',
-        'requirelogin'	=> isset($_SESSION['uid']) ? false : true,
+        'breadcrumb'    => array('index.php?m=NicIT' => 'NicIT'),
+        'templatefile'  => 'core/base',
+        'requirelogin'  => isset($_SESSION['uid']) ? false : true,
         'vars' => array(
-            'content'	=> $content,
+            'content'   => $content,
         ),
     );
- 
 }
 
 
@@ -131,4 +129,3 @@ function spamexperts_getModuleClass($file)
     // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
     return basename(dirname($file));
 }
-?>

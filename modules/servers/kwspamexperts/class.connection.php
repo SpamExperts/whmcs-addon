@@ -2,9 +2,9 @@
 
 /* * ********************************************************************
  * Customization Services by ModulesGarden.com
- * Copyright  ModulesGarden, INBS Group Brand, All Rights Reserved 
+ * Copyright  ModulesGarden, INBS Group Brand, All Rights Reserved
  * (2014-02-10, 10:27:46)
- * 
+ *
  *
  *  CREATED BY MODULESGARDEN       ->        http://modulesgarden.com
  *  CONTACT                        ->       contact@modulesgarden.com
@@ -86,7 +86,14 @@ class kwspamexperts_api
         $secrets = $this->secretsToMask($action);
         // replaceVars is only documented to mask the request and response, so
         // mask the action here too.
-        logModuleCall('kwspamexperts', str_replace($secrets, '********', $action), $this->url . "/api/" . $action . ($format ? "/format/json/" : ""), print_r($this->response, true), '', $secrets);
+        logModuleCall(
+            'kwspamexperts',
+            str_replace($secrets, '********', $action),
+            $this->url . "/api/" . $action . ($format ? "/format/json/" : ""),
+            print_r($this->response, true),
+            '',
+            $secrets
+        );
     }
 
     // Values masked in the module log: the password in the
@@ -101,7 +108,8 @@ class kwspamexperts_api
         if (preg_match('#/password/([^/]+)#', $action, $match)) {
             $secrets[] = $match[1];
         }
-        if (strpos($action, 'authticket/') !== false
+        if (
+            strpos($action, 'authticket/') !== false
             && isset($this->response['result'])
             && is_string($this->response['result'])
             && $this->response['result'] !== ''

@@ -2,9 +2,9 @@
 
 /* * ********************************************************************
  * Customization Services by ModulesGarden.com
- * Copyright  ModulesGarden, INBS Group Brand, All Rights Reserved 
+ * Copyright  ModulesGarden, INBS Group Brand, All Rights Reserved
  * (2014-02-10, 10:27:46)
- * 
+ *
  *
  *  CREATED BY MODULESGARDEN       ->        http://modulesgarden.com
  *  CONTACT                        ->       contact@modulesgarden.com
@@ -63,7 +63,7 @@ class spamexperts_api
     public function call($action)
     {
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->url."/api/".$action."/format/json/");
+        curl_setopt($ch, CURLOPT_URL, $this->url . "/api/" . $action . "/format/json/");
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_USERPWD, $this->user . ":" . $this->pass);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
@@ -91,7 +91,14 @@ class spamexperts_api
         $secrets = $this->secretsToMask($action);
         // replaceVars is only documented to mask the request and response, so
         // mask the action here too.
-        logModuleCall('spamexpertsreseller', str_replace($secrets, '********', $action), $this->url . "/api/" . $action . "/format/json/", print_r($this->response, true), '', $secrets);
+        logModuleCall(
+            'spamexpertsreseller',
+            str_replace($secrets, '********', $action),
+            $this->url . "/api/" . $action . "/format/json/",
+            print_r($this->response, true),
+            '',
+            $secrets
+        );
     }
 
     // Values masked in the module log: the password in the
@@ -106,7 +113,8 @@ class spamexperts_api
         if (preg_match('#/password/([^/]+)#', $action, $match)) {
             $secrets[] = $match[1];
         }
-        if (strpos($action, 'authticket/') !== false
+        if (
+            strpos($action, 'authticket/') !== false
             && isset($this->response['result'])
             && is_string($this->response['result'])
             && $this->response['result'] !== ''

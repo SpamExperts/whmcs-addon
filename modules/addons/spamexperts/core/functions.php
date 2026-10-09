@@ -8,13 +8,12 @@ use WHMCS\Database\Capsule;
 defined('ADDON_DIR') or define('ADDON_DIR', dirname(__DIR__));
 defined('ADDON_NAME') or define('ADDON_NAME', basename(ADDON_DIR));
 
-if(!function_exists('getWHMCSconfig'))
-{
+if (!function_exists('getWHMCSconfig')) {
     /**
      * @param string $k Setting name in tblconfiguration
      * @return string
      */
-    function getWHMCSconfig($k) 
+    function getWHMCSconfig($k)
     {
         try {
             $settings = Capsule::table('tblconfiguration')
@@ -30,8 +29,7 @@ if(!function_exists('getWHMCSconfig'))
     }
 }
 
-if(!function_exists('addError'))
-{
+if (!function_exists('addError')) {
     /**
      * @param string $error
      */
@@ -42,8 +40,7 @@ if(!function_exists('addError'))
 }
 
 
-if(!function_exists('addInfo'))
-{
+if (!function_exists('addInfo')) {
     /**
      * @param string $info
      */
@@ -53,8 +50,7 @@ if(!function_exists('addInfo'))
     }
 }
 
-if(!function_exists('getErrors'))
-{
+if (!function_exists('getErrors')) {
     function getErrors()
     {
         $errors = $_SESSION[ADDON_NAME]['errors'];
@@ -63,8 +59,7 @@ if(!function_exists('getErrors'))
     }
 }
 
-if(!function_exists('getInfos'))
-{
+if (!function_exists('getInfos')) {
     function getInfos()
     {
         $infos = $_SESSION[ADDON_NAME]['infos'];
@@ -73,21 +68,24 @@ if(!function_exists('getInfos'))
     }
 }
 
-if(!function_exists('getAddonUrl'))
-{
+if (!function_exists('getAddonUrl')) {
     function getAddonUrl($modpage = null, $modsubpage = null)
     {
         global $IS_CLIENTAREA;
-        if($IS_CLIENTAREA)
-            return 'index.php?m=' . ADDON_NAME.($modpage ? '&modpage=' . $modpage : '') . ($modsubpage ? '&modsubpage=' . $modsubpage : '');
-        else
-            return 'addonmodules.php?module=' . ADDON_NAME . ($modpage ? '&modpage=' . $modpage : '') . ($modsubpage ? '&modsubpage=' . $modsubpage : '');
+        if ($IS_CLIENTAREA) {
+            return 'index.php?m=' . ADDON_NAME
+                . ($modpage ? '&modpage=' . $modpage : '')
+                . ($modsubpage ? '&modsubpage=' . $modsubpage : '');
+        } else {
+            return 'addonmodules.php?module=' . ADDON_NAME
+                . ($modpage ? '&modpage=' . $modpage : '')
+                . ($modsubpage ? '&modsubpage=' . $modsubpage : '');
+        }
     }
 }
 
 
-if(!function_exists('saveWHMCSconfig'))
-{
+if (!function_exists('saveWHMCSconfig')) {
     /**
      * @param string $k Setting name in tblconfiguration
      * @param string $v
@@ -113,7 +111,7 @@ if(!function_exists('saveWHMCSconfig'))
     }
 }
 
-if(!function_exists('updateProductsConfig')){
+if (!function_exists('updateProductsConfig')) {
     /**
      * @param string $c Serialized API settings
      * @return bool

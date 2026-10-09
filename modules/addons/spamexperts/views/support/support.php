@@ -2,9 +2,9 @@
 
 /* * ********************************************************************
  * Customization Services by ModulesGarden.com
- * Copyright  ModulesGarden, INBS Group Brand, All Rights Reserved 
+ * Copyright  ModulesGarden, INBS Group Brand, All Rights Reserved
  * (2014-02-10, 11:55:29)
- * 
+ *
  *
  *  CREATED BY MODULESGARDEN       ->        http://modulesgarden.com
  *  CONTACT                        ->       contact@modulesgarden.com
@@ -33,10 +33,15 @@
  *
  * @author Maciej Husak <maciej@modulesgarden.com>
  */
-if (!defined("WHMCS")) 
-{
-  die("This file cannot be accessed directly");
+if (!defined("WHMCS")) {
+    die("This file cannot be accessed directly");
 }
+
+$serversDir = ROOTDIR . DS . 'modules' . DS . 'servers' . DS;
+// phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
+$hasServerModule = file_exists($serversDir . 'kwspamexperts' . DS . 'kwspamexperts.php');
+// phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
+$hasResellerModule = file_exists($serversDir . 'spamexpertsreseller' . DS . 'spamexpertsreseller.php');
 ?>
 <table class="table">
     <thead>
@@ -69,17 +74,29 @@ if (!defined("WHMCS"))
     </tr>
     <tr>
         <td>WHMCS Version</td>
-        <td><?php if(version_compare($CONFIG['Version'], '5.0.0', '<')) echo '<span class="error">Required Version >= 5.0.0</span>'; else echo '<span class="success">OK</span>';?></td>
+        <td>
+            <?php if (version_compare($CONFIG['Version'], '5.0.0', '<')) { ?>
+                <span class="error">Required Version >= 5.0.0</span>
+            <?php } else { ?>
+                <span class="success">OK</span>
+            <?php } ?>
+        </td>
     </tr>
     <tr>
         <td>PHP Version</td>
-        <td><?php if(version_compare(PHP_VERSION, '5.0.0', '<')) echo '<span class="error">Required Version >= 5.0.0</span>'; else echo '<span class="success">OK</span>';?></td>
+        <td>
+            <?php if (version_compare(PHP_VERSION, '5.0.0', '<')) { ?>
+                <span class="error">Required Version >= 5.0.0</span>
+            <?php } else { ?>
+                <span class="success">OK</span>
+            <?php } ?>
+        </td>
     </tr>
     <tr>
         <td>SpamExperts API Connection</td>
         <td>
-            <?php if($api->isSuccess()) { ?>
-                <span class="success">OK</span>';
+            <?php if ($api->isSuccess()) { ?>
+                <span class="success">OK</span>
             <?php } else { ?>
                 <span class="error">
                     <?php echo htmlentities($api->error(), ENT_QUOTES, 'UTF-8'); ?>
@@ -90,25 +107,21 @@ if (!defined("WHMCS"))
     <tr>
         <td>SpamExperts Module</td>
         <td>
-            <?php
-            // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
-            if(file_exists(ROOTDIR.DS.'modules'.DS.'servers'.DS.'kwspamexperts'.DS.'kwspamexperts.php'))
-                echo '<span class="success">OK</span>';
-            else
-                echo '<span class="error">Module not exists.</span>';
-            ?>
+            <?php if ($hasServerModule) { ?>
+                <span class="success">OK</span>
+            <?php } else { ?>
+                <span class="error">Module not exists.</span>
+            <?php } ?>
         </td>
     </tr>
     <tr>
         <td>SpamExperts Reseller Module</td>
         <td>
-            <?php
-            // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
-            if(file_exists(ROOTDIR.DS.'modules'.DS.'servers'.DS.'spamexpertsreseller'.DS.'spamexpertsreseller.php'))
-                echo '<span class="success">OK</span>';
-            else
-                echo '<span class="error">Module not exists.</span>';
-            ?>
+            <?php if ($hasResellerModule) { ?>
+                <span class="success">OK</span>
+            <?php } else { ?>
+                <span class="error">Module not exists.</span>
+            <?php } ?>
         </td>
     </tr>
 </table>

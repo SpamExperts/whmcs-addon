@@ -5,38 +5,53 @@
  *
  * @var array $data API settings, set by the page
  */
-if (!defined("WHMCS")) 
-{
-  die("This file cannot be accessed directly");
+if (!defined("WHMCS")) {
+    die("This file cannot be accessed directly");
 }
 ?>
 <form action="" method="post">
     <table class="table table-bordered table-striped configtable">
         <tr>
             <td>API URL:</td>
-            <td><input type="text" name="conf[url]" style="width:304px;" value="<?php echo htmlentities($data['url'], ENT_QUOTES, 'UTF-8'); ?>" /></td>
+            <td>
+                <input type="text" name="conf[url]" style="width:304px;"
+                    value="<?php echo htmlentities($data['url'], ENT_QUOTES, 'UTF-8'); ?>" />
+            </td>
         </tr>
         <tr>
             <td>API Username</td>
-            <td><input type="text" name="conf[user]" style="width:304px;" value="<?php echo htmlentities($data['user'], ENT_QUOTES, 'UTF-8'); ?>" /></td>
+            <td>
+                <input type="text" name="conf[user]" style="width:304px;"
+                    value="<?php echo htmlentities($data['user'], ENT_QUOTES, 'UTF-8'); ?>" />
+            </td>
         </tr>
         <tr>
             <td>API Password</td>
-            <td><input type="password" name="conf[password]" value="<?php echo htmlentities($data['password'], ENT_QUOTES, 'UTF-8'); ?>" /></td>
+            <td>
+                <input type="password" name="conf[password]"
+                    value="<?php echo htmlentities($data['password'], ENT_QUOTES, 'UTF-8'); ?>" />
+            </td>
         </tr>
         <tr>
             <td>Disable user access to manage routes page</td>
-            <td><input type="checkbox" name="conf[disable_manage_routes]" value="1" <?php if($data['disable_manage_routes'] == '1') echo 'checked'; ?>/></td>
+            <td>
+                <input type="checkbox" name="conf[disable_manage_routes]" value="1"
+                    <?php echo $data['disable_manage_routes'] == '1' ? 'checked' : ''; ?>/>
+            </td>
         </tr>
         <tr>
             <td>Disable user access to edit contact e-mail page</td>
-            <td><input type="checkbox" name="conf[disable_edit_contact]" value="1" <?php if($data['disable_edit_contact'] == '1') echo 'checked'; ?>/></td>
+            <td>
+                <input type="checkbox" name="conf[disable_edit_contact]" value="1"
+                    <?php echo $data['disable_edit_contact'] == '1' ? 'checked' : ''; ?>/>
+            </td>
         </tr>
         <tr>
             <td colspan="2">
                 <input type="hidden" name="action" value="savechanges" />
                 <input type="submit" value="Save Changes" class="btn btn-success" style="height:32px;" />
-                <input type="submit" value="Test Connection" id="testConnection" class="btn btn-info" style="height:32px;" />
+                <input type="submit" value="Test Connection" id="testConnection" class="btn btn-info"
+                    style="height:32px;" />
                 <span id="ajax_response"></span>
             </td>
         </tr>

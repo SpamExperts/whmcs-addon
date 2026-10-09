@@ -1,13 +1,10 @@
 <?php
 
-use Carbon\Carbon;
-use WHMCS\Database\Capsule;
-
 /* * ********************************************************************
  * Customization Services by ModulesGarden.com
- * Copyright  ModulesGarden, INBS Group Brand, All Rights Reserved 
+ * Copyright  ModulesGarden, INBS Group Brand, All Rights Reserved
  * (2014-02-11, 11:40:58)
- * 
+ *
  *
  *  CREATED BY MODULESGARDEN       ->        http://modulesgarden.com
  *  CONTACT                        ->       contact@modulesgarden.com
@@ -28,9 +25,12 @@ use WHMCS\Database\Capsule;
 /**
  * @author Maciej Husak <maciej@modulesgarden.com>
  */
-if (!defined("WHMCS")) 
-{
-  die("This file cannot be accessed directly");
+
+use Carbon\Carbon;
+use WHMCS\Database\Capsule;
+
+if (!defined("WHMCS")) {
+    die("This file cannot be accessed directly");
 }
 
 /**
@@ -65,7 +65,7 @@ function spamexpertsreseller_ConfigOptions()
             "FriendlyName" => "Domains Limits",
             "Description"  => ""
         ),
-        "UsageLimits"=> array(
+        "UsageLimits" => array(
             "Type"         => "yesno",
             "Size"         => "25",
             "FriendlyName" => "Usage Limits",
@@ -100,7 +100,8 @@ function spamexpertsreseller_configError($params)
 * @param mixed $value
 * @return bool
 */
-function spamexpertsreseller_isHostname($value) {
+function spamexpertsreseller_isHostname($value)
+{
     if (!is_string($value) || $value === '') {
         return false;
     }
@@ -122,17 +123,23 @@ function spamexpertsreseller_CreateAccount($params)
         return $error;
     }
     // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-    include_once(__DIR__.DIRECTORY_SEPARATOR.'class.connection.php');
+    include_once(__DIR__ . DIRECTORY_SEPARATOR . 'class.connection.php');
     $api        = new spamexperts_api($params);
-    $password   = !empty($params['password'])                ? $params["password"]               : createServerPassword();
-    $email      = !empty($params["customfields"]["Email"])   ? $params["customfields"]["Email"]  : $params['clientsdetails']['email'];
-    $username   = !empty($params['username'])                ? $params['username']               : uniqid();
+    $password   = !empty($params['password']) ? $params["password"] : createServerPassword();
+    $email      = !empty($params["customfields"]["Email"])
+        ? $params["customfields"]["Email"]
+        : $params['clientsdetails']['email'];
+    $username   = !empty($params['username']) ? $params['username'] : uniqid();
 
     // for add, the optional value needed for api_usage is the inverse of the config option to disable api access
     //  - "1" passed as the value enables the API access
     //  - "0" passed as the value or nothing passed disables the API access
     $api_usage = ($params['configoption5'] === 'on' ? 0 : 1);
-    $api->call('/reseller/add/username/' . $username . '/password/' . rawurlencode($password) . '/email/' . rawurlencode($email) . '/domainslimit/' . $params['configoption4'] . '/api_usage/' . $api_usage);
+    $api->call(
+        '/reseller/add/username/' . $username . '/password/' . rawurlencode($password)
+        . '/email/' . rawurlencode($email) . '/domainslimit/' . $params['configoption4']
+        . '/api_usage/' . $api_usage
+    );
     if ($api->isSuccess()) {
         // update password & username
         Capsule::table('tblhosting')
@@ -164,12 +171,13 @@ function spamexpertsreseller_TerminateAccount($params)
         return "Username cannot be empty. Please enter the reseller username in the Username field.";
     }
     // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-    include_once(__DIR__.DIRECTORY_SEPARATOR.'class.connection.php');
+    include_once(__DIR__ . DIRECTORY_SEPARATOR . 'class.connection.php');
     $api = new spamexperts_api($params);
-    $api ->call("reseller/remove/username/".$params['username']."/");
+    $api ->call("reseller/remove/username/" . $params['username'] . "/");
 
-    if ($api->isSuccess())
+    if ($api->isSuccess()) {
         return "success";
+    }
 
     return $api->error();
 }
@@ -181,7 +189,8 @@ function spamexpertsreseller_TerminateAccount($params)
 * @param array $params
 * @return string
 */
-function spamexpertsreseller_ChangePackage($params) {
+function spamexpertsreseller_ChangePackage($params)
+{
     if ($error = spamexpertsreseller_configError($params)) {
         return $error;
     }
@@ -189,16 +198,18 @@ function spamexpertsreseller_ChangePackage($params) {
         return "Username cannot be empty. Please enter the reseller username in the Username field.";
     }
     // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-    include_once(__DIR__.DIRECTORY_SEPARATOR.'class.connection.php');
+    include_once(__DIR__ . DIRECTORY_SEPARATOR . 'class.connection.php');
     $api = new spamexperts_api($params);
     // for update, the optional value needed for api_usage matches the config option to disable api access
     //  - "0" passed as the value enables the API access
     //  - "1" passed as the value disables the API access
     $api_usage = ($params['configoption5'] === 'on' ? 1 : 0);
-    $api ->call("reseller/update/username/".$params['username']."/password/".rawurlencode($params['password'])."/domainslimit/".$params['configoption4']."/api_usage/".$api_usage."/");
+    $api ->call(
+        "reseller/update/username/" . $params['username'] . "/password/" . rawurlencode($params['password'])
+        . "/domainslimit/" . $params['configoption4'] . "/api_usage/" . $api_usage . "/"
+    );
 
-    if ($api->isSuccess())
-    {
+    if ($api->isSuccess()) {
         return "success";
     }
 
@@ -211,14 +222,15 @@ function spamexpertsreseller_ChangePackage($params) {
 * Display extended pages in clientarea
 * @param array $params
 * @return array
-*/ 
-function spamexpertsreseller_ClientArea($params) {
+*/
+function spamexpertsreseller_ClientArea($params)
+{
     $output = array('vars' => array());
     if (function_exists('generate_token')) {
         $output['vars']['token'] = generate_token('plain');
     }
     // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-    include_once(__DIR__.DIRECTORY_SEPARATOR.'class.connection.php');
+    include_once(__DIR__ . DIRECTORY_SEPARATOR . 'class.connection.php');
     $lang = spamexpertsreseller_getLang($params);
 
     $error = spamexpertsreseller_setupError($params, $lang);
@@ -226,15 +238,15 @@ function spamexpertsreseller_ClientArea($params) {
         $output['vars']['api_error'] = $error;
     } else {
         $api = new spamexperts_api($params);
-        $api->call("authticket/create/username/".$params['username']."/");
+        $api->call("authticket/create/username/" . $params['username'] . "/");
 
         $url = (strpos($params['configoption1'], 'http') === false)
-            ? 'https://'.$params['configoption1']
+            ? 'https://' . $params['configoption1']
             : $params['configoption1'];
 
         $res = $api->getResponse();
         if ($api->isSuccess()) {
-            $output['vars']['api_url'] = $url.'/?authticket='.$res['result'];
+            $output['vars']['api_url'] = $url . '/?authticket=' . $res['result'];
         } elseif (isset($res['messages']['error'][0])) {
             $output['vars']['api_error'] = sprintf($lang['mainsite']['notadded'], $params['username']);
         } else {
@@ -248,27 +260,32 @@ function spamexpertsreseller_ClientArea($params) {
 
 
 
-if(!function_exists('spamexpertsreseller_getLang')){
+if (!function_exists('spamexpertsreseller_getLang')) {
     /**
     * FUNCTION spamexpertsreseller_getLang
     * Get user language
     * @param array $params
     * @return array
     */
-    function spamexpertsreseller_getLang($params){
+    function spamexpertsreseller_getLang($params)
+    {
         global $CONFIG;
-        if(!empty($_SESSION['Language']))
+        if (!empty($_SESSION['Language'])) {
             $language = strtolower($_SESSION['Language']);
-        else if(isset($params['clientsdetails']['language']) && strtolower($params['clientsdetails']['language'])!='')
+        } elseif (
+            isset($params['clientsdetails']['language'])
+            && strtolower($params['clientsdetails']['language']) != ''
+        ) {
             $language = strtolower($params['clientsdetails']['language']);
-        else
+        } else {
             $language = $CONFIG['Language'];
+        }
 
         $available_languages = array('english');
         // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-        $langfilename = __DIR__.DIRECTORY_SEPARATOR.'language'.DIRECTORY_SEPARATOR.$language.'.php';
+        $langfilename = __DIR__ . DIRECTORY_SEPARATOR . 'language' . DIRECTORY_SEPARATOR . $language . '.php';
         // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
-        if(in_array($language, $available_languages, true) && file_exists($langfilename)) {
+        if (in_array($language, $available_languages, true) && file_exists($langfilename)) {
             // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
             require($langfilename);
         } else {
@@ -276,8 +293,9 @@ if(!function_exists('spamexpertsreseller_getLang')){
             require(__DIR__ . DIRECTORY_SEPARATOR . 'language' . DIRECTORY_SEPARATOR . 'english.php');
         }
 
-        if(isset($lang))
+        if (isset($lang)) {
             return $lang;
+        }
     }
 }
 
@@ -288,7 +306,8 @@ if(!function_exists('spamexpertsreseller_getLang')){
 * adding a button for them
 * @return array
 */
-function spamexpertsreseller_ClientAreaAllowedFunctions() {
+function spamexpertsreseller_ClientAreaAllowedFunctions()
+{
     $buttonarray = array(
         'Management' => 'management'
     );
@@ -296,62 +315,65 @@ function spamexpertsreseller_ClientAreaAllowedFunctions() {
 }
 
 
-if (!function_exists('spamexpertsreseller_page')){
-     /**
-     * FUNCTION spamexpertsreseller_page
-     * Run a management page script and collect its template vars
-     * @param array $params
-     * @param string $page
-     * @param bool $handle_actions Run the posted action instead of loading the page data
-     * @return array|null Null when the page does not exist
-     */
-     function spamexpertsreseller_page($params, $page, $handle_actions){
-         // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-         include_once(__DIR__.DIRECTORY_SEPARATOR.'class.connection.php');
-         $lang              = spamexpertsreseller_getLang($params);
-         $api               = new spamexperts_api($params);
-         $vars['main_lang'] = $lang['mainsite'];
-         $vars['lang']      = $lang[(!isset($lang[$page])                ? 'mainsite'                         : $page)];
-         $vars['serviceid'] = $params['serviceid'];
+if (!function_exists('spamexpertsreseller_page')) {
+    /**
+    * FUNCTION spamexpertsreseller_page
+    * Run a management page script and collect its template vars
+    * @param array $params
+    * @param string $page
+    * @param bool $handle_actions Run the posted action instead of loading the page data
+    * @return array|null Null when the page does not exist
+    */
+    function spamexpertsreseller_page($params, $page, $handle_actions)
+    {
+        // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
+        include_once(__DIR__ . DIRECTORY_SEPARATOR . 'class.connection.php');
+        $lang              = spamexpertsreseller_getLang($params);
+        $api               = new spamexperts_api($params);
+        $vars['main_lang'] = $lang['mainsite'];
+        $vars['lang']      = $lang[(!isset($lang[$page]) ? 'mainsite' : $page)];
+        $vars['serviceid'] = $params['serviceid'];
 
-         if (function_exists('generate_token')) {
-             $vars['token'] = generate_token('plain');
-         }
+        if (function_exists('generate_token')) {
+            $vars['token'] = generate_token('plain');
+        }
 
-         $available_pages = array('managedomains', 'stats');
-         // phpcs:disable PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
-         if(empty($page) || !in_array($page, $available_pages, true)
-             || !file_exists(__DIR__.DIRECTORY_SEPARATOR.$page.'.php')
-             || !file_exists(__DIR__.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.$page.'.tpl')
-         ) {
-             return null;
-         }
-         // phpcs:enable PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
+        $available_pages = array('managedomains', 'stats');
+        // phpcs:disable PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
+        if (
+            empty($page) || !in_array($page, $available_pages, true)
+            || !file_exists(__DIR__ . DIRECTORY_SEPARATOR . $page . '.php')
+            || !file_exists(__DIR__ . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . $page . '.tpl')
+        ) {
+            return null;
+        }
+        // phpcs:enable PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
 
-         $serviceid = $params['serviceid'];
-         if (!$handle_actions && isset($_SESSION['spamexpertsreseller_result'][$serviceid])) {
-             $vars['_result'] = $_SESSION['spamexpertsreseller_result'][$serviceid];
-             unset($_SESSION['spamexpertsreseller_result'][$serviceid]);
-         }
+        $serviceid = $params['serviceid'];
+        if (!$handle_actions && isset($_SESSION['spamexpertsreseller_result'][$serviceid])) {
+            $vars['_result'] = $_SESSION['spamexpertsreseller_result'][$serviceid];
+            unset($_SESSION['spamexpertsreseller_result'][$serviceid]);
+        }
 
-         $error = spamexpertsreseller_setupError($params, $lang);
-         if ($error) {
-             $vars['_status'] = array('code' => 2, 'msg' => $error);
-             return $vars;
-         }
+        $error = spamexpertsreseller_setupError($params, $lang);
+        if ($error) {
+            $vars['_status'] = array('code' => 2, 'msg' => $error);
+            return $vars;
+        }
 
-         // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-         require_once(__DIR__.DIRECTORY_SEPARATOR.$page.'.php');
+        // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
+        require_once(__DIR__ . DIRECTORY_SEPARATOR . $page . '.php');
 
-         // The same API error can come from the action and from loading the page
-         if (isset($vars['_result'], $vars['_status'])
-             && $vars['_result']['msg'] === $vars['_status']['msg']
-         ) {
-             unset($vars['_result']);
-         }
+        // The same API error can come from the action and from loading the page
+        if (
+            isset($vars['_result'], $vars['_status'])
+            && $vars['_result']['msg'] === $vars['_status']['msg']
+        ) {
+            unset($vars['_result']);
+        }
 
-         return $vars;
-     }
+        return $vars;
+    }
 }
 
 /**
@@ -361,7 +383,8 @@ if (!function_exists('spamexpertsreseller_page')){
 * @param array $lang
 * @return string|null
 */
-function spamexpertsreseller_setupError($params, $lang) {
+function spamexpertsreseller_setupError($params, $lang)
+{
     if (spamexpertsreseller_configError($params)) {
         return $lang['mainsite']['notconfigured'];
     }
@@ -373,48 +396,49 @@ function spamexpertsreseller_setupError($params, $lang) {
     return null;
 }
 
-if (!function_exists('spamexpertsreseller_management')){
-     /**
-     * FUNCTION spamexpertsreseller_management
-     * Display extended pages in clientarea. A posted action is run first, then
-     * redirected to the page so the result is shown by a GET request.
-     * @param array $params
-     * @return array
-     */
-     function spamexpertsreseller_management($params){
-         $page = isset($_REQUEST['page']) ? $_REQUEST['page'] : '';
+if (!function_exists('spamexpertsreseller_management')) {
+    /**
+    * FUNCTION spamexpertsreseller_management
+    * Display extended pages in clientarea. A posted action is run first, then
+    * redirected to the page so the result is shown by a GET request.
+    * @param array $params
+    * @return array
+    */
+    function spamexpertsreseller_management($params)
+    {
+        $page = isset($_REQUEST['page']) ? $_REQUEST['page'] : '';
 
-         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-             $vars = spamexpertsreseller_page($params, $page, false);
-             if ($vars === null) {
-                 $lang = spamexpertsreseller_getLang($params);
-                 return array('vars' => array(
-                     '_status' => array('code' => 1, 'msg' => $lang['mainsite']['notfound'])
-                 ));
-             }
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $vars = spamexpertsreseller_page($params, $page, false);
+            if ($vars === null) {
+                $lang = spamexpertsreseller_getLang($params);
+                return array('vars' => array(
+                    '_status' => array('code' => 1, 'msg' => $lang['mainsite']['notfound'])
+                ));
+            }
 
-             return array(
-                 'templatefile' => 'templates/'.$page,
-                 'breadcrumb'   => ' > <a href="#">Server Details</a>',
-                 'vars'         => $vars
-             );
-         }
+            return array(
+                'templatefile' => 'templates/' . $page,
+                'breadcrumb'   => ' > <a href="#">Server Details</a>',
+                'vars'         => $vars
+            );
+        }
 
-         $url  = 'clientarea.php?action=productdetails&id='.$params['serviceid'];
-         $vars = spamexpertsreseller_page($params, $page, true);
-         if ($vars !== null) {
-             // Code 2 marks the page as unavailable, which the GET shows again itself
-             if (isset($vars['_status']) && $vars['_status']['code'] !== 2) {
-                 $_SESSION['spamexpertsreseller_result'][$params['serviceid']] = $vars['_status'];
-             }
-             $url .= '&modop=custom&a=management&page='.urlencode($page)
-                  .'&token='.urlencode(isset($vars['token']) ? $vars['token'] : '');
-         }
+        $url  = 'clientarea.php?action=productdetails&id=' . $params['serviceid'];
+        $vars = spamexpertsreseller_page($params, $page, true);
+        if ($vars !== null) {
+            // Code 2 marks the page as unavailable, which the GET shows again itself
+            if (isset($vars['_status']) && $vars['_status']['code'] !== 2) {
+                $_SESSION['spamexpertsreseller_result'][$params['serviceid']] = $vars['_status'];
+            }
+            $url .= '&modop=custom&a=management&page=' . urlencode($page)
+                 . '&token=' . urlencode(isset($vars['token']) ? $vars['token'] : '');
+        }
 
-         if (ob_get_length()) {
-             ob_clean();
-         }
-         header('Location: '.$url);
-         exit;
-     }
+        if (ob_get_length()) {
+            ob_clean();
+        }
+        header('Location: ' . $url);
+        exit;
+    }
 }
