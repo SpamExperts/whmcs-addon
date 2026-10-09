@@ -10,6 +10,10 @@ defined('ADDON_NAME') or define('ADDON_NAME', basename(ADDON_DIR));
 
 if(!function_exists('getWHMCSconfig'))
 {
+    /**
+     * @param string $k Setting name in tblconfiguration
+     * @return string
+     */
     function getWHMCSconfig($k) 
     {
         try {
@@ -28,6 +32,9 @@ if(!function_exists('getWHMCSconfig'))
 
 if(!function_exists('addError'))
 {
+    /**
+     * @param string $error
+     */
     function addError($error)
     {
         $_SESSION[ADDON_NAME]['errors'][] = $error;
@@ -37,6 +44,9 @@ if(!function_exists('addError'))
 
 if(!function_exists('addInfo'))
 {
+    /**
+     * @param string $info
+     */
     function addInfo($info)
     {
         $_SESSION[ADDON_NAME]['infos'][] = $info;
@@ -78,6 +88,11 @@ if(!function_exists('getAddonUrl'))
 
 if(!function_exists('saveWHMCSconfig'))
 {
+    /**
+     * @param string $k Setting name in tblconfiguration
+     * @param string $v
+     * @return bool
+     */
     function saveWHMCSconfig($k, $v)
     {
         try {
@@ -99,6 +114,10 @@ if(!function_exists('saveWHMCSconfig'))
 }
 
 if(!function_exists('updateProductsConfig')){
+    /**
+     * @param string $c Serialized API settings
+     * @return bool
+     */
     function updateProductsConfig($c)
     {
         $array = unserialize($c);

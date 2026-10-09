@@ -4,6 +4,7 @@ if(!class_exists('MG_Pagination'))
 {
     class MG_Pagination
     {
+        /** @var string Session key of the pagination settings */
         private $pagination_name;
 
         private $settings = array();
@@ -88,6 +89,9 @@ if(!class_exists('MG_Pagination'))
             return $query;
         }
 
+        /**
+         * @param int $amount Total number of rows
+         */
         public function setAmount($amount)
         {
             $this->settings['amount'] = $amount;
@@ -119,11 +123,18 @@ if(!class_exists('MG_Pagination'))
             return $this->settings['offset'] / $this->settings['limit'];
         }
         /************************* FILTERING ****************************/
+        /**
+         * @param string $field_name
+         * @param mixed $field_value
+         */
         public function addFilter($field_name, $field_value)
         {
             $this->settings['filters'][$field_name] = $field_value;
         }
 
+        /**
+         * @param string $field_name
+         */
         public function removeFilter($field_name)
         {
             if(isset($this->settings['filters'][$field_name]))
@@ -169,6 +180,9 @@ if(!class_exists('MG_Pagination'))
             return true;
         }
 
+        /**
+         * @param int $page Zero based page number
+         */
         public function setPage($page)
         {
             if($this->settings['amount'] > $this->settings['limit'] * $page)
@@ -177,6 +191,9 @@ if(!class_exists('MG_Pagination'))
             }
         }
         /************* SOME SETTINGS *********************/
+        /**
+         * @param int $limit
+         */
         public function setLimit($limit)
         {
             $this->settings['limit'] = $limit;
@@ -187,6 +204,9 @@ if(!class_exists('MG_Pagination'))
             return $this->settings['limit'];
         }
 
+        /**
+         * @param int $offset
+         */
         public function setOffset($offset)
         {
             $this->settings['offset'] = $offset;
@@ -197,6 +217,10 @@ if(!class_exists('MG_Pagination'))
             return $this->settings['offset'];
         }
 
+        /**
+         * @param string $field_name
+         * @param string $type 'ASC' or 'DESC'
+         */
         public function setOrderBy($field_name, $type = 'ASC')
         { 
             $this->settings['order_by'] = array();

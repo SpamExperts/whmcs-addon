@@ -27,12 +27,21 @@
  */
 class spamexperts_api
 {
+    /** @var string|null */
     private $error = null;
+    /** @var string|null */
     private $url = null;
+    /** @var string|null */
     private $user = null;
+    /** @var string|null */
     private $pass = null;
+    /** @var array|null Decoded API response */
     private $response = null;
 
+    /**
+     * @param array $params Module parameters
+     * @param bool $user Use the service's own credentials instead of the reseller ones
+     */
     public function __construct($params, $user = false)
     {
         $this->url = $params['configoption1'];
@@ -47,6 +56,10 @@ class spamexperts_api
         }
     }
 
+    /**
+     * @param string $action API path, without the /api/ prefix
+     * @return void
+     */
     public function call($action)
     {
         $ch = curl_init();
@@ -83,6 +96,10 @@ class spamexperts_api
 
     // Values masked in the module log: the password in the
     // request path and the SSO ticket returned by authticket/create.
+    /**
+     * @param string $action
+     * @return string[]
+     */
     private function secretsToMask($action)
     {
         $secrets = array();

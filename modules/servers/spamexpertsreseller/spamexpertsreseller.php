@@ -248,13 +248,13 @@ function spamexpertsreseller_ClientArea($params) {
 
 
 
-/**
-* FUNCTION spamexpertsreseller_getLang
-* Get user language
-* @params array
-* @return string
-*/
 if(!function_exists('spamexpertsreseller_getLang')){
+    /**
+    * FUNCTION spamexpertsreseller_getLang
+    * Get user language
+    * @param array $params
+    * @return array
+    */
     function spamexpertsreseller_getLang($params){
         global $CONFIG;
         if(!empty($_SESSION['Language']))
@@ -296,15 +296,15 @@ function spamexpertsreseller_ClientAreaAllowedFunctions() {
 }
 
 
-/**
-* FUNCTION spamexpertsreseller_page
-* Run a management page script and collect its template vars
-* @param array $params
-* @param string $page
-* @param bool $handle_actions Run the posted action instead of loading the page data
-* @return array|null Null when the page does not exist
-*/
 if (!function_exists('spamexpertsreseller_page')){
+     /**
+     * FUNCTION spamexpertsreseller_page
+     * Run a management page script and collect its template vars
+     * @param array $params
+     * @param string $page
+     * @param bool $handle_actions Run the posted action instead of loading the page data
+     * @return array|null Null when the page does not exist
+     */
      function spamexpertsreseller_page($params, $page, $handle_actions){
          // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
          include_once(__DIR__.DIRECTORY_SEPARATOR.'class.connection.php');
@@ -373,14 +373,14 @@ function spamexpertsreseller_setupError($params, $lang) {
     return null;
 }
 
-/**
-* FUNCTION spamexpertsreseller_management
-* Display extended pages in clientarea. A posted action is run first, then
-* redirected to the page so the result is shown by a GET request.
-* @params array
-* @return array
-*/
 if (!function_exists('spamexpertsreseller_management')){
+     /**
+     * FUNCTION spamexpertsreseller_management
+     * Display extended pages in clientarea. A posted action is run first, then
+     * redirected to the page so the result is shown by a GET request.
+     * @param array $params
+     * @return array
+     */
      function spamexpertsreseller_management($params){
          $page = isset($_REQUEST['page']) ? $_REQUEST['page'] : '';
 

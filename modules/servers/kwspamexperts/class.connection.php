@@ -27,12 +27,20 @@
  */
 class kwspamexperts_api
 {
+    /** @var string|null */
     private $error = null;
+    /** @var string|null */
     private $url = null;
+    /** @var string|null */
     private $user = null;
+    /** @var string|null */
     private $pass = null;
+    /** @var array|null Decoded API response */
     private $response = null;
 
+    /**
+     * @param array $params Module parameters
+     */
     public function __construct($params)
     {
         $this->url = $params['configoption2'];
@@ -42,6 +50,11 @@ class kwspamexperts_api
         $this->pass = html_entity_decode($params['configoption4'], ENT_QUOTES);
     }
 
+    /**
+     * @param string $action API path, without the /api/ prefix
+     * @param bool $format Append /format/json/ to the path
+     * @return void
+     */
     public function call($action, $format = true)
     {
         $ch = curl_init();
@@ -78,6 +91,10 @@ class kwspamexperts_api
 
     // Values masked in the module log: the password in the
     // request path and the SSO ticket returned by authticket/create.
+    /**
+     * @param string $action
+     * @return string[]
+     */
     private function secretsToMask($action)
     {
         $secrets = array();

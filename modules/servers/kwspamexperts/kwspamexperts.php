@@ -214,6 +214,12 @@ function kwspamexperts_ChangePackage($params) {
         return $api->error();
 }
 
+/**
+* FUNCTION kwspamexperts_SuspendAccount
+* Suspend Account
+* @param array $params
+* @return string
+*/
 function kwspamexperts_SuspendAccount($params)
 {
     if ($error = kwspamexperts_configError($params)) {
@@ -235,6 +241,12 @@ function kwspamexperts_SuspendAccount($params)
         return $api->error();
 }
 
+/**
+* FUNCTION kwspamexperts_UnsuspendAccount
+* Unsuspend Account
+* @param array $params
+* @return string
+*/
 function kwspamexperts_UnsuspendAccount($params)
 {
     if ($error = kwspamexperts_configError($params)) {
@@ -255,13 +267,13 @@ function kwspamexperts_UnsuspendAccount($params)
         return $api->error();
 }
 
-/**
-* FUNCTION kwspamexperts_getLang
-* Get user language
-* @params array
-* @return string
-*/
 if(!function_exists('kwspamexperts_getLang')){
+    /**
+    * FUNCTION kwspamexperts_getLang
+    * Get user language
+    * @param array $params
+    * @return array
+    */
     function kwspamexperts_getLang($params){
         global $CONFIG;
         if(!empty($_SESSION['Language']))
@@ -307,15 +319,15 @@ function kwspamexperts_ClientAreaAllowedFunctions() {
     return $buttonarray;
 }
 
-/**
-* FUNCTION kwspamexperts_page
-* Run a management page script and collect its template vars
-* @param array $params
-* @param string $page
-* @param bool $handle_actions Run the posted action instead of loading the page data
-* @return array|null Null when the page does not exist
-*/
 if (!function_exists('kwspamexperts_page')){
+     /**
+     * FUNCTION kwspamexperts_page
+     * Run a management page script and collect its template vars
+     * @param array $params
+     * @param string $page
+     * @param bool $handle_actions Run the posted action instead of loading the page data
+     * @return array|null Null when the page does not exist
+     */
      function kwspamexperts_page($params, $page, $handle_actions){
          $lang              = kwspamexperts_getLang($params);
          $api               = new kwspamexperts_api($params);
@@ -387,14 +399,14 @@ function kwspamexperts_setupError($params, $lang) {
     return null;
 }
 
-/**
-* FUNCTION kwspamexperts_management
-* Display extended pages in clientarea. A posted action is run first, then
-* redirected to the page so the result is shown by a GET request.
-* @params array
-* @return array
-*/
 if (!function_exists('kwspamexperts_management')){
+     /**
+     * FUNCTION kwspamexperts_management
+     * Display extended pages in clientarea. A posted action is run first, then
+     * redirected to the page so the result is shown by a GET request.
+     * @param array $params
+     * @return array
+     */
      function kwspamexperts_management($params){
          $page = isset($_REQUEST['page']) ? $_REQUEST['page'] : '';
 

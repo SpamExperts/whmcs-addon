@@ -60,6 +60,10 @@ function spamexperts_deactivate()
 }
 
 
+/**
+ * Addon upgrade
+ * @param array $vars
+ */
 function spamexperts_upgrade($vars)
 {
     //SOME USEFUL STUFF
@@ -76,7 +80,7 @@ function spamexperts_upgrade($vars)
 
 /**
  * Admin area output
- * @param type $vars 
+ * @param array $vars
  */
 function spamexperts_output($vars)
 {
@@ -86,6 +90,11 @@ function spamexperts_output($vars)
     require_once __DIR__.DS.'core'.DS.'output.php';
 }
 
+/**
+ * Client area output
+ * @param array $vars
+ * @return array
+ */
 function spamexperts_clientarea($vars) 
 {
     //Enable Client Area
@@ -111,6 +120,11 @@ function spamexperts_clientarea($vars)
 
 
 /**** HELPER ****/
+/**
+ * Module class name, the name of the addon directory
+ * @param string $file
+ * @return string
+ */
 function spamexperts_getModuleClass($file)
 {
     // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
