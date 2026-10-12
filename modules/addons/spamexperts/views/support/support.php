@@ -18,6 +18,11 @@ $serversDir = ROOTDIR . DS . 'modules' . DS . 'servers' . DS;
 $hasServerModule = file_exists($serversDir . 'kwspamexperts' . DS . 'kwspamexperts.php');
 // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
 $hasResellerModule = file_exists($serversDir . 'spamexpertsreseller' . DS . 'spamexpertsreseller.php');
+// WHMCS 9, with the lowest PHP version it supports. Use 1.0 on WHMCS 8.
+$minWhmcs = '9.0.0';
+$minPhp   = '8.2.0';
+// Without a suffix such as -release.1, which version_compare() ranks below the bare version
+$whmcsVersion = strtok($CONFIG['Version'], '-');
 ?>
 <table class="table table-striped">
     <thead>
@@ -59,8 +64,8 @@ $hasResellerModule = file_exists($serversDir . 'spamexpertsreseller' . DS . 'spa
         <tr>
             <td width="50%">WHMCS Version</td>
             <td>
-                <?php if (version_compare($CONFIG['Version'], '5.0.0', '<')) { ?>
-                    <span class="text-danger">Required Version >= 5.0.0</span>
+                <?php if (version_compare($whmcsVersion, $minWhmcs, '<')) { ?>
+                    <span class="text-danger">Required Version >= <?php echo $minWhmcs; ?></span>
                 <?php } else { ?>
                     <span class="text-success">OK</span>
                 <?php } ?>
@@ -69,8 +74,8 @@ $hasResellerModule = file_exists($serversDir . 'spamexpertsreseller' . DS . 'spa
         <tr>
             <td>PHP Version</td>
             <td>
-                <?php if (version_compare(PHP_VERSION, '5.0.0', '<')) { ?>
-                    <span class="text-danger">Required Version >= 5.0.0</span>
+                <?php if (version_compare(PHP_VERSION, $minPhp, '<')) { ?>
+                    <span class="text-danger">Required Version >= <?php echo $minPhp; ?></span>
                 <?php } else { ?>
                     <span class="text-success">OK</span>
                 <?php } ?>
