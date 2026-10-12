@@ -73,7 +73,7 @@ $api ->call("domainalias/list/domain/" . $domain . "/");
 if ($api->isSuccess()) {
     $data = $api->getResponse();
 
-    foreach ($data['result'] as $key => $val) {
+    foreach ((array) $data['result'] as $key => $val) {
         if ($val === $domain) {
             unset($data['result'][$key]);
         }

@@ -37,7 +37,10 @@ if (! $params['configoption5']) {
                             $found = true;
                         }
                     }
-                } elseif (isset($_POST['routetodel'])) {
+                } elseif (
+                    isset($_POST['routetodel'], $_POST['routeporttodel'])
+                    && is_string($_POST['routetodel']) && is_string($_POST['routeporttodel'])
+                ) {
                     foreach ($routes['result'] as $key => $val) {
                         if ($val === $_POST['routetodel'] . '::' . $_POST['routeporttodel']) {
                             $found = true;
@@ -109,7 +112,7 @@ if (! $params['configoption5']) {
     if ($api->isSuccess()) {
         $data = $api->getResponse();
 
-        foreach ($data['result'] as $key => $val) {
+        foreach ((array) $data['result'] as $key => $val) {
             $vars['domainroutes'][] = explode(':', $val);
         }
     } else {

@@ -25,7 +25,7 @@ if (! $params['configoption6']) {
         $input = [];
         foreach ($contacts as $field => $contact) {
             [$endpoint, $label] = $contact;
-            if (!isset($_POST[$field]) || trim($_POST[$field]) === '') {
+            if (!isset($_POST[$field]) || !is_string($_POST[$field]) || trim($_POST[$field]) === '') {
                 continue;
             }
             $api->call($endpoint . '/get/domain/' . $domain . '/');
