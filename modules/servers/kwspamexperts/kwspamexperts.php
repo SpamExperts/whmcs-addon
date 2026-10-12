@@ -86,6 +86,9 @@ function kwspamexperts_configError($params)
     if (preg_match('#^\s*http://#i', $params['configoption2'])) {
         return "Set the Spam Panel URL to an https:// address in the product's Module Settings.";
     }
+    if (str_contains($params['configoption3'], ':')) {
+        return "Set an API Username without a colon in the product's Module Settings.";
+    }
 
     return null;
 }

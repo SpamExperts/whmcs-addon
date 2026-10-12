@@ -8,6 +8,8 @@ class spamexperts_api
 
     /** The error for a plain HTTP Spam Panel URL, refused before any request */
     public const HTTP_URL = 'The Spam Panel URL must use https://, so the API credentials are sent encrypted.';
+    /** The error for a username with a colon, which Basic authentication cannot carry */
+    public const USERNAME_COLON = 'The API username cannot contain a colon, which Basic authentication cannot carry.';
 
     /** @var string|null */
     private $error = null;
@@ -48,6 +50,12 @@ class spamexperts_api
         if (preg_match('#^\s*http://#i', (string) $this->url)) {
             $this->response = null;
             $this->error = self::HTTP_URL;
+            return;
+        }
+        // Nor with a colon in the username, as Basic authentication ends the username there
+        if (str_contains((string) $this->user, ':')) {
+            $this->response = null;
+            $this->error = self::USERNAME_COLON;
             return;
         }
 

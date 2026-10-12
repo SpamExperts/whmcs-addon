@@ -76,6 +76,9 @@ function spamexpertsreseller_configError($params)
     if (preg_match('#^\s*http://#i', $params['configoption1'])) {
         return "Set the Spam Panel URL to an https:// address in the product's Module Settings.";
     }
+    if (str_contains($params['configoption2'], ':')) {
+        return "Set an API Username without a colon in the product's Module Settings.";
+    }
 
     return null;
 }
@@ -162,6 +165,10 @@ function spamexpertsreseller_CreateAccount($params)
     }
     if (!spamexpertsreseller_isDomainsLimit($params['configoption4'])) {
         return "Set the Domains Limits to a whole number in the product's Module Settings.";
+    }
+    // The reseller could not log in to the API with it, which Domains Management needs
+    if (str_contains($username, ':')) {
+        return "Username cannot contain a colon. Please enter another username in the Username field.";
     }
 
     // for add, the optional value needed for api_usage is the inverse of the config option to disable api access
