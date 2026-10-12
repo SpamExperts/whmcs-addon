@@ -6,6 +6,9 @@ class spamexperts_api
     // phpcs:ignore Generic.Files.LineLength.TooLong
     public const INVALID_CREDENTIALS = 'The API credentials provided are incorrect, please specify a valid API username and password.';
 
+    /** The error for a plain HTTP Spam Panel URL, refused before any request */
+    public const HTTP_URL = 'The Spam Panel URL must use https://, so the API credentials are sent encrypted.';
+
     /** @var string|null */
     private $error = null;
     /** @var string|null */
@@ -41,13 +44,24 @@ class spamexperts_api
      */
     public function call($action)
     {
+        // Not over plain HTTP, which would send the API credentials unencrypted
+        if (preg_match('#^\s*http://#i', (string) $this->url)) {
+            $this->response = null;
+            $this->error = self::HTTP_URL;
+            return;
+        }
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $this->url . "/api/" . $action . "/format/json/");
+        // A Spam Panel URL may lack a scheme, which curl would take as http
+        curl_setopt($ch, CURLOPT_DEFAULT_PROTOCOL, 'https');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_USERPWD, $this->user . ":" . $this->pass);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        // Nor follow a redirect to plain HTTP
+        curl_setopt($ch, CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTPS);
         // Fail fast on an unreachable host, so the page shows the error
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
         // Only a guard against a hung API, so it doesn't hold PHP workers and cron forever

@@ -73,6 +73,9 @@ function spamexpertsreseller_configError($params)
     if (empty($params['configoption1']) || empty($params['configoption2']) || empty($params['configoption3'])) {
         return "Set the Spam Panel URL, API Username and API Password in the product's Module Settings.";
     }
+    if (preg_match('#^\s*http://#i', $params['configoption1'])) {
+        return "Set the Spam Panel URL to an https:// address in the product's Module Settings.";
+    }
 
     return null;
 }
@@ -339,9 +342,11 @@ function spamexpertsreseller_loginUrl($params)
         return null;
     }
 
-    $url = (!str_contains($params['configoption1'], 'http'))
-        ? 'https://' . $params['configoption1']
-        : $params['configoption1'];
+    // The API refuses http://, so a URL without https:// lacks a scheme
+    $url = $params['configoption1'];
+    if (!preg_match('#^https://#i', $url)) {
+        $url = 'https://' . $url;
+    }
 
     return $url . '/?authticket=' . urlencode($res['result']);
 }

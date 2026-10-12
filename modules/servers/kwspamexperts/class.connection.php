@@ -5,6 +5,9 @@ class kwspamexperts_api
     /** The error the API returns for any call when the credentials are wrong */
     // phpcs:ignore Generic.Files.LineLength.TooLong
     public const INVALID_CREDENTIALS = 'The API credentials provided are incorrect, please specify a valid API username and password.';
+    /** The error for a plain HTTP Spam Panel URL, refused before any request */
+    public const HTTP_URL = 'The Spam Panel URL must use https://, so the API credentials are sent encrypted.';
+
     /** The error for a domain the account doesn't have, for sprintf() */
     public const DOMAIN_NOT_ALLOWED = 'You are not allowed to manage the domain %s';
 
@@ -38,13 +41,24 @@ class kwspamexperts_api
      */
     public function call($action, $format = true)
     {
+        // Not over plain HTTP, which would send the API credentials unencrypted
+        if (preg_match('#^\s*http://#i', (string) $this->url)) {
+            $this->response = null;
+            $this->error = self::HTTP_URL;
+            return;
+        }
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $this->url . "/api/" . $action . ($format ? "/format/json/" : ""));
+        // A Spam Panel URL may lack a scheme, which curl would take as http
+        curl_setopt($ch, CURLOPT_DEFAULT_PROTOCOL, 'https');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_USERPWD, $this->user . ":" . $this->pass);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        // Nor follow a redirect to plain HTTP
+        curl_setopt($ch, CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTPS);
         // Fail fast on an unreachable host, so the page shows the error
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
         // Only a guard against a hung API, so it doesn't hold PHP workers and cron forever

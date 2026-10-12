@@ -83,6 +83,9 @@ function kwspamexperts_configError($params)
     if (empty($params['configoption2']) || empty($params['configoption3']) || empty($params['configoption4'])) {
         return "Set the Spam Panel URL, API Username and API Password in the product's Module Settings.";
     }
+    if (preg_match('#^\s*http://#i', $params['configoption2'])) {
+        return "Set the Spam Panel URL to an https:// address in the product's Module Settings.";
+    }
 
     return null;
 }
@@ -633,9 +636,11 @@ function kwspamexperts_loginUrl($params)
         return null;
     }
 
-    $api_url = (str_contains($params['configoption2'], 'http'))
-        ? $params['configoption2']
-        : 'https://' . $params['configoption2'];
+    // The API refuses http://, so a URL without https:// lacks a scheme
+    $api_url = $params['configoption2'];
+    if (!preg_match('#^https://#i', $api_url)) {
+        $api_url = 'https://' . $api_url;
+    }
 
     return $api_url . '/?authticket=' . urlencode($auth['result']);
 }
