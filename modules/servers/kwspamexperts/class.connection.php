@@ -39,10 +39,9 @@ class kwspamexperts_api
 
     /**
      * @param string $action API path, without the /api/ prefix
-     * @param bool $format Append /format/json/ to the path
      * @return void
      */
-    public function call($action, $format = true)
+    public function call($action)
     {
         // Not over plain HTTP, which would send the API credentials unencrypted
         if (preg_match('#^\s*http://#i', (string) $this->url)) {
@@ -58,7 +57,7 @@ class kwspamexperts_api
         }
 
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->url . "/api/" . $action . ($format ? "/format/json/" : ""));
+        curl_setopt($ch, CURLOPT_URL, $this->url . "/api/" . $action . "/format/json/");
         // A Spam Panel URL may lack a scheme, which curl would take as http
         curl_setopt($ch, CURLOPT_DEFAULT_PROTOCOL, 'https');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -95,7 +94,7 @@ class kwspamexperts_api
         logModuleCall(
             'kwspamexperts',
             str_replace($secrets, '********', $action),
-            $this->url . "/api/" . $action . ($format ? "/format/json/" : ""),
+            $this->url . "/api/" . $action . "/format/json/",
             print_r($this->response, true),
             '',
             $secrets

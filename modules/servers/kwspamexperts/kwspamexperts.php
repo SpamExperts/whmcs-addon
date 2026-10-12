@@ -276,7 +276,7 @@ function kwspamexperts_SuspendAccount($params)
     if (!kwspamexperts_isHostname($domain)) {
         return "Domain is empty or invalid. Please enter a valid domain name in the Domain field.";
     }
-    $api ->call("domain/whitelistrecipient/domain/" . $domain . "/recipient/*/", false);
+    $api ->call("domain/whitelistrecipient/domain/" . $domain . "/recipient/*/");
 
     if ($api->isSuccess()) {
         return "success";
@@ -301,7 +301,7 @@ function kwspamexperts_UnsuspendAccount($params)
     if (!kwspamexperts_isHostname($domain)) {
         return "Domain is empty or invalid. Please enter a valid domain name in the Domain field.";
     }
-    $api ->call("domain/unwhitelistrecipient/domain/" . $domain . "/recipient/*/", false);
+    $api ->call("domain/unwhitelistrecipient/domain/" . $domain . "/recipient/*/");
 
     if ($api->isSuccess()) {
         return "success";
