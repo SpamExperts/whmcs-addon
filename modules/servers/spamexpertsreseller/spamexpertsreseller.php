@@ -376,7 +376,7 @@ if (!function_exists('spamexpertsreseller_page')) {
             $vars['token'] = generate_token('plain');
         }
 
-        $available_pages = array('managedomains', 'stats');
+        $available_pages = array('managedomains');
         // phpcs:disable PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
         if (
             empty($page) || !in_array($page, $available_pages, true)

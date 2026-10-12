@@ -7,7 +7,6 @@ $lang                                       = array();
 $lang['mainsite']['login']                  = 'Log In To Panel';
 $lang['mainsite']['management']             = 'Management';
 $lang['mainsite']['manage_domains']         = 'Domains Management';
-$lang['mainsite']['stats']                  = 'Bandwidth Usage';
 $lang['mainsite']['notadded']               = "The reseller account '%s' has not been added to this spam filter account.";
 $lang['mainsite']['notconfigured']          = 'This product is not configured properly. Please contact support.';
 $lang['mainsite']['notsetup']               = 'This service has not been set up yet. Please contact support.';
@@ -30,13 +29,5 @@ $lang['managedomains']['invalid_owner']     = 'Domain is assigned to the another
 $lang['managedomains']['invalid_domain']    = 'Please enter a valid domain name.';
 
 
-
-$lang['stats']['header']                    = 'Bandwidth Usage';
-$lang['stats']['incoming_bandwidth_daily']  = 'Incoming Bandwidth Daily';
-$lang['stats']['incoming_bandwidth_yearly'] = 'Incoming Bandwidth Yearly';
-$lang['stats']['outgoing_bandwidth_daily']  = 'Outgoing Bandwidth Daily';
-$lang['stats']['outgoing_bandwidth_yearly'] = 'Outgoing Bandwidth Yearly';
-$lang['stats']['domain']                    = 'Domain';
-$lang['stats']['nothing_to_display']        = 'Nothing to display.';
 
 $lang['portal']['auto_redirect']            = 'Please wait, you will be redirected automatically.';
