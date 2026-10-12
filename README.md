@@ -3,6 +3,9 @@
 # WHMCS addon
 An add-on for WHMCS (https://whmcs.com) providing integration with SpamExperts' services
 
+## Requirements
+WHMCS 9.0 or later with PHP 8.2 or later. Stay on version 1.0 for WHMCS 8.
+
 ## Documentation
 Administrator and end-user documentation can be found at https://documentation.n-able.com/spamexperts/userguide/Content/Integration/whmcs-addon.htm
 

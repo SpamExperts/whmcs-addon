@@ -13,7 +13,7 @@ class spamexperts
     public $description = 'Allows to simply create products, test connection with SpamExperts API and show WHMCS server configuration.';
 
     //Module Version
-    public $version = '1.0';
+    public $version = '2.0';
 
     //Module Author
     public $author = '<a href="https://spamexperts.com" target="_blank">SpamExperts.com</a>';
