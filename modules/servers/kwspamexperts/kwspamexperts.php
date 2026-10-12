@@ -296,7 +296,9 @@ function kwspamexperts_UnsuspendAccount($params)
 if (!function_exists('kwspamexperts_getLang')) {
     /**
     * FUNCTION kwspamexperts_getLang
-    * Get user language
+    * Get the strings in the client's language. The English ones are loaded
+    * first, so a language file only needs the strings it translates.
+    * Adding a language takes a language/<name>.php file named as in WHMCS.
     * @param array $params
     * @return array
     */
@@ -304,35 +306,26 @@ if (!function_exists('kwspamexperts_getLang')) {
     {
         global $CONFIG;
         if (!empty($_SESSION['Language'])) {
-            $language = strtolower($_SESSION['Language']);
-        } elseif (
-            isset($params['clientsdetails']['language'])
-            && strtolower($params['clientsdetails']['language']) != ''
-        ) {
-            $language = strtolower($params['clientsdetails']['language']);
+            $language = $_SESSION['Language'];
+        } elseif (!empty($params['clientsdetails']['language'])) {
+            $language = $params['clientsdetails']['language'];
         } else {
-            $language = $CONFIG['Language'];
+            $language = isset($CONFIG['Language']) ? $CONFIG['Language'] : '';
         }
+        $language = strtolower((string) $language);
 
-        $available_languages = array('english');
-        // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-        $langfilename = __DIR__ . DS . 'language' . DS . $language . '.php';
+        $dir = __DIR__ . DS . 'language' . DS;
+        // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
+        require($dir . 'english.php');
+
+        // Only a plain name, so the language cannot point outside the folder
         // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
-        if (in_array($language, $available_languages) && file_exists($langfilename)) {
+        if ($language !== 'english' && preg_match('/^[a-z-]+$/', $language) && file_exists($dir . $language . '.php')) {
             // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-            require($langfilename);
-        } else {
-            // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-            require(__DIR__ . DS . 'language' . DS . 'english.php');
+            require($dir . $language . '.php');
         }
 
-        if (isset($lang)) {
-            return $lang;
-        } elseif (isset($LANG)) {
-            return $LANG;
-        } else {
-            return array();
-        }
+        return isset($lang) ? $lang : array();
     }
 }
 
