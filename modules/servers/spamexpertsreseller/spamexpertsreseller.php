@@ -121,6 +121,18 @@ function spamexpertsreseller_isDomainsLimit($value)
     return is_string($value) && ctype_digit($value);
 }
 
+/**
+* FUNCTION spamexpertsreseller_panelUsername
+* The username as the panel stores it. The API strips backslashes and tags from
+* every username it is given and trims it, but keeps the case for resellers.
+* @param string $username
+* @return string
+*/
+function spamexpertsreseller_panelUsername($username)
+{
+    return strip_tags(preg_replace('/(^\s+)|(\s+$)/us', '', stripslashes($username)));
+}
+
 
 /**
 * FUNCTION spamexpertsreseller_CreateAccount
@@ -165,7 +177,8 @@ function spamexpertsreseller_CreateAccount($params)
             ->update([
                 // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.CryptoFunctions.WarnCryptoFunc
                 'password' => encrypt($password),
-                'username' => $username,
+                // As the panel stores it, so later lookups in its reseller list match
+                'username' => spamexpertsreseller_panelUsername($username),
                 'updated_at' => Carbon::now()
             ]);
         return "success";
@@ -483,9 +496,14 @@ function spamexpertsreseller_apiError($params, $lang)
             ? $lang['mainsite']['notconfigured']
             : $lang['mainsite']['apierror'];
     }
+    // Without case, as the panel finds a reseller by its username in any case
+    $username = mb_strtolower(spamexpertsreseller_panelUsername($params['username']), 'UTF-8');
     foreach ((array) $res['result'] as $resellers) {
         foreach ((array) $resellers as $reseller) {
-            if (isset($reseller['username']) && $reseller['username'] === $params['username']) {
+            if (
+                isset($reseller['username']) && is_string($reseller['username'])
+                && mb_strtolower($reseller['username'], 'UTF-8') === $username
+            ) {
                 return null;
             }
         }
