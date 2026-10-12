@@ -354,7 +354,7 @@ function spamexpertsreseller_loginUrl($params)
     }
 
     // The API refuses http://, so a URL without https:// lacks a scheme
-    $url = $params['configoption1'];
+    $url = trim($params['configoption1']);
     if (!preg_match('#^https://#i', $url)) {
         $url = 'https://' . $url;
     }

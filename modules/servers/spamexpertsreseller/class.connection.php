@@ -28,7 +28,8 @@ class spamexperts_api
      */
     public function __construct($params, $user = false)
     {
-        $this->url = $params['configoption1'];
+        // Without the spaces a pasted URL may have, which curl rejects
+        $this->url = trim((string) $params['configoption1']);
         if ($user) {
             $this->user = $params['username'];
             $this->pass = $params['password'];

@@ -641,7 +641,7 @@ function kwspamexperts_loginUrl($params)
     }
 
     // The API refuses http://, so a URL without https:// lacks a scheme
-    $api_url = $params['configoption2'];
+    $api_url = trim($params['configoption2']);
     if (!preg_match('#^https://#i', $api_url)) {
         $api_url = 'https://' . $api_url;
     }

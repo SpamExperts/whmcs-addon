@@ -29,7 +29,8 @@ class kwspamexperts_api
      */
     public function __construct($params)
     {
-        $this->url = $params['configoption2'];
+        // Without the spaces a pasted URL may have, which curl rejects
+        $this->url = trim((string) $params['configoption2']);
         // WHMCS stores the password field HTML-encoded. Text fields are stored raw
         // on WHMCS 9 but may be encoded on older versions, so decode both.
         $this->user = html_entity_decode($params['configoption3'], ENT_QUOTES);
