@@ -78,14 +78,6 @@ if (!$lerror) {
     //CONTROLLER
     // phpcs:disable PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
     if (
-        isset($_REQUEST['modsubpage'])
-        && in_array($PAGE, $available_pages)
-        && in_array($_REQUEST['modsubpage'], $available_pages)
-        && file_exists(ADDON_DIR . DS . 'pages' . DS . $PAGE . DS . $_REQUEST['modsubpage'] . '.php')
-    ) {
-        // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI,PHPCS_SecurityAudit.BadFunctions.EasyRFI.ErrEasyRFI
-        require ADDON_DIR . DS . 'pages' . DS . $PAGE . DS . $_REQUEST['modsubpage'] . '.php';
-    } elseif (
         in_array($PAGE, $available_pages)
         && file_exists(ADDON_DIR . DS . 'pages' . DS . $PAGE . DS . $PAGE . '.php')
     ) {
@@ -97,14 +89,6 @@ if (!$lerror) {
 
     //LOCATE VIEW FILE AND LOAD IT
     if (
-        isset($_REQUEST['modsubpage'])
-        && in_array($PAGE, $available_pages)
-        && in_array($_REQUEST['modsubpage'], $available_pages)
-        && file_exists(ADDON_DIR . DS . 'views' . DS . $PAGE . DS . $_REQUEST['modsubpage'] . '.php')
-    ) {
-        // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI,PHPCS_SecurityAudit.BadFunctions.EasyRFI.ErrEasyRFI
-        require ADDON_DIR . DS . 'views' . DS . $PAGE . DS . $_REQUEST['modsubpage'] . '.php';
-    } elseif (
         in_array($PAGE, $available_pages)
         && file_exists(ADDON_DIR . DS . 'views' . DS . $PAGE . DS . $PAGE . '.php')
     ) {
