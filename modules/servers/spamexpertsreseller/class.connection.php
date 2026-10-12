@@ -91,12 +91,12 @@ class spamexperts_api
      */
     private function secretsToMask($action)
     {
-        $secrets = array();
+        $secrets = [];
         if (preg_match('#/password/([^/]+)#', $action, $match)) {
             $secrets[] = $match[1];
         }
         if (
-            strpos($action, 'authticket/') !== false
+            str_contains($action, 'authticket/')
             && isset($this->response['result'])
             && is_string($this->response['result'])
             && $this->response['result'] !== ''

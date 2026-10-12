@@ -20,15 +20,15 @@ if (! $params['configoption5']) {
         // Both actions rewrite the full route list. call() treats any HTTP 200
         // as success, even when the body isn't JSON, so check the list too.
         if (!$api->isSuccess() || !isset($routes['result']) || !is_array($routes['result'])) {
-            $vars['_status'] = array('code' => 0,'msg' => $api->isSuccess() ? 'Resource not found!' : $api->error());
+            $vars['_status'] = ['code' => 0,'msg' => $api->isSuccess() ? 'Resource not found!' : $api->error()];
             return;
         }
-        switch (isset($_POST['_action']) ? $_POST['_action'] : '') {
+        switch ($_POST['_action'] ?? '') {
             case 'deleteroute':
                 $found = false;
                 if (!empty($_POST['routes']['old_list']) && is_array($_POST['routes']['old_list'])) {
                     if (count($_POST['routes']['old_list']) === count($routes['result'])) {
-                        $vars['_status'] = array('code' => 0,'msg' => $vars['lang']['remove_info']);
+                        $vars['_status'] = ['code' => 0,'msg' => $vars['lang']['remove_info']];
                         break;
                     }
                     foreach ($routes['result'] as $key => $val) {
@@ -55,12 +55,12 @@ if (! $params['configoption5']) {
                     );
 
                     if ($api->isSuccess()) {
-                        $vars['_status'] = array('code' => 1,'msg' => $vars['lang']['route_removed']);
+                        $vars['_status'] = ['code' => 1,'msg' => $vars['lang']['route_removed']];
                     } else {
-                        $vars['_status'] = array('code' => 0,'msg' => $api->error());
+                        $vars['_status'] = ['code' => 0,'msg' => $api->error()];
                     }
                 } else {
-                    $vars['_status'] = array('code' => 0,'msg' => 'Resource not found!');
+                    $vars['_status'] = ['code' => 0,'msg' => 'Resource not found!'];
                 }
 
 
@@ -75,11 +75,11 @@ if (! $params['configoption5']) {
                         $port = filter_var(
                             $port,
                             FILTER_VALIDATE_INT,
-                            array('options' => array('min_range' => 1, 'max_range' => 65535))
+                            ['options' => ['min_range' => 1, 'max_range' => 65535]]
                         );
                     }
                     if (!$validHost || $port === false) {
-                        $vars['_status'] = array('code' => 0,'msg' => $vars['lang']['invalid_route']);
+                        $vars['_status'] = ['code' => 0,'msg' => $vars['lang']['invalid_route']];
                         break;
                     }
 
@@ -93,9 +93,9 @@ if (! $params['configoption5']) {
                         . rawurlencode(json_encode($routes['result'])) . "/"
                     );
                     if ($api->isSuccess()) {
-                        $vars['_status'] = array('code' => 1,'msg' => $vars['lang']['route_added']);
+                        $vars['_status'] = ['code' => 1,'msg' => $vars['lang']['route_added']];
                     } else {
-                        $vars['_status'] = array('code' => 0,'msg' => $api->error());
+                        $vars['_status'] = ['code' => 0,'msg' => $api->error()];
                     }
                 }
                 break;
@@ -104,7 +104,7 @@ if (! $params['configoption5']) {
         return;
     }
 
-    $vars['domainroutes'] = array();
+    $vars['domainroutes'] = [];
     $api ->call("domain/getroute/domain/" . $domain . "/");
     if ($api->isSuccess()) {
         $data = $api->getResponse();
@@ -113,8 +113,8 @@ if (! $params['configoption5']) {
             $vars['domainroutes'][] = explode(':', $val);
         }
     } else {
-        $vars['_status'] = array('code' => 0,'msg' => $api->error());
+        $vars['_status'] = ['code' => 0,'msg' => $api->error()];
     }
 } else {
-    $vars['_status'] = array('code' => 2,'msg' => $vars['lang']['route_denied']);
+    $vars['_status'] = ['code' => 2,'msg' => $vars['lang']['route_denied']];
 }

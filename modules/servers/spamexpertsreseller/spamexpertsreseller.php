@@ -14,9 +14,9 @@ if (!defined("WHMCS")) {
 */
 function spamexpertsreseller_MetaData()
 {
-    return array(
+    return [
         'DisplayName' => 'SpamExperts Reseller',
-    );
+    ];
 }
 
 /**
@@ -26,38 +26,38 @@ function spamexpertsreseller_MetaData()
 */
 function spamexpertsreseller_ConfigOptions()
 {
-    $configarray = array(
-        "SpampanelURL"     => array(
+    $configarray = [
+        "SpampanelURL"     => [
             "Type"         => "text",
             "Size"         => "25",
             "FriendlyName" => "Spam Panel URL",
             "Description"  => ""
-        ),
-        "APIUsername"      => array(
+        ],
+        "APIUsername"      => [
             "Type"         => "text",
             "Size"         => "25",
             "FriendlyName" => "API Username",
             "Description"  => ""
-        ),
-        "APIPassword"      => array(
+        ],
+        "APIPassword"      => [
             "Type"         => "password",
             "Size"         => "25",
             "FriendlyName" => "API Password",
             "Description"  => ""
-        ),
-        "DomainsLimit"     => array(
+        ],
+        "DomainsLimit"     => [
             "Type"         => "text",
             "Size"         => "25",
             "FriendlyName" => "Domains Limits",
             "Description"  => "Whole number. 0 for unlimited, if the API account has no domains limit"
-        ),
-        "UsageLimits" => array(
+        ],
+        "UsageLimits" => [
             "Type"         => "yesno",
             "Size"         => "25",
             "FriendlyName" => "Usage Limits",
             "Description"  => "Tick to disallow access to the API for the reseller"
-        ),
-    );
+        ],
+    ];
     return $configarray;
 }
 
@@ -105,7 +105,7 @@ function spamexpertsreseller_isHostname($value)
 */
 function spamexpertsreseller_isEmail($value)
 {
-    return is_string($value) && strpos($value, '/') === false
+    return is_string($value) && !str_contains($value, '/')
         && filter_var($value, FILTER_VALIDATE_EMAIL) !== false;
 }
 
@@ -278,12 +278,12 @@ function spamexpertsreseller_ClientArea($params)
     $overview = 'clientarea.php?action=productdetails&id=' . $params['serviceid'];
 
     // The panel has the reseller only from create until terminate, as suspending doesn't touch it
-    if (!in_array($params['status'], array('Active', 'Suspended'), true)) {
+    if (!in_array($params['status'], ['Active', 'Suspended'], true)) {
         if (isset($_GET['manage'])) {
             spamexpertsreseller_redirect($overview);
         }
         spamexpertsreseller_shownPages(false);
-        return array('vars' => array('api_error' => null));
+        return ['vars' => ['api_error' => null]];
     }
 
     // The management pages are plain links to the product details, so they
@@ -298,7 +298,7 @@ function spamexpertsreseller_ClientArea($params)
     // Without a working panel, the sidebar has no management links and the overview shows why
     $lang  = spamexpertsreseller_getLang($params);
     $error = spamexpertsreseller_apiError($params, $lang);
-    $pages = $error ? array() : spamexpertsreseller_managePages($params, $lang);
+    $pages = $error ? [] : spamexpertsreseller_managePages($params, $lang);
     if (isset($_GET['manage'])) {
         // Only the pages the sidebar links, so not a disabled one either
         if (is_string($_GET['manage']) && isset($pages[$_GET['manage']])) {
@@ -314,7 +314,7 @@ function spamexpertsreseller_ClientArea($params)
 
     spamexpertsreseller_shownPages($error ? false : $pages);
 
-    return array('vars' => array('api_error' => $error));
+    return ['vars' => ['api_error' => $error]];
 }
 
 /**
@@ -339,7 +339,7 @@ function spamexpertsreseller_loginUrl($params)
         return null;
     }
 
-    $url = (strpos($params['configoption1'], 'http') === false)
+    $url = (!str_contains($params['configoption1'], 'http'))
         ? 'https://' . $params['configoption1']
         : $params['configoption1'];
 
@@ -365,7 +365,7 @@ if (!function_exists('spamexpertsreseller_getLang')) {
         } elseif (!empty($params['clientsdetails']['language'])) {
             $language = $params['clientsdetails']['language'];
         } else {
-            $language = isset($CONFIG['Language']) ? $CONFIG['Language'] : '';
+            $language = $CONFIG['Language'] ?? '';
         }
         $language = strtolower((string) $language);
 
@@ -380,7 +380,7 @@ if (!function_exists('spamexpertsreseller_getLang')) {
             require($dir . $language . '.php');
         }
 
-        return isset($lang) ? $lang : array();
+        return $lang ?? [];
     }
 }
 
@@ -408,7 +408,7 @@ if (!function_exists('spamexpertsreseller_page')) {
             $vars['token'] = generate_token('plain');
         }
 
-        $available_pages = array('managedomains');
+        $available_pages = ['managedomains'];
         // phpcs:disable PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
         if (
             empty($page) || !in_array($page, $available_pages, true)
@@ -427,7 +427,7 @@ if (!function_exists('spamexpertsreseller_page')) {
 
         $error = spamexpertsreseller_setupError($params, $lang);
         if ($error) {
-            $vars['_status'] = array('code' => 2, 'msg' => $error);
+            $vars['_status'] = ['code' => 2, 'msg' => $error];
             return $vars;
         }
 
@@ -524,9 +524,9 @@ if (!function_exists('spamexpertsreseller_managePages')) {
     {
         // The page calls the API as the reseller, so not when its API access is disallowed
         if ($params['configoption5'] === 'on') {
-            return array();
+            return [];
         }
-        return array('managedomains' => $lang['mainsite']['manage_domains']);
+        return ['managedomains' => $lang['mainsite']['manage_domains']];
     }
 }
 
@@ -569,10 +569,10 @@ if (!function_exists('spamexpertsreseller_management')) {
                 return null;
             }
 
-            return array(
+            return [
                 'tabOverviewReplacementTemplate' => 'templates/' . $page . '.tpl',
                 'templateVariables'              => $vars
-            );
+            ];
         }
 
         // WHMCS checks the token of its own forms only. A wrong one logs the

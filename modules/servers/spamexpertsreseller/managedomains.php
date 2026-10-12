@@ -15,32 +15,32 @@ if (!defined("WHMCS")) {
 $api = new spamexperts_api($params, true);
 
 if ($handle_actions) {
-    switch (isset($_POST['_action']) ? $_POST['_action'] : '') {
+    switch ($_POST['_action'] ?? '') {
         case 'unbind':
-            $unbindDomain = isset($_POST['unbind-domain']) ? $_POST['unbind-domain'] : '';
+            $unbindDomain = $_POST['unbind-domain'] ?? '';
             if (!spamexpertsreseller_isHostname($unbindDomain)) {
-                $vars['_status'] = array('code' => 0, 'msg' => $vars['lang']['invalid_domain']);
+                $vars['_status'] = ['code' => 0, 'msg' => $vars['lang']['invalid_domain']];
                 break;
             }
             $api->call('/domain/remove/domain/' . rawurlencode($unbindDomain) . '/');
 
             if ($api->isSuccess()) {
-                $vars['_status']  = array('code' => 1, 'msg' => $vars['lang']['domain_unbinded']);
+                $vars['_status']  = ['code' => 1, 'msg' => $vars['lang']['domain_unbinded']];
             } else {
-                $vars['_status']  = array('code' => 0, 'msg' => $api->error());
+                $vars['_status']  = ['code' => 0, 'msg' => $api->error()];
             }
             break;
         case 'bind':
-            $bindDomain = isset($_POST['bind']['domain']) ? $_POST['bind']['domain'] : '';
+            $bindDomain = $_POST['bind']['domain'] ?? '';
             if (!spamexpertsreseller_isHostname($bindDomain)) {
-                $vars['_status'] = array('code' => 0, 'msg' => $vars['lang']['invalid_domain']);
+                $vars['_status'] = ['code' => 0, 'msg' => $vars['lang']['invalid_domain']];
                 break;
             }
             $api->call('/domain/add/domain/' . rawurlencode($bindDomain) . '/');
             if ($api->isSuccess()) {
-                $vars['_status']  = array('code' => 1, 'msg' => $vars['lang']['domain_binded']);
+                $vars['_status']  = ['code' => 1, 'msg' => $vars['lang']['domain_binded']];
             } else {
-                $vars['_status']  = array('code' => 0, 'msg' => $api->error());
+                $vars['_status']  = ['code' => 0, 'msg' => $api->error()];
             }
 
             break;
@@ -54,5 +54,5 @@ if ($api->isSuccess()) {
     $list                   = $api->getResponse();
     $vars['domains_list']   = $list['result'];
 } else {
-    $vars['_status']        = array('code' => 0, 'msg' => $api->error());
+    $vars['_status']        = ['code' => 0, 'msg' => $api->error()];
 }

@@ -35,8 +35,8 @@ if (!function_exists('getApiSettings')) {
      */
     function getApiSettings()
     {
-        $data = unserialize(getWHMCSconfig('kwspamexperts_api'), array('allowed_classes' => false));
-        return is_array($data) ? $data : array('url' => '', 'user' => '', 'password' => '');
+        $data = unserialize(getWHMCSconfig('kwspamexperts_api'), ['allowed_classes' => false]);
+        return is_array($data) ? $data : ['url' => '', 'user' => '', 'password' => ''];
     }
 }
 

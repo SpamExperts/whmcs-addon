@@ -19,12 +19,12 @@ function spamexperts_config()
 
     $module = spamexperts_getModuleClass(__FILE__);
     $moduleConfig = new $module();
-    return array(
+    return [
         'name'          =>  $moduleConfig->system_name,
         'description'   =>  $moduleConfig->description,
         'version'       =>  $moduleConfig->version,
         'author'        =>  $moduleConfig->author
-    );
+    ];
 }
 
 function spamexperts_activate()

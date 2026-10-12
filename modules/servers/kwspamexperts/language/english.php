@@ -3,7 +3,7 @@
 // Translation strings are kept on one line
 // phpcs:disable Generic.Files.LineLength.TooLong
 
-$lang                                       = array();
+$lang                                       = [];
 $lang['mainsite']['management']             = 'Management';
 $lang['mainsite']['logintopanel']           = 'Log In To Panel';
 $lang['mainsite']['editcontactemail']       = 'Edit Contact E-mail';

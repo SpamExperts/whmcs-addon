@@ -40,8 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $AJAX = isset($_REQUEST['ajax']) ? 1 : 0;
 
 //FIND PAGE FILES
-$PAGE = isset($_REQUEST['modpage']) ? $_REQUEST['modpage'] : $moduleConfig->default_page;
-$available_pages = array('main', 'setupProducts', 'support');
+$PAGE = $_REQUEST['modpage'] ?? $moduleConfig->default_page;
+$available_pages = ['main', 'setupProducts', 'support'];
 
 //IS IT AJAX REQUEST? JUST INCLUDE CONTROLLER FILE AND VIEW
 if ($AJAX) {

@@ -75,8 +75,8 @@ if (!function_exists('spamexpertsreseller_managePageHeader')) {
         }
 
         // Only the management pages have a header
-        $lang = spamexpertsreseller_getLang(array());
-        return isset($lang[$_GET['manage']]['header']) ? $lang[$_GET['manage']]['header'] : null;
+        $lang = spamexpertsreseller_getLang([]);
+        return $lang[$_GET['manage']]['header'] ?? null;
     }
 }
 
@@ -90,27 +90,27 @@ add_hook('ClientAreaPage', 1, function ($vars) {
         !isset($vars['templatefile']) || $vars['templatefile'] !== 'clientareaproductdetails'
         || empty($vars['serviceid']) || empty($vars['breadcrumb'])
     ) {
-        return array();
+        return [];
     }
 
     $header = spamexpertsreseller_managePageHeader($vars['serviceid']);
     if ($header === null) {
-        return array();
+        return [];
     }
 
     $url        = 'clientarea.php?action=productdetails&id=' . (int) $vars['serviceid'];
     $breadcrumb = $vars['breadcrumb'];
     foreach ($breadcrumb as $i => $item) {
         if (
-            isset($item['link']) && strpos($item['link'], 'action=productdetails') !== false
-            && strpos($item['link'], 'id=') === false
+            isset($item['link']) && str_contains($item['link'], 'action=productdetails')
+            && !str_contains($item['link'], 'id=')
         ) {
             $breadcrumb[$i]['link'] = $url;
         }
     }
-    $breadcrumb[] = array('link' => $url . '&manage=' . urlencode($_GET['manage']), 'label' => $header);
+    $breadcrumb[] = ['link' => $url . '&manage=' . urlencode($_GET['manage']), 'label' => $header];
 
-    return array('breadcrumb' => $breadcrumb);
+    return ['breadcrumb' => $breadcrumb];
 });
 
 /**
@@ -148,24 +148,24 @@ add_hook('ClientAreaPrimarySidebar', 1, function ($primarySidebar) {
         return;
     }
 
-    $lang  = spamexpertsreseller_getLang(array());
-    $panel = $primarySidebar->addChild('spamexpertsreseller Management', array(
+    $lang  = spamexpertsreseller_getLang([]);
+    $panel = $primarySidebar->addChild('spamexpertsreseller Management', [
         'label' => $lang['mainsite']['management'],
         'icon'  => 'fa-wrench',
         'order' => $overview->getOrder() + 5,
-    ));
+    ]);
     $order = 10;
     foreach ($pages as $page => $label) {
-        $panel->addChild('spamexpertsreseller ' . $page, array(
+        $panel->addChild('spamexpertsreseller ' . $page, [
             'label' => $label,
             'uri'   => $url . '&manage=' . $page,
             'order' => $order,
-        ))->setCurrent($page === $current);
+        ])->setCurrent($page === $current);
         $order += 10;
     }
-    $panel->addChild('spamexpertsreseller login', array(
+    $panel->addChild('spamexpertsreseller login', [
         'label' => $lang['mainsite']['login'],
         'uri'   => $url . '&manage=login',
         'order' => $order,
-    ))->setAttribute('target', '_blank');
+    ])->setAttribute('target', '_blank');
 });

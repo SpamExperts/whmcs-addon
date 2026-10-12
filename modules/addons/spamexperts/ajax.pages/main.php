@@ -9,11 +9,11 @@ if (isset($_POST['action']) && $_POST['action'] === 'testconnection') {
     include_once(ROOTDIR . DS . 'modules' . DS . 'servers' . DS . 'kwspamexperts' . DS . 'class.connection.php');
 
     $api = new kwspamexperts_api(
-        array(
+        [
                 'configoption2' => $_POST['url'],
                 'configoption3' => $_POST['user'],
                 'configoption4' => $_POST['password']
-                )
+                ]
     );
 
     $api->call('/version/get/');

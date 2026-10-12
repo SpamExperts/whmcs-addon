@@ -14,25 +14,25 @@ if (!defined("WHMCS")) {
 }
 
 if ($handle_actions) {
-    switch (isset($_POST['_action']) ? $_POST['_action'] : '') {
+    switch ($_POST['_action'] ?? '') {
         case 'addalias':
-            $alias = isset($_POST['alias']['new']) ? $_POST['alias']['new'] : '';
+            $alias = $_POST['alias']['new'] ?? '';
             if (!kwspamexperts_isHostname($alias)) {
-                $vars['_status'] = array('code' => 0,'msg' => $vars['lang']['invalid_alias']);
+                $vars['_status'] = ['code' => 0,'msg' => $vars['lang']['invalid_alias']];
                 break;
             }
             $api->call("domainalias/add/domain/" . $domain . "/alias/" . rawurlencode($alias) . "/");
             if ($api->isSuccess()) {
-                $vars['_status'] = array('code' => 1,'msg' => $vars['lang']['alias_added']);
+                $vars['_status'] = ['code' => 1,'msg' => $vars['lang']['alias_added']];
             } else {
-                $vars['_status'] = array('code' => 0,'msg' => $api->error());
+                $vars['_status'] = ['code' => 0,'msg' => $api->error()];
             }
             break;
         case 'deletealias':
             if (!empty($_POST['alias']['old_list']) && is_array($_POST['alias']['old_list'])) {
                 foreach ($_POST['alias']['old_list'] as $val) {
                     if (!kwspamexperts_isHostname($val)) {
-                        $vars['_status'] = array('code' => 0,'msg' => $vars['lang']['invalid_alias']);
+                        $vars['_status'] = ['code' => 0,'msg' => $vars['lang']['invalid_alias']];
                         break 2;
                     }
                 }
@@ -40,23 +40,23 @@ if ($handle_actions) {
                 foreach ($_POST['alias']['old_list'] as $val) {
                     $api->call("domainalias/remove/domain/" . $domain . "/alias/" . rawurlencode($val) . "/");
                     if (!$api->isSuccess()) {
-                        $vars['_status'] = array('code' => 0,'msg' => $api->error());
+                        $vars['_status'] = ['code' => 0,'msg' => $api->error()];
                         break 2;
                     }
                 }
 
-                $vars['_status'] = array('code' => 1,'msg' => $vars['lang']['alias_removed']);
+                $vars['_status'] = ['code' => 1,'msg' => $vars['lang']['alias_removed']];
             } elseif (isset($_POST['delete-item'])) {
                 $alias = key((array) $_POST['delete-item']);
                 if (!kwspamexperts_isHostname($alias)) {
-                    $vars['_status'] = array('code' => 0,'msg' => $vars['lang']['invalid_alias']);
+                    $vars['_status'] = ['code' => 0,'msg' => $vars['lang']['invalid_alias']];
                     break;
                 }
                 $api->call("domainalias/remove/domain/" . $domain . "/alias/" . rawurlencode($alias) . "/");
                 if ($api->isSuccess()) {
-                    $vars['_status'] = array('code' => 1,'msg' => $vars['lang']['alias_removed']);
+                    $vars['_status'] = ['code' => 1,'msg' => $vars['lang']['alias_removed']];
                 } else {
-                    $vars['_status'] = array('code' => 0,'msg' => $api->error());
+                    $vars['_status'] = ['code' => 0,'msg' => $api->error()];
                 }
             }
 
@@ -67,7 +67,7 @@ if ($handle_actions) {
     return;
 }
 
-$vars['domainaliases'] = array();
+$vars['domainaliases'] = [];
 $api ->call("domainalias/list/domain/" . $domain . "/");
 
 if ($api->isSuccess()) {
@@ -81,5 +81,5 @@ if ($api->isSuccess()) {
 
     $vars['domainaliases'] = array_filter((array) $data['result']);
 } else {
-    $vars['_status'] = array('code' => 0,'msg' => $api->error());
+    $vars['_status'] = ['code' => 0,'msg' => $api->error()];
 }

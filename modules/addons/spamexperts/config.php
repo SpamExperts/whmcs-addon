@@ -22,17 +22,17 @@ class spamexperts
     public $default_page = 'main';
 
     //Top Menu
-    public $top_menu =  array(
-        'main'                  => array(
+    public $top_menu =  [
+        'main'                  => [
             'title'             => 'Configuration',
-        ),
-        'setupProducts'         =>  array(
+        ],
+        'setupProducts'         =>  [
             'title'             =>  'Setup Products',
-        ),
-        'support'               =>  array(
+        ],
+        'support'               =>  [
             'title'             =>  'Support',
-        ),
-    );
+        ],
+    ];
 
 
     //Enable PHP Debug Info

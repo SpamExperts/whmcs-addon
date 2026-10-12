@@ -20,9 +20,9 @@ include_once(__DIR__ . DIRECTORY_SEPARATOR . 'class.connection.php');
 */
 function kwspamexperts_MetaData()
 {
-    return array(
+    return [
         'DisplayName' => 'SpamExperts',
-    );
+    ];
 }
 
 /**
@@ -32,42 +32,42 @@ function kwspamexperts_MetaData()
 */
 function kwspamexperts_ConfigOptions()
 {
-    $configarray = array(
-     "ProductType"      => array(
+    $configarray = [
+     "ProductType"      => [
              "Type"         => "dropdown",
              "Options"      => "Incoming,Outgoing,Both",
              "FriendlyName" => "Product Type",
              "Description"  => ""
-         ),
-     "SpampanelURL"     => array(
+         ],
+     "SpampanelURL"     => [
              "Type"         => "text",
              "Size"         => "25",
              "FriendlyName" => "Spam Panel URL",
              "Description"  => ""
-         ),
-     "APIUsername"      => array(
+         ],
+     "APIUsername"      => [
              "Type"         => "text",
              "Size"         => "25",
              "FriendlyName" => "API Username",
              "Description"  => ""
-         ),
-     "APIPassword"      => array(
+         ],
+     "APIPassword"      => [
              "Type"         => "password",
              "Size"         => "25",
              "FriendlyName" => "API Password",
              "Description"  => ""
-         ),
-     "EditRoute"      => array(
+         ],
+     "EditRoute"      => [
              "Type"         => "yesno",
              "FriendlyName" => "Disable user access to manage routes page",
              "Description"  => ""
-         ),
-     "ChangeContact"      => array(
+         ],
+     "ChangeContact"      => [
              "Type"         => "yesno",
              "FriendlyName" => "Disable user access to edit contact e-mail page",
              "Description"  => ""
-         ),
-    );
+         ],
+    ];
     return $configarray;
 }
 
@@ -117,7 +117,7 @@ function kwspamexperts_isHostname($value)
 */
 function kwspamexperts_isEmail($value)
 {
-    if (!is_string($value) || strpos($value, '/') !== false) {
+    if (!is_string($value) || str_contains($value, '/')) {
         return false;
     }
     $at = strrpos($value, '@');
@@ -320,7 +320,7 @@ if (!function_exists('kwspamexperts_getLang')) {
         } elseif (!empty($params['clientsdetails']['language'])) {
             $language = $params['clientsdetails']['language'];
         } else {
-            $language = isset($CONFIG['Language']) ? $CONFIG['Language'] : '';
+            $language = $CONFIG['Language'] ?? '';
         }
         $language = strtolower((string) $language);
 
@@ -335,7 +335,7 @@ if (!function_exists('kwspamexperts_getLang')) {
             require($dir . $language . '.php');
         }
 
-        return isset($lang) ? $lang : array();
+        return $lang ?? [];
     }
 }
 
@@ -363,7 +363,7 @@ if (!function_exists('kwspamexperts_page')) {
             $vars['token'] = generate_token('plain');
         }
 
-        $available_pages = array('EditEmail', 'ManageRoutes', 'ManageAliases');
+        $available_pages = ['EditEmail', 'ManageRoutes', 'ManageAliases'];
         // phpcs:disable PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
         if (
             empty($page) || !in_array($page, $available_pages, true)
@@ -382,7 +382,7 @@ if (!function_exists('kwspamexperts_page')) {
 
         $error = kwspamexperts_setupError($params, $lang);
         if ($error) {
-            $vars['_status'] = array('code' => 2, 'msg' => $error);
+            $vars['_status'] = ['code' => 2, 'msg' => $error];
             return $vars;
         }
 
@@ -472,7 +472,7 @@ if (!function_exists('kwspamexperts_managePages')) {
     */
     function kwspamexperts_managePages($params, $lang)
     {
-        $pages = array();
+        $pages = [];
         if (empty($params['configoption6'])) {
             $pages['EditEmail'] = $lang['mainsite']['editcontactemail'];
         }
@@ -524,10 +524,10 @@ if (!function_exists('kwspamexperts_management')) {
                 return null;
             }
 
-            return array(
+            return [
                 'tabOverviewReplacementTemplate' => 'templates/' . $page . '.tpl',
                 'templateVariables'              => $vars
-            );
+            ];
         }
 
         // WHMCS checks the token of its own forms only. A wrong one logs the
@@ -573,12 +573,12 @@ function kwspamexperts_ClientArea($params)
     $overview = 'clientarea.php?action=productdetails&id=' . $params['serviceid'];
 
     // The panel has the domain only from create until terminate, as suspending just whitelists its mail
-    if (!in_array($params['status'], array('Active', 'Suspended'), true)) {
+    if (!in_array($params['status'], ['Active', 'Suspended'], true)) {
         if (isset($_GET['manage'])) {
             kwspamexperts_redirect($overview);
         }
         kwspamexperts_shownPages(false);
-        return array('vars' => array('api_error' => null));
+        return ['vars' => ['api_error' => null]];
     }
 
     // The management pages are plain links to the product details, so they
@@ -593,7 +593,7 @@ function kwspamexperts_ClientArea($params)
     // Without a working panel, the sidebar has no management links and the overview shows why
     $lang  = kwspamexperts_getLang($params);
     $error = kwspamexperts_apiError($params, $lang);
-    $pages = $error ? array() : kwspamexperts_managePages($params, $lang);
+    $pages = $error ? [] : kwspamexperts_managePages($params, $lang);
     if (isset($_GET['manage'])) {
         // Only the pages the sidebar links, so not a disabled one either
         if (is_string($_GET['manage']) && isset($pages[$_GET['manage']])) {
@@ -609,7 +609,7 @@ function kwspamexperts_ClientArea($params)
 
     kwspamexperts_shownPages($error ? false : $pages);
 
-    return array('vars' => array('api_error' => $error));
+    return ['vars' => ['api_error' => $error]];
 }
 
 /**
@@ -633,7 +633,7 @@ function kwspamexperts_loginUrl($params)
         return null;
     }
 
-    $api_url = (strpos($params['configoption2'], 'http') !== false)
+    $api_url = (str_contains($params['configoption2'], 'http'))
         ? $params['configoption2']
         : 'https://' . $params['configoption2'];
 

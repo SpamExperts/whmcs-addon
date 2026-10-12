@@ -18,11 +18,11 @@ $data  = getApiSettings();
 $curl  = curl_version();
 
 $api   = new kwspamexperts_api(
-    array(
+    [
             'configoption2' => $data['url'],
             'configoption3' => $data['user'],
             'configoption4' => $data['password']
-            )
+            ]
 );
 $api->call('/version/get/');
 
