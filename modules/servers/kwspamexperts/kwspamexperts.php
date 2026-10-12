@@ -110,13 +110,23 @@ function kwspamexperts_isHostname($value)
 * FUNCTION kwspamexperts_isEmail
 * Check a client supplied e-mail address before it goes into an API path. The
 * API splits its path on slashes, even encoded ones, so those are rejected too.
+* FILTER_VALIDATE_EMAIL only knows ASCII domains, so an IDN domain is checked
+* in its punycode form. The address itself is passed on unchanged.
 * @param mixed $value
 * @return bool
 */
 function kwspamexperts_isEmail($value)
 {
-    return is_string($value) && strpos($value, '/') === false
-        && filter_var($value, FILTER_VALIDATE_EMAIL) !== false;
+    if (!is_string($value) || strpos($value, '/') !== false) {
+        return false;
+    }
+    $at = strrpos($value, '@');
+    if ($at === false) {
+        return false;
+    }
+    $domain = idn_to_ascii(substr($value, $at + 1), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
+    return $domain !== false
+        && filter_var(substr($value, 0, $at + 1) . $domain, FILTER_VALIDATE_EMAIL, FILTER_FLAG_EMAIL_UNICODE) !== false;
 }
 
 

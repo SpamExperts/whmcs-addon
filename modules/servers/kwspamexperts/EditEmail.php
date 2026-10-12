@@ -15,15 +15,21 @@ if (!defined("WHMCS")) {
 
 if (! $params['configoption6']) {
     if ($handle_actions) {
-        // Each contact is updated on its own, so report each result
+        // Each contact is updated on its own, so report each result. Empty
+        // and unchanged fields are skipped, and failed input is kept for the form.
         $contacts = array(
             'primaryemail' => array('domaincontact', 'primarycontact'),
             'adminemail' => array('domainadmincontact', 'admincontact'),
         );
         $statuses = array();
+        $input = array();
         foreach ($contacts as $field => $contact) {
             list($endpoint, $label) = $contact;
-            if (!isset($_POST[$field])) {
+            if (!isset($_POST[$field]) || trim($_POST[$field]) === '') {
+                continue;
+            }
+            $api->call($endpoint . '/get/domain/' . $domain . '/');
+            if ($api->isSuccess() && $api->getResponse()['result'] === $_POST[$field]) {
                 continue;
             }
             if (!kwspamexperts_isEmail($_POST[$field])) {
@@ -36,7 +42,10 @@ if (! $params['configoption6']) {
                     $status = array('code' => 0,'msg' => $api->error());
                 }
             }
-            $status['msg'] = $vars['lang'][$label] . ' ' . $status['msg'];
+            if ($status['code'] !== 1) {
+                $input[$label] = $_POST[$field];
+            }
+            $status['msg'] = $vars['lang'][$label] . ': ' . $status['msg'];
             $statuses[] = $status;
         }
         if ($statuses) {
@@ -45,7 +54,11 @@ if (! $params['configoption6']) {
                 'code' => min($codes),
                 'msg' => implode(' ', array_column($statuses, 'msg')),
                 'list' => $statuses,
+                'input' => $input,
             );
+        } else {
+            // Code 3 is a notice, shown as an info alert
+            $vars['_status'] = array('code' => 3, 'msg' => $vars['lang']['no_changes']);
         }
 
         return;
@@ -63,6 +76,11 @@ if (! $params['configoption6']) {
         $vars['admincontact'] = $api->getResponse()['result'];
     } else {
         $vars['_status'] = array('code' => 0,'msg' => $api->error());
+    }
+
+    // Show what failed to save, so it can be corrected instead of retyped
+    if (isset($vars['_result']['input'])) {
+        $vars = array_merge($vars, $vars['_result']['input']);
     }
 } else {
     $vars['_status'] = array('code' => 2,'msg' => $vars['lang']['email_denied']);
