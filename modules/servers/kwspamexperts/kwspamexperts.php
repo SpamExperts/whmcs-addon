@@ -14,6 +14,18 @@ include_once(__DIR__ . DIRECTORY_SEPARATOR . 'class.connection.php');
 
 
 /**
+* FUNCTION kwspamexperts_MetaData
+* Module name shown in the WHMCS admin area
+* @return array
+*/
+function kwspamexperts_MetaData()
+{
+    return array(
+        'DisplayName' => 'SpamExperts',
+    );
+}
+
+/**
 * FUNCTION kwspamexperts_ConfigOptions
 * Display Configuration fields
 * @return array

@@ -8,6 +8,18 @@ if (!defined("WHMCS")) {
 }
 
 /**
+* FUNCTION spamexpertsreseller_MetaData
+* Module name shown in the WHMCS admin area
+* @return array
+*/
+function spamexpertsreseller_MetaData()
+{
+    return array(
+        'DisplayName' => 'SpamExperts Reseller',
+    );
+}
+
+/**
 * FUNCTION spamexpertsreseller_ConfigOptions
 * Display Configuration fields
 * @return array
