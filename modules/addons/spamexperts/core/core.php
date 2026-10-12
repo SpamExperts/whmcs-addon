@@ -12,7 +12,6 @@ $ROOT_DIR = basename(dirname(__DIR__));
 //SOME USEFUL STUFF
 // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
 require_once __DIR__ . DS . 'functions.php';
-//Include ModulesGarden class
 
 //INCLUDE USER FUNCTIONS IF FILE EXISTS
 // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
@@ -24,10 +23,10 @@ if (file_exists(ADDON_DIR . DS . 'core.php')) {
 // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
 $module = basename(dirname(ADDON_DIR . DS . $ROOT_DIR));
 //CREATE MODULE CONFIG
-$MGC = new $module();
+$moduleConfig = new $module();
 
 //ENABLE DEBUG
-if ($MGC->debug) {
+if ($moduleConfig->debug) {
     error_reporting(E_ALL);
     ini_set('display_errors', 1);
 }
@@ -41,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $AJAX = isset($_REQUEST['ajax']) ? 1 : 0;
 
 //FIND PAGE FILES
-$PAGE = isset($_REQUEST['modpage']) ? $_REQUEST['modpage'] : $MGC->default_page;
+$PAGE = isset($_REQUEST['modpage']) ? $_REQUEST['modpage'] : $moduleConfig->default_page;
 $available_pages = array('main', 'setupProducts', 'support');
 
 //IS IT AJAX REQUEST? JUST INCLUDE CONTROLLER FILE AND VIEW
@@ -65,7 +64,7 @@ if ($AJAX) {
 
 //NORMAL REQUEST?
 //GET MENU
-$TOP_MENU = $MGC->top_menu;
+$TOP_MENU = $moduleConfig->top_menu;
 
 //MODULE URL
 $MODULE_URL = 'addonmodules.php?module=' . $_GET['module'];

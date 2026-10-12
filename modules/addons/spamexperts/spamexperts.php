@@ -18,12 +18,12 @@ function spamexperts_config()
     require_once __DIR__ . DS . 'config.php';
 
     $module = spamexperts_getModuleClass(__FILE__);
-    $MGC = new $module();
+    $moduleConfig = new $module();
     return array(
-        'name'          =>  $MGC->system_name,
-        'description'   =>  $MGC->description,
-        'version'       =>  $MGC->version,
-        'author'        =>  $MGC->author
+        'name'          =>  $moduleConfig->system_name,
+        'description'   =>  $moduleConfig->description,
+        'version'       =>  $moduleConfig->version,
+        'author'        =>  $moduleConfig->author
     );
 }
 
@@ -37,8 +37,8 @@ function spamexperts_activate()
     require_once __DIR__ . DS . 'config.php';
 
     $module = spamexperts_getModuleClass(__FILE__);
-    $MGC = new $module();
-    $MGC->activate();
+    $moduleConfig = new $module();
+    $moduleConfig->activate();
 }
 
 function spamexperts_deactivate()
@@ -51,8 +51,8 @@ function spamexperts_deactivate()
     require_once __DIR__ . DS . 'config.php';
 
     $module = spamexperts_getModuleClass(__FILE__);
-    $MGC = new $module();
-    $MGC->deactivate();
+    $moduleConfig = new $module();
+    $moduleConfig->deactivate();
 }
 
 
@@ -70,8 +70,8 @@ function spamexperts_upgrade($vars)
     require_once __DIR__ . DS . 'config.php';
 
     $module = spamexperts_getModuleClass(__FILE__);
-    $MGC = new $module();
-    $MGC->upgrade();
+    $moduleConfig = new $module();
+    $moduleConfig->upgrade();
 }
 
 /**
