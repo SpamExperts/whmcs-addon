@@ -155,6 +155,13 @@ function kwspamexperts_CreateAccount($params)
         : $params['clientsdetails']['email'];
     $archiving  = (int)(!empty($params["configoptions"]["archiving"]) && $params["configoptions"]["archiving"]);
 
+    // Before the password is saved, so a rejected Create leaves the service as it was
+    if (!kwspamexperts_isHostname($domain)) {
+        return "Domain is empty or invalid. Please enter a valid domain name in the Domain field.";
+    }
+    if (!kwspamexperts_isEmail($email)) {
+        return "Email is empty or invalid. Please enter a valid e-mail address in the Email field.";
+    }
 
     // update password
     Capsule::table('tblhosting')
@@ -166,12 +173,6 @@ function kwspamexperts_CreateAccount($params)
         ]);
 
     // add domain
-    if (!kwspamexperts_isHostname($domain)) {
-        return "Domain is empty or invalid. Please enter a valid domain name in the Domain field.";
-    }
-    if (!kwspamexperts_isEmail($email)) {
-        return "Email is empty or invalid. Please enter a valid e-mail address in the Email field.";
-    }
     $api->call("domain/add/domain/" . $domain . "/");
     if ($api->isError()) {
         return $api->error();
