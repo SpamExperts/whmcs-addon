@@ -49,7 +49,7 @@ function spamexpertsreseller_ConfigOptions()
             "Type"         => "text",
             "Size"         => "25",
             "FriendlyName" => "Domains Limits",
-            "Description"  => ""
+            "Description"  => "Whole number. 0 for unlimited, if the API account has no domains limit"
         ),
         "UsageLimits" => array(
             "Type"         => "yesno",
@@ -109,6 +109,18 @@ function spamexpertsreseller_isEmail($value)
         && filter_var($value, FILTER_VALIDATE_EMAIL) !== false;
 }
 
+/**
+* FUNCTION spamexpertsreseller_isDomainsLimit
+* Check the product's domains limit before it goes into an API path. The API
+* drops an empty path segment, so an empty limit would take the next name.
+* @param mixed $value
+* @return bool
+*/
+function spamexpertsreseller_isDomainsLimit($value)
+{
+    return is_string($value) && ctype_digit($value);
+}
+
 
 /**
 * FUNCTION spamexpertsreseller_CreateAccount
@@ -133,13 +145,16 @@ function spamexpertsreseller_CreateAccount($params)
     if (!spamexpertsreseller_isEmail($email)) {
         return "Email is empty or invalid. Please enter a valid e-mail address in the Email field.";
     }
+    if (!spamexpertsreseller_isDomainsLimit($params['configoption4'])) {
+        return "Set the Domains Limits to a whole number in the product's Module Settings.";
+    }
 
     // for add, the optional value needed for api_usage is the inverse of the config option to disable api access
     //  - "1" passed as the value enables the API access
     //  - "0" passed as the value or nothing passed disables the API access
     $api_usage = ($params['configoption5'] === 'on' ? 0 : 1);
     $api->call(
-        '/reseller/add/username/' . $username . '/password/' . rawurlencode($password)
+        '/reseller/add/username/' . rawurlencode($username) . '/password/' . rawurlencode($password)
         . '/email/' . rawurlencode($email) . '/domainslimit/' . $params['configoption4']
         . '/api_usage/' . $api_usage
     );
@@ -176,7 +191,7 @@ function spamexpertsreseller_TerminateAccount($params)
     // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
     include_once(__DIR__ . DIRECTORY_SEPARATOR . 'class.connection.php');
     $api = new spamexperts_api($params);
-    $api ->call("reseller/remove/username/" . $params['username'] . "/");
+    $api ->call("reseller/remove/username/" . rawurlencode($params['username']) . "/");
 
     if ($api->isSuccess()) {
         return "success";
@@ -200,6 +215,9 @@ function spamexpertsreseller_ChangePackage($params)
     if (empty($params['username'])) {
         return "Username cannot be empty. Please enter the reseller username in the Username field.";
     }
+    if (!spamexpertsreseller_isDomainsLimit($params['configoption4'])) {
+        return "Set the Domains Limits to a whole number in the product's Module Settings.";
+    }
     // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
     include_once(__DIR__ . DIRECTORY_SEPARATOR . 'class.connection.php');
     $api = new spamexperts_api($params);
@@ -208,7 +226,8 @@ function spamexpertsreseller_ChangePackage($params)
     //  - "1" passed as the value disables the API access
     $api_usage = ($params['configoption5'] === 'on' ? 1 : 0);
     $api ->call(
-        "reseller/update/username/" . $params['username'] . "/password/" . rawurlencode($params['password'])
+        "reseller/update/username/" . rawurlencode($params['username'])
+        . "/password/" . rawurlencode($params['password'])
         . "/domainslimit/" . $params['configoption4'] . "/api_usage/" . $api_usage . "/"
     );
 
@@ -301,7 +320,7 @@ function spamexpertsreseller_loginUrl($params)
     }
 
     $api = new spamexperts_api($params);
-    $api->call("authticket/create/username/" . $params['username'] . "/");
+    $api->call("authticket/create/username/" . rawurlencode($params['username']) . "/");
     $res = $api->getResponse();
     if (!$api->isSuccess()) {
         return null;
@@ -454,7 +473,7 @@ function spamexpertsreseller_apiError($params, $lang)
     // A cheap read of only this reseller. The list has every reseller when the
     // username matches none, so the reseller is still looked up in it.
     $api = new spamexperts_api($params);
-    $api->call("reseller/list/username/" . $params['username'] . "/no_domains/1/");
+    $api->call("reseller/list/username/" . rawurlencode($params['username']) . "/no_domains/1/");
     $res = $api->getResponse();
     if (!$api->isSuccess()) {
         if (!isset($res['messages']['error'][0])) {

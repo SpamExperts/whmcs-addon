@@ -26,7 +26,7 @@ if ($handle_actions) {
             $role = $api->getResponse();
             if ($role['result'] == 'admin') {
                 $api->call(
-                    '/reseller/unbinddomains/username/' . $params['username']
+                    '/reseller/unbinddomains/username/' . rawurlencode($params['username'])
                     . '/domains/' . rawurlencode($unbindDomain) . '/'
                 );
             } else {
@@ -61,7 +61,7 @@ if ($handle_actions) {
                     $owner = $api->getResponse();
                     if (empty($owner['result']) || $owner['result']['username'] == $params['username']) {
                         $api->call(
-                            '/reseller/binddomains/username/' . $params['username']
+                            '/reseller/binddomains/username/' . rawurlencode($params['username'])
                             . '/domains/' . rawurlencode($bindDomain) . '/'
                         );
                         if ($api->isSuccess()) {
