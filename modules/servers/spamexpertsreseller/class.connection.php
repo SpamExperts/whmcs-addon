@@ -12,6 +12,8 @@ class spamexperts_api
     public const USERNAME_COLON = 'The API username cannot contain a colon, which Basic authentication cannot carry.';
     /** The error for an HTTP 200 that isn't the API's JSON, as from a URL with a wrong path */
     public const NO_API_RESPONSE = 'The Spam Panel URL gave no API response. Check that it is the panel address.';
+    /** Pattern of the error domainslist/get gives a reseller without domains, as it HTML-escapes the name */
+    public const NO_DOMAINS = "#^The user '.*' has no domains$#s";
 
     /** @var string|null */
     private $error = null;

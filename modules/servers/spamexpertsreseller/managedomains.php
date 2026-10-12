@@ -53,6 +53,9 @@ $api->call('/domainslist/get/');
 if ($api->isSuccess()) {
     $list                   = $api->getResponse();
     $vars['domains_list']   = $list['result'];
+} elseif (preg_match(spamexperts_api::NO_DOMAINS, (string) $api->error())) {
+    // Not an error, just an empty list
+    $vars['domains_list']   = [];
 } else {
     $vars['_status']        = ['code' => 0, 'msg' => $api->error()];
 }
