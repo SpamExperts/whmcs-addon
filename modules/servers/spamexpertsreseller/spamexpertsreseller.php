@@ -231,6 +231,10 @@ function spamexpertsreseller_ChangePackage($params)
     if (empty($params['username'])) {
         return "Username cannot be empty. Please enter the reseller username in the Username field.";
     }
+    // The API drops an empty path segment, so an empty password would take the next name
+    if (empty($params['password'])) {
+        return "Password cannot be empty. Please enter the reseller password in the Password field.";
+    }
     if (!spamexpertsreseller_isDomainsLimit($params['configoption4'])) {
         return "Set the Domains Limits to a whole number in the product's Module Settings.";
     }
