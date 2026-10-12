@@ -232,8 +232,8 @@ function kwspamexperts_ChangePackage($params)
         return $error;
     }
     $domain   = !empty($params["customfields"]["Domain"]) ? $params["customfields"]["Domain"] : $params['domain'];
-    $outgoing = $params["configoption1"] != 'Incoming' ? 1 : 0;
-    $incoming = $params["configoption1"] != 'Outgoing' ? 1 : 0;
+    $outgoing = $params["configoption1"] !== 'Incoming' ? 1 : 0;
+    $incoming = $params["configoption1"] !== 'Outgoing' ? 1 : 0;
     $archiving  = (int)(!empty($params["configoptions"]["archiving"]) && $params["configoptions"]["archiving"]);
 
     $api = new kwspamexperts_api($params);

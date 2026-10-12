@@ -27,7 +27,7 @@ if (! $params['configoption5']) {
             case 'deleteroute':
                 $found = false;
                 if (!empty($_POST['routes']['old_list']) && is_array($_POST['routes']['old_list'])) {
-                    if (count($_POST['routes']['old_list']) == count($routes['result'])) {
+                    if (count($_POST['routes']['old_list']) === count($routes['result'])) {
                         $vars['_status'] = array('code' => 0,'msg' => $vars['lang']['remove_info']);
                         break;
                     }
@@ -39,7 +39,7 @@ if (! $params['configoption5']) {
                     }
                 } elseif (isset($_POST['routetodel'])) {
                     foreach ($routes['result'] as $key => $val) {
-                        if ($val == $_POST['routetodel'] . '::' . $_POST['routeporttodel']) {
+                        if ($val === $_POST['routetodel'] . '::' . $_POST['routeporttodel']) {
                             $found = true;
                             unset($routes['result'][$key]);
                             break;

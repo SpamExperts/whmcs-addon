@@ -78,7 +78,7 @@ if (!$lerror) {
     //CONTROLLER
     // phpcs:disable PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
     if (
-        in_array($PAGE, $available_pages)
+        in_array($PAGE, $available_pages, true)
         && file_exists(ADDON_DIR . DS . 'pages' . DS . $PAGE . DS . $PAGE . '.php')
     ) {
         // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
@@ -89,7 +89,7 @@ if (!$lerror) {
 
     //LOCATE VIEW FILE AND LOAD IT
     if (
-        in_array($PAGE, $available_pages)
+        in_array($PAGE, $available_pages, true)
         && file_exists(ADDON_DIR . DS . 'views' . DS . $PAGE . DS . $PAGE . '.php')
     ) {
         // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI

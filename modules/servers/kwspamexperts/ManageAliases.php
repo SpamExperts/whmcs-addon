@@ -74,7 +74,7 @@ if ($api->isSuccess()) {
     $data = $api->getResponse();
 
     foreach ($data['result'] as $key => $val) {
-        if ($val == $domain) {
+        if ($val === $domain) {
             unset($data['result'][$key]);
         }
     }

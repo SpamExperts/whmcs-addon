@@ -67,7 +67,7 @@ if (!defined("WHMCS")) {
                'action'     : 'testconnection',
                'token'      : jQuery(this).closest('form').find("input[name='token']").val()
            }, function (data) {
-               if(data == 'success'){
+               if(data === 'success'){
                    jQuery("#ajax_response").html("<span class='text-success'>Success</span>");
                } else {
                    jQuery("#ajax_response").html("<span class='text-danger'>"+data+'</span>');

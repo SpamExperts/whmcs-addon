@@ -2,13 +2,13 @@
     <div class="card-body">
         <h3 class="card-title">{$lang.header}</h3>
         {if $_result}
-            <div class="alert {if $_result.code==1}alert-success{else}alert-danger{/if}">{$_result.msg|escape}</div>
+            <div class="alert {if $_result.code===1}alert-success{else}alert-danger{/if}">{$_result.msg|escape}</div>
         {/if}
-        {if $_status && $_status.code==2}
+        {if $_status && $_status.code===2}
             <div class="alert alert-danger">{$_status.msg|escape}</div>
         {else}
             {if $_status}
-                <div class="alert {if $_status.code==1}alert-success{else}alert-danger{/if}">{$_status.msg|escape}</div>
+                <div class="alert {if $_status.code===1}alert-success{else}alert-danger{/if}">{$_status.msg|escape}</div>
             {/if}
             <form action="clientarea.php?action=productdetails&id={$serviceid}&manage=ManageAliases" method="post" id="se-add-alias">
                 <input type="hidden" name="token" value="{$token}" />
