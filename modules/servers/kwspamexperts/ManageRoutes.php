@@ -17,8 +17,7 @@ if (! $params['configoption5']) {
     if ($handle_actions) {
         $api ->call("domain/getroute/domain/" . $domain . "/");
         $routes = $api->getResponse();
-        // Both actions rewrite the full route list. call() treats any HTTP 200
-        // as success, even when the body isn't JSON, so check the list too.
+        // Both actions rewrite the full route list, so not without one
         if (!$api->isSuccess() || !isset($routes['result']) || !is_array($routes['result'])) {
             $vars['_status'] = ['code' => 0,'msg' => $api->isSuccess() ? 'Resource not found!' : $api->error()];
             return;

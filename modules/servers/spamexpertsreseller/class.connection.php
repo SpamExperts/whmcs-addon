@@ -10,6 +10,8 @@ class spamexperts_api
     public const HTTP_URL = 'The Spam Panel URL must use https://, so the API credentials are sent encrypted.';
     /** The error for a username with a colon, which Basic authentication cannot carry */
     public const USERNAME_COLON = 'The API username cannot contain a colon, which Basic authentication cannot carry.';
+    /** The error for an HTTP 200 that isn't the API's JSON, as from a URL with a wrong path */
+    public const NO_API_RESPONSE = 'The Spam Panel URL gave no API response. Check that it is the panel address.';
 
     /** @var string|null */
     private $error = null;
@@ -90,6 +92,8 @@ class spamexperts_api
             if ($curl_error) {
                 $this->error .= ' ' . $curl_error;
             }
+        } elseif (!is_array($this->response)) {
+            $this->error = self::NO_API_RESPONSE;
         }
 
         $secrets = $this->secretsToMask($action);
