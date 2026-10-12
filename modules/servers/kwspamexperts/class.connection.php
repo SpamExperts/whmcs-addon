@@ -2,6 +2,12 @@
 
 class kwspamexperts_api
 {
+    /** The error the API returns for any call when the credentials are wrong */
+    // phpcs:ignore Generic.Files.LineLength.TooLong
+    public const INVALID_CREDENTIALS = 'The API credentials provided are incorrect, please specify a valid API username and password.';
+    /** The error for a domain the account doesn't have, for sprintf() */
+    public const DOMAIN_NOT_ALLOWED = 'You are not allowed to manage the domain %s';
+
     /** @var string|null */
     private $error = null;
     /** @var string|null */

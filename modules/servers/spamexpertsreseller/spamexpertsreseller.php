@@ -221,6 +221,21 @@ function spamexpertsreseller_ChangePackage($params)
 
 
 /**
+* FUNCTION spamexpertsreseller_redirect
+* Send the client to a URL instead of the page
+* @param string $url
+* @return never
+*/
+function spamexpertsreseller_redirect($url)
+{
+    if (ob_get_length()) {
+        ob_clean();
+    }
+    header('Location: ' . $url);
+    exit;
+}
+
+/**
 * FUNCTION spamexpertsreseller_ClientArea
 * Display extended pages in clientarea
 * @param array $params
@@ -228,37 +243,75 @@ function spamexpertsreseller_ChangePackage($params)
 */
 function spamexpertsreseller_ClientArea($params)
 {
-    $output = array('vars' => array());
-    if (function_exists('generate_token')) {
-        $output['vars']['token'] = generate_token('plain');
+    $overview = 'clientarea.php?action=productdetails&id=' . $params['serviceid'];
+
+    // The panel has the reseller only from create until terminate, as suspending doesn't touch it
+    if (!in_array($params['status'], array('Active', 'Suspended'), true)) {
+        if (isset($_GET['manage'])) {
+            spamexpertsreseller_redirect($overview);
+        }
+        spamexpertsreseller_shownPages(false);
+        return array('vars' => array('api_error' => null));
     }
+
+    // The management pages are plain links to the product details, so they
+    // need no token in the URL, unlike a modop=custom function in WHMCS 9.
+    // The login link makes its ticket only when followed, as one expires.
+    if (isset($_GET['manage']) && $_GET['manage'] === 'login') {
+        // The overview shows why when the panel cannot be reached
+        $url = spamexpertsreseller_loginUrl($params);
+        spamexpertsreseller_redirect($url !== null ? $url : $overview);
+    }
+
+    // Without a working panel, the sidebar has no management links and the overview shows why
+    $lang  = spamexpertsreseller_getLang($params);
+    $error = spamexpertsreseller_apiError($params, $lang);
+    $pages = $error ? array() : spamexpertsreseller_managePages($params, $lang);
+    if (isset($_GET['manage'])) {
+        // Only the pages the sidebar links, so not a disabled one either
+        if (is_string($_GET['manage']) && isset($pages[$_GET['manage']])) {
+            $output = spamexpertsreseller_management($params, $_GET['manage']);
+            if ($output !== null) {
+                spamexpertsreseller_shownPages($pages);
+                return $output;
+            }
+        }
+        unset($_SESSION['spamexpertsreseller_result'][$params['serviceid']]);
+        spamexpertsreseller_redirect($overview);
+    }
+
+    spamexpertsreseller_shownPages($error ? false : $pages);
+
+    return array('vars' => array('api_error' => $error));
+}
+
+/**
+* FUNCTION spamexpertsreseller_loginUrl
+* Panel URL with a new login ticket, made only when the client follows the
+* login link rather than on every page that shows it
+* @param array $params
+* @return string|null Null when the panel cannot be reached
+*/
+function spamexpertsreseller_loginUrl($params)
+{
     // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
     include_once(__DIR__ . DIRECTORY_SEPARATOR . 'class.connection.php');
-    $lang = spamexpertsreseller_getLang($params);
-
-    $error = spamexpertsreseller_setupError($params, $lang);
-    if ($error) {
-        $output['vars']['api_error'] = $error;
-    } else {
-        $api = new spamexperts_api($params);
-        $api->call("authticket/create/username/" . $params['username'] . "/");
-
-        $url = (strpos($params['configoption1'], 'http') === false)
-            ? 'https://' . $params['configoption1']
-            : $params['configoption1'];
-
-        $res = $api->getResponse();
-        if ($api->isSuccess()) {
-            $output['vars']['api_url'] = $url . '/?authticket=' . urlencode($res['result']);
-        } elseif (isset($res['messages']['error'][0])) {
-            $output['vars']['api_error'] = sprintf($lang['mainsite']['notadded'], $params['username']);
-        } else {
-            $output['vars']['api_error'] = $lang['mainsite']['unavailable'];
-        }
+    if (spamexpertsreseller_setupError($params, spamexpertsreseller_getLang($params))) {
+        return null;
     }
-    $output['vars']['lang'] = $lang['mainsite'];
 
-    return $output;
+    $api = new spamexperts_api($params);
+    $api->call("authticket/create/username/" . $params['username'] . "/");
+    $res = $api->getResponse();
+    if (!$api->isSuccess()) {
+        return null;
+    }
+
+    $url = (strpos($params['configoption1'], 'http') === false)
+        ? 'https://' . $params['configoption1']
+        : $params['configoption1'];
+
+    return $url . '/?authticket=' . urlencode($res['result']);
 }
 
 
@@ -300,20 +353,6 @@ if (!function_exists('spamexpertsreseller_getLang')) {
 }
 
 
-/**
-* FUNCTION spamexpertsreseller_ClientAreaAllowedFunctions()
-* Allow the management pages to be called from the clientarea without
-* adding a button for them
-* @return array
-*/
-function spamexpertsreseller_ClientAreaAllowedFunctions()
-{
-    $buttonarray = array(
-        'Management' => 'management'
-    );
-    return $buttonarray;
-}
-
 
 if (!function_exists('spamexpertsreseller_page')) {
     /**
@@ -330,7 +369,6 @@ if (!function_exists('spamexpertsreseller_page')) {
         include_once(__DIR__ . DIRECTORY_SEPARATOR . 'class.connection.php');
         $lang              = spamexpertsreseller_getLang($params);
         $api               = new spamexperts_api($params);
-        $vars['main_lang'] = $lang['mainsite'];
         $vars['lang']      = $lang[(!isset($lang[$page]) ? 'mainsite' : $page)];
         $vars['serviceid'] = $params['serviceid'];
 
@@ -396,49 +434,123 @@ function spamexpertsreseller_setupError($params, $lang)
     return null;
 }
 
+/**
+* FUNCTION spamexpertsreseller_apiError
+* Why the client area cannot offer the management pages: the setup, a panel
+* that cannot be reached or a reseller the panel doesn't have
+* @param array $params
+* @param array $lang
+* @return string|null
+*/
+function spamexpertsreseller_apiError($params, $lang)
+{
+    $error = spamexpertsreseller_setupError($params, $lang);
+    if ($error) {
+        return $error;
+    }
+
+    // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
+    include_once(__DIR__ . DIRECTORY_SEPARATOR . 'class.connection.php');
+    // A cheap read of only this reseller. The list has every reseller when the
+    // username matches none, so the reseller is still looked up in it.
+    $api = new spamexperts_api($params);
+    $api->call("reseller/list/username/" . $params['username'] . "/no_domains/1/");
+    $res = $api->getResponse();
+    if (!$api->isSuccess()) {
+        if (!isset($res['messages']['error'][0])) {
+            return $lang['mainsite']['unavailable'];
+        }
+        return $res['messages']['error'][0] === spamexperts_api::INVALID_CREDENTIALS
+            ? $lang['mainsite']['notconfigured']
+            : $lang['mainsite']['apierror'];
+    }
+    foreach ((array) $res['result'] as $resellers) {
+        foreach ((array) $resellers as $reseller) {
+            if (isset($reseller['username']) && $reseller['username'] === $params['username']) {
+                return null;
+            }
+        }
+    }
+
+    return sprintf($lang['mainsite']['notadded'], $params['username']);
+}
+
+if (!function_exists('spamexpertsreseller_managePages')) {
+    /**
+    * FUNCTION spamexpertsreseller_managePages
+    * Management pages the product offers, in the sidebar's order
+    * @param array $params
+    * @param array $lang
+    * @return array Page names and their labels
+    */
+    function spamexpertsreseller_managePages($params, $lang)
+    {
+        // The page calls the API as the reseller, so not when its API access is disallowed
+        if ($params['configoption5'] === 'on') {
+            return array();
+        }
+        return array('managedomains' => $lang['mainsite']['manage_domains']);
+    }
+}
+
+if (!function_exists('spamexpertsreseller_shownPages')) {
+    /**
+    * FUNCTION spamexpertsreseller_shownPages
+    * Record the management pages the client area page can show, which the
+    * sidebar hook links to
+    * @param array|false|null $pages Pages to record, false when the panel
+    * cannot be used, or null to read them
+    * @return array|false|null Null when no page of this module was shown
+    */
+    function spamexpertsreseller_shownPages($pages = null)
+    {
+        static $shown = null;
+        if ($pages !== null) {
+            $shown = $pages;
+        }
+        return $shown;
+    }
+}
+
 if (!function_exists('spamexpertsreseller_management')) {
     /**
     * FUNCTION spamexpertsreseller_management
-    * Display extended pages in clientarea. A posted action is run first, then
-    * redirected to the page so the result is shown by a GET request.
+    * Display a management page in place of the product overview. A posted
+    * action is run first, then redirected to the page so the result is shown
+    * by a GET request.
     * @param array $params
-    * @return array
+    * @param string $page
+    * @return array|null Null when the page does not exist
     */
-    function spamexpertsreseller_management($params)
+    function spamexpertsreseller_management($params, $page)
     {
-        $page = isset($_REQUEST['page']) ? $_REQUEST['page'] : '';
+        $url = 'clientarea.php?action=productdetails&id=' . $params['serviceid'];
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $vars = spamexpertsreseller_page($params, $page, false);
             if ($vars === null) {
-                $lang = spamexpertsreseller_getLang($params);
-                return array('vars' => array(
-                    '_status' => array('code' => 1, 'msg' => $lang['mainsite']['notfound'])
-                ));
+                return null;
             }
 
             return array(
-                'templatefile' => 'templates/' . $page,
-                'breadcrumb'   => ' > <a href="#">Server Details</a>',
-                'vars'         => $vars
+                'tabOverviewReplacementTemplate' => 'templates/' . $page . '.tpl',
+                'templateVariables'              => $vars
             );
         }
 
-        $url  = 'clientarea.php?action=productdetails&id=' . $params['serviceid'];
+        // WHMCS checks the token of its own forms only. A wrong one logs the
+        // client out, as it does for those.
+        check_token('WHMCS.default');
+
         $vars = spamexpertsreseller_page($params, $page, true);
         if ($vars !== null) {
             // Code 2 marks the page as unavailable, which the GET shows again itself
             if (isset($vars['_status']) && $vars['_status']['code'] !== 2) {
                 $_SESSION['spamexpertsreseller_result'][$params['serviceid']] = $vars['_status'];
             }
-            $url .= '&modop=custom&a=management&page=' . urlencode($page)
-                 . '&token=' . urlencode(isset($vars['token']) ? $vars['token'] : '');
+            $url .= '&manage=' . urlencode($page);
         }
 
-        if (ob_get_length()) {
-            ob_clean();
-        }
-        header('Location: ' . $url);
-        exit;
+        spamexpertsreseller_redirect($url);
     }
 }

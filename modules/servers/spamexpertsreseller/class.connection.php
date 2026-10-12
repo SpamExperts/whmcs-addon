@@ -2,6 +2,10 @@
 
 class spamexperts_api
 {
+    /** The error the API returns for any call when the credentials are wrong */
+    // phpcs:ignore Generic.Files.LineLength.TooLong
+    public const INVALID_CREDENTIALS = 'The API credentials provided are incorrect, please specify a valid API username and password.';
+
     /** @var string|null */
     private $error = null;
     /** @var string|null */

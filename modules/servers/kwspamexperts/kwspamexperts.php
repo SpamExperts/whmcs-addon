@@ -340,20 +340,6 @@ if (!function_exists('kwspamexperts_getLang')) {
 }
 
 
-/**
-* FUNCTION kwspamexperts_ClientAreaAllowedFunctions()
-* Allow the management pages to be called from the clientarea without
-* adding a button for them
-* @return array
-*/
-function kwspamexperts_ClientAreaAllowedFunctions()
-{
-    $buttonarray = array(
-        'Management' => 'management'
-    );
-    return $buttonarray;
-}
-
 if (!function_exists('kwspamexperts_page')) {
     /**
     * FUNCTION kwspamexperts_page
@@ -367,7 +353,6 @@ if (!function_exists('kwspamexperts_page')) {
     {
         $lang              = kwspamexperts_getLang($params);
         $api               = new kwspamexperts_api($params);
-        $vars['main_lang'] = $lang['mainsite'];
         $vars['lang']      = $lang[(!isset($lang[$page]) ? 'mainsite' : $page)];
         $vars['serviceid'] = $params['serviceid'];
         $domain            = !empty($params["customfields"]["Domain"])
@@ -440,51 +425,141 @@ function kwspamexperts_setupError($params, $lang)
     return null;
 }
 
+/**
+* FUNCTION kwspamexperts_apiError
+* Why the client area cannot offer the management pages: the setup, a panel
+* that cannot be reached or a domain the panel doesn't have
+* @param array $params
+* @param array $lang
+* @return string|null
+*/
+function kwspamexperts_apiError($params, $lang)
+{
+    $error = kwspamexperts_setupError($params, $lang);
+    if ($error) {
+        return $error;
+    }
+
+    // A cheap read, which the API refuses for a domain it doesn't have
+    $domain = !empty($params["customfields"]["Domain"]) ? $params["customfields"]["Domain"] : $params['domain'];
+    $api = new kwspamexperts_api($params);
+    $api->call("domaincontact/get/domain/{$domain}/");
+    if ($api->isSuccess()) {
+        return null;
+    }
+
+    $res = $api->getResponse();
+    if (!isset($res['messages']['error'][0])) {
+        return $lang['mainsite']['unavailable'];
+    }
+    switch ($res['messages']['error'][0]) {
+        case kwspamexperts_api::INVALID_CREDENTIALS:
+            return $lang['mainsite']['notconfigured'];
+        case sprintf(kwspamexperts_api::DOMAIN_NOT_ALLOWED, $domain):
+            return sprintf($lang['mainsite']['notadded'], $domain);
+        default:
+            return $lang['mainsite']['apierror'];
+    }
+}
+
+if (!function_exists('kwspamexperts_managePages')) {
+    /**
+    * FUNCTION kwspamexperts_managePages
+    * Management pages the product offers, in the sidebar's order
+    * @param array $params
+    * @param array $lang
+    * @return array Page names and their labels
+    */
+    function kwspamexperts_managePages($params, $lang)
+    {
+        $pages = array();
+        if (empty($params['configoption6'])) {
+            $pages['EditEmail'] = $lang['mainsite']['editcontactemail'];
+        }
+        if (empty($params['configoption5'])) {
+            $pages['ManageRoutes'] = $lang['mainsite']['manageroutes'];
+        }
+        $pages['ManageAliases'] = $lang['mainsite']['managealiases'];
+
+        return $pages;
+    }
+}
+
+if (!function_exists('kwspamexperts_shownPages')) {
+    /**
+    * FUNCTION kwspamexperts_shownPages
+    * Record the management pages the client area page can show, which the
+    * sidebar hook links to
+    * @param array|false|null $pages Pages to record, false when the panel
+    * cannot be used, or null to read them
+    * @return array|false|null Null when no page of this module was shown
+    */
+    function kwspamexperts_shownPages($pages = null)
+    {
+        static $shown = null;
+        if ($pages !== null) {
+            $shown = $pages;
+        }
+        return $shown;
+    }
+}
+
 if (!function_exists('kwspamexperts_management')) {
     /**
     * FUNCTION kwspamexperts_management
-    * Display extended pages in clientarea. A posted action is run first, then
-    * redirected to the page so the result is shown by a GET request.
+    * Display a management page in place of the product overview. A posted
+    * action is run first, then redirected to the page so the result is shown
+    * by a GET request.
     * @param array $params
-    * @return array
+    * @param string $page
+    * @return array|null Null when the page does not exist
     */
-    function kwspamexperts_management($params)
+    function kwspamexperts_management($params, $page)
     {
-        $page = isset($_REQUEST['page']) ? $_REQUEST['page'] : '';
+        $url = 'clientarea.php?action=productdetails&id=' . $params['serviceid'];
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $vars = kwspamexperts_page($params, $page, false);
             if ($vars === null) {
-                $lang = kwspamexperts_getLang($params);
-                return array('vars' => array(
-                    '_status' => array('code' => 1, 'msg' => $lang['mainsite']['notfound'])
-                ));
+                return null;
             }
 
             return array(
-                'templatefile' => 'templates/' . $page,
-                'breadcrumb'   => ' > <a href="#">Server Details</a>',
-                'vars'         => $vars
+                'tabOverviewReplacementTemplate' => 'templates/' . $page . '.tpl',
+                'templateVariables'              => $vars
             );
         }
 
-        $url  = 'clientarea.php?action=productdetails&id=' . $params['serviceid'];
+        // WHMCS checks the token of its own forms only. A wrong one logs the
+        // client out, as it does for those.
+        check_token('WHMCS.default');
+
         $vars = kwspamexperts_page($params, $page, true);
         if ($vars !== null) {
             // Code 2 marks the page as unavailable, which the GET shows again itself
             if (isset($vars['_status']) && $vars['_status']['code'] !== 2) {
                 $_SESSION['kwspamexperts_result'][$params['serviceid']] = $vars['_status'];
             }
-            $url .= '&modop=custom&a=management&page=' . urlencode($page)
-                 . '&token=' . urlencode(isset($vars['token']) ? $vars['token'] : '');
+            $url .= '&manage=' . urlencode($page);
         }
 
-        if (ob_get_length()) {
-            ob_clean();
-        }
-        header('Location: ' . $url);
-        exit;
+        kwspamexperts_redirect($url);
     }
+}
+
+/**
+* FUNCTION kwspamexperts_redirect
+* Send the client to a URL instead of the page
+* @param string $url
+* @return never
+*/
+function kwspamexperts_redirect($url)
+{
+    if (ob_get_length()) {
+        ob_clean();
+    }
+    header('Location: ' . $url);
+    exit;
 }
 
 /**
@@ -495,40 +570,72 @@ if (!function_exists('kwspamexperts_management')) {
 */
 function kwspamexperts_ClientArea($params)
 {
-    $output = array('vars' => array());
-    if (function_exists('generate_token')) {
-        $output['vars']['token'] = generate_token('plain');
-    }
+    $overview = 'clientarea.php?action=productdetails&id=' . $params['serviceid'];
 
-    $lang = kwspamexperts_getLang($params);
-
-    $output['vars']['lang'] = $lang['mainsite'];
-    $domain = !empty($params["customfields"]["Domain"]) ? $params["customfields"]["Domain"] : $params['domain'];
-
-    $error = kwspamexperts_setupError($params, $lang);
-    if ($error) {
-        $output['vars']['api_error'] = $error;
-    } else {
-        $api = new kwspamexperts_api($params);
-        $api->call("authticket/create/username/{$domain}/");
-
-        $api_url = (strpos($params['configoption2'], 'http') !== false)
-            ? $params['configoption2']
-            : 'https://' . $params['configoption2'];
-
-        $auth = $api->getResponse();
-        if ($api->isSuccess()) {
-            $output['vars']['api_url'] = $api_url;
-            $output['vars']['api_auth'] = $auth['result'];
-        } elseif (isset($auth['messages']['error'][0])) {
-            $output['vars']['api_error'] = sprintf($lang['mainsite']['notadded'], $domain);
-        } else {
-            $output['vars']['api_error'] = $lang['mainsite']['unavailable'];
+    // The panel has the domain only from create until terminate, as suspending just whitelists its mail
+    if (!in_array($params['status'], array('Active', 'Suspended'), true)) {
+        if (isset($_GET['manage'])) {
+            kwspamexperts_redirect($overview);
         }
+        kwspamexperts_shownPages(false);
+        return array('vars' => array('api_error' => null));
     }
 
-    $output['vars']['disable_manage_routes'] = $params['configoption5'];
-    $output['vars']['disable_edit_contact'] = $params['configoption6'];
+    // The management pages are plain links to the product details, so they
+    // need no token in the URL, unlike a modop=custom function in WHMCS 9.
+    // The login link makes its ticket only when followed, as one expires.
+    if (isset($_GET['manage']) && $_GET['manage'] === 'login') {
+        // The overview shows why when the panel cannot be reached
+        $url = kwspamexperts_loginUrl($params);
+        kwspamexperts_redirect($url !== null ? $url : $overview);
+    }
 
-    return $output;
+    // Without a working panel, the sidebar has no management links and the overview shows why
+    $lang  = kwspamexperts_getLang($params);
+    $error = kwspamexperts_apiError($params, $lang);
+    $pages = $error ? array() : kwspamexperts_managePages($params, $lang);
+    if (isset($_GET['manage'])) {
+        // Only the pages the sidebar links, so not a disabled one either
+        if (is_string($_GET['manage']) && isset($pages[$_GET['manage']])) {
+            $output = kwspamexperts_management($params, $_GET['manage']);
+            if ($output !== null) {
+                kwspamexperts_shownPages($pages);
+                return $output;
+            }
+        }
+        unset($_SESSION['kwspamexperts_result'][$params['serviceid']]);
+        kwspamexperts_redirect($overview);
+    }
+
+    kwspamexperts_shownPages($error ? false : $pages);
+
+    return array('vars' => array('api_error' => $error));
+}
+
+/**
+* FUNCTION kwspamexperts_loginUrl
+* Panel URL with a new login ticket, made only when the client follows the
+* login link rather than on every page that shows it
+* @param array $params
+* @return string|null Null when the panel cannot be reached
+*/
+function kwspamexperts_loginUrl($params)
+{
+    if (kwspamexperts_setupError($params, kwspamexperts_getLang($params))) {
+        return null;
+    }
+
+    $domain = !empty($params["customfields"]["Domain"]) ? $params["customfields"]["Domain"] : $params['domain'];
+    $api = new kwspamexperts_api($params);
+    $api->call("authticket/create/username/{$domain}/");
+    $auth = $api->getResponse();
+    if (!$api->isSuccess()) {
+        return null;
+    }
+
+    $api_url = (strpos($params['configoption2'], 'http') !== false)
+        ? $params['configoption2']
+        : 'https://' . $params['configoption2'];
+
+    return $api_url . '/?authticket=' . urlencode($auth['result']);
 }

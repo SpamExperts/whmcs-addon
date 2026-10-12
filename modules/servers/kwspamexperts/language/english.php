@@ -11,12 +11,12 @@ $lang['mainsite']['manageroutes']           = "Manage Routes";
 $lang['mainsite']['managealiases']          = "Manage Aliases";
 $lang['mainsite']['sso']                    = "SSO";
 $lang['mainsite']['back']                   = 'Back';
-$lang['mainsite']['notfound']               = 'Page not found.';
 $lang['mainsite']['notadded']               = "The domain '%s' has not been added to this spam filter account.";
 $lang['mainsite']['notconfigured']          = 'This product is not configured properly. Please contact support.';
 $lang['mainsite']['notsetup']               = 'This service has not been set up yet. Please contact support.';
 $lang['mainsite']['invaliddomain']          = 'The domain of this service is not valid. Please contact support.';
 $lang['mainsite']['unavailable']            = 'The spam filter cannot be reached at the moment. Please contact support.';
+$lang['mainsite']['apierror']               = 'The spam filter returned an error. Please contact support.';
 
 
 $lang['ManageRoutes']['header']             = 'Manage Routes';
@@ -43,7 +43,7 @@ $lang['ManageRoutes']['invalid_route']      = 'Please enter a valid hostname or 
 $lang['ManageAliases']['header']            = 'Manage Aliases';
 $lang['ManageAliases']['action']            = 'Action';
 $lang['ManageAliases']['alias']             = 'Alias';
-$lang['ManageAliases']['add_alias']         = 'Add An alias';
+$lang['ManageAliases']['add_alias']         = 'Add an alias';
 $lang['ManageAliases']['confirm_delete']    = 'Are you sure you want to delete this alias?';
 $lang['ManageAliases']['nothing']           = 'The domain has no aliases.';
 $lang['ManageAliases']['save']              = 'Save';

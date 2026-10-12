@@ -8,12 +8,11 @@ $lang['mainsite']['login']                  = 'Log In To Panel';
 $lang['mainsite']['management']             = 'Management';
 $lang['mainsite']['manage_domains']         = 'Domains Management';
 $lang['mainsite']['stats']                  = 'Bandwidth Usage';
-$lang['mainsite']['notfound']               = 'Page not found';
 $lang['mainsite']['notadded']               = "The reseller account '%s' has not been added to this spam filter account.";
 $lang['mainsite']['notconfigured']          = 'This product is not configured properly. Please contact support.';
 $lang['mainsite']['notsetup']               = 'This service has not been set up yet. Please contact support.';
 $lang['mainsite']['unavailable']            = 'The spam filter cannot be reached at the moment. Please contact support.';
-$lang['mainsite']['back']                   = 'Back';
+$lang['mainsite']['apierror']               = 'The spam filter returned an error. Please contact support.';
 
 
 
