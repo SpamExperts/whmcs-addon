@@ -67,7 +67,6 @@ class kwspamexperts_api
         $this->response = json_decode(curl_exec($ch), true);
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $curl_error = curl_error($ch);
-        curl_close($ch);
 
         $hasErrorMessage = isset($this->response['messages']['error'][0]);
         $genericError = 'Something went wrong with this service.';
