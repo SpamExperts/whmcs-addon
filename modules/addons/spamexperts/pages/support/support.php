@@ -12,6 +12,7 @@ global $CONFIG;
 $addon = (array)Capsule::table('tbladdonmodules')
     ->select('value as version')
     ->where('module', 'spamexperts')
+    ->where('setting', 'version')
     ->first();
 $data  = getApiSettings();
 $curl  = curl_version();
