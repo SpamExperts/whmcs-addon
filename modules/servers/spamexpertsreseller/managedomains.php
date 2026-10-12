@@ -22,16 +22,7 @@ if ($handle_actions) {
                 $vars['_status'] = array('code' => 0, 'msg' => $vars['lang']['invalid_domain']);
                 break;
             }
-            $api->call('/auth/getrole/');
-            $role = $api->getResponse();
-            if ($role['result'] == 'admin') {
-                $api->call(
-                    '/reseller/unbinddomains/username/' . rawurlencode($params['username'])
-                    . '/domains/' . rawurlencode($unbindDomain) . '/'
-                );
-            } else {
-                $api->call('/domain/remove/domain/' . rawurlencode($unbindDomain) . '/');
-            }
+            $api->call('/domain/remove/domain/' . rawurlencode($unbindDomain) . '/');
 
             if ($api->isSuccess()) {
                 $vars['_status']  = array('code' => 1, 'msg' => $vars['lang']['domain_unbinded']);
@@ -45,43 +36,11 @@ if ($handle_actions) {
                 $vars['_status'] = array('code' => 0, 'msg' => $vars['lang']['invalid_domain']);
                 break;
             }
-            $api->call('/auth/getrole/');
-            $role = $api->getResponse();
-
-            if ($role['result'] == 'admin') {
-                $api->call('/domain/exists/domain/' . rawurlencode($bindDomain) . '/');
-                if ($api->isSuccess()) {
-                    $res = $api->getResponse();
-                    if ($res['result']['present'] != 1) {
-                        $api->call('/domain/add/domain/' . rawurlencode($bindDomain) . '/');
-                    }
-                }
-                $api->call('/domain/getowner/domain/' . rawurlencode($bindDomain));
-                if ($api->isSuccess()) {
-                    $owner = $api->getResponse();
-                    if (empty($owner['result']) || $owner['result']['username'] == $params['username']) {
-                        $api->call(
-                            '/reseller/binddomains/username/' . rawurlencode($params['username'])
-                            . '/domains/' . rawurlencode($bindDomain) . '/'
-                        );
-                        if ($api->isSuccess()) {
-                            $vars['_status']  = array('code' => 1, 'msg' => $vars['lang']['domain_binded']);
-                        } else {
-                            $vars['_status']  = array('code' => 0, 'msg' => $api->error());
-                        }
-                    } else {
-                        $vars['_status'] = array('code' => 0, 'msg' => $vars['lang']['invalid_owner']);
-                    }
-                } else {
-                    $vars['_status']  = array('code' => 0, 'msg' => $api->error());
-                }
+            $api->call('/domain/add/domain/' . rawurlencode($bindDomain) . '/');
+            if ($api->isSuccess()) {
+                $vars['_status']  = array('code' => 1, 'msg' => $vars['lang']['domain_binded']);
             } else {
-                $api->call('/domain/add/domain/' . rawurlencode($bindDomain) . '/');
-                if ($api->isSuccess()) {
-                    $vars['_status']  = array('code' => 1, 'msg' => $vars['lang']['domain_binded']);
-                } else {
-                    $vars['_status']  = array('code' => 0, 'msg' => $api->error());
-                }
+                $vars['_status']  = array('code' => 0, 'msg' => $api->error());
             }
 
             break;
