@@ -5,10 +5,19 @@ if (!defined("WHMCS")) {
 }
 
 if (isset($_POST['action']) && $_POST['action'] === 'savechanges') {
-    if (saveWHMCSconfig('kwspamexperts_api', serialize($_POST['conf']))) {
+    // Saved without the spaces a pasted URL may have, for the products as well
+    if (isset($_POST['conf']['url']) && is_string($_POST['conf']['url'])) {
+        $_POST['conf']['url'] = trim($_POST['conf']['url']);
+    }
+    // The products use this URL too, so not one that sends the credentials unencrypted
+    if (isset($_POST['conf']['url']) && preg_match('#^\s*http://#i', (string) $_POST['conf']['url'])) {
+        addError('The API URL must use https://, so the API credentials are sent encrypted.');
+    } elseif (isset($_POST['conf']['user']) && str_contains((string) $_POST['conf']['user'], ':')) {
+        // Basic authentication ends the username at its first colon
+        addError('The API username cannot contain a colon, which Basic authentication cannot carry.');
+    } elseif (saveWHMCSconfig('kwspamexperts_api', serialize($_POST['conf']))) {
         updateProductsConfig(serialize($_POST['conf']));
     }
 }
 
-$api = getWHMCSconfig('kwspamexperts_api');
-$data = unserialize($api);
+$data = getApiSettings();

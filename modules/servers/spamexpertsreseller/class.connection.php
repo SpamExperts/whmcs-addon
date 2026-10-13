@@ -1,69 +1,91 @@
 <?php
 
-/* * ********************************************************************
- * Customization Services by ModulesGarden.com
- * Copyright  ModulesGarden, INBS Group Brand, All Rights Reserved 
- * (2014-02-10, 10:27:46)
- * 
- *
- *  CREATED BY MODULESGARDEN       ->        http://modulesgarden.com
- *  CONTACT                        ->       contact@modulesgarden.com
- *
- *
- *
- *
- * This software is furnished under a license and may be used and copied
- * only  in  accordance  with  the  terms  of such  license and with the
- * inclusion of the above copyright notice.  This software  or any other
- * copies thereof may not be provided or otherwise made available to any
- * other person.  No title to and  ownership of the  software is  hereby
- * transferred.
- *
- *
- * ******************************************************************** */
-
-/**
- * @author Maciej Husak <maciej@modulesgarden.com>
- */
 class spamexperts_api
 {
-    private $error = null;
-    private $url = null;
-    private $user = null;
-    private $pass = null;
-    private $response = null;
-    private $debug = true;
+    /** The error the API returns for any call when the credentials are wrong */
+    // phpcs:ignore Generic.Files.LineLength.TooLong
+    public const INVALID_CREDENTIALS = 'The API credentials provided are incorrect, please specify a valid API username and password.';
 
+    /** The error for a plain HTTP Spam Panel URL, refused before any request */
+    public const HTTP_URL = 'The Spam Panel URL must use https://, so the API credentials are sent encrypted.';
+    /** The error for a username with a colon, which Basic authentication cannot carry */
+    public const USERNAME_COLON = 'The API username cannot contain a colon, which Basic authentication cannot carry.';
+    /** The error for an HTTP 200 that isn't the API's JSON, as from a URL with a wrong path */
+    public const NO_API_RESPONSE = 'The Spam Panel URL gave no API response. Check that it is the panel address.';
+    /** Pattern of the error domainslist/get gives a reseller without domains, as it HTML-escapes the name */
+    public const NO_DOMAINS = "#^The user '.*' has no domains$#s";
+
+    /** @var string|null */
+    private $error = null;
+    /** @var string|null */
+    private $url = null;
+    /** @var string|null */
+    private $user = null;
+    /** @var string|null */
+    private $pass = null;
+    /** @var array|null Decoded API response */
+    private $response = null;
+
+    /**
+     * @param array $params Module parameters
+     * @param bool $user Use the service's own credentials instead of the reseller ones
+     */
     public function __construct($params, $user = false)
     {
-        $this->url = $params['configoption1'];
+        // Without the spaces a pasted URL may have, which curl rejects
+        $this->url = trim((string) $params['configoption1']);
         if ($user) {
             $this->user = $params['username'];
             $this->pass = $params['password'];
         } else {
-            $this->user = $params['configoption2'];
-            $this->pass = $params['configoption3'];
+            // WHMCS stores the password field HTML-encoded. Text fields are stored raw
+            // on WHMCS 9 but may be encoded on older versions, so decode both.
+            $this->user = html_entity_decode($params['configoption2'], ENT_QUOTES);
+            $this->pass = html_entity_decode($params['configoption3'], ENT_QUOTES);
         }
     }
 
+    /**
+     * @param string $action API path, without the /api/ prefix
+     * @return void
+     */
     public function call($action)
     {
+        // Not over plain HTTP, which would send the API credentials unencrypted
+        if (preg_match('#^\s*http://#i', (string) $this->url)) {
+            $this->response = null;
+            $this->error = self::HTTP_URL;
+            return;
+        }
+        // Nor with a colon in the username, as Basic authentication ends the username there
+        if (str_contains((string) $this->user, ':')) {
+            $this->response = null;
+            $this->error = self::USERNAME_COLON;
+            return;
+        }
+
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->url."/api/".$action."/format/json/");
+        curl_setopt($ch, CURLOPT_URL, $this->url . "/api/" . $action . "/format/json/");
+        // A Spam Panel URL may lack a scheme, which curl would take as http
+        curl_setopt($ch, CURLOPT_DEFAULT_PROTOCOL, 'https');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_USERPWD, $this->user . ":" . $this->pass);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_UNRESTRICTED_AUTH, true);
+        // Nor follow a redirect to plain HTTP
+        curl_setopt($ch, CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTPS);
+        // Fail fast on an unreachable host, so the page shows the error
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+        // Only a guard against a hung API, so it doesn't hold PHP workers and cron forever
+        curl_setopt($ch, CURLOPT_TIMEOUT, 120);
         // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
         $this->response = json_decode(curl_exec($ch), true);
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $curl_error = curl_error($ch);
-        curl_close($ch);
 
         $hasErrorMessage = isset($this->response['messages']['error'][0]);
-        $genericError = 'Something went wrong with this service. Please contact your admin to check its configuration.';
+        $genericError = 'Something went wrong with this service.';
         $apiError = $hasErrorMessage ? $this->response['messages']['error'][0] : $genericError;
 
         $this->error = null;
@@ -72,11 +94,44 @@ class spamexperts_api
             if ($curl_error) {
                 $this->error .= ' ' . $curl_error;
             }
+        } elseif (!is_array($this->response)) {
+            $this->error = self::NO_API_RESPONSE;
         }
 
-        if ($this->debug) {
-            logModuleCall('spamexpertsresller', $action, $this->url . "/api/" . $action . "/format/json/", print_r($this->response, true));
+        $secrets = $this->secretsToMask($action);
+        // replaceVars is only documented to mask the request and response, so
+        // mask the action here too.
+        logModuleCall(
+            'spamexpertsreseller',
+            str_replace($secrets, '********', $action),
+            $this->url . "/api/" . $action . "/format/json/",
+            print_r($this->response, true),
+            '',
+            $secrets
+        );
+    }
+
+    // Values masked in the module log: the password in the
+    // request path and the SSO ticket returned by authticket/create.
+    /**
+     * @param string $action
+     * @return string[]
+     */
+    private function secretsToMask($action)
+    {
+        $secrets = [];
+        if (preg_match('#/password/([^/]+)#', $action, $match)) {
+            $secrets[] = $match[1];
         }
+        if (
+            str_contains($action, 'authticket/')
+            && isset($this->response['result'])
+            && is_string($this->response['result'])
+            && $this->response['result'] !== ''
+        ) {
+            $secrets[] = $this->response['result'];
+        }
+        return $secrets;
     }
 
     public function isError()
@@ -97,12 +152,5 @@ class spamexperts_api
     public function error()
     {
         return $this->error;
-    }
-
-    public function redirect($url)
-    {
-        ob_clean();
-        header("Location: " . $url);
-        die();
     }
 }

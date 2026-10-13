@@ -1,32 +1,9 @@
 <?php
 
-/* * ********************************************************************
- * Customization Services by ModulesGarden.com
- * Copyright  ModulesGarden, INBS Group Brand, All Rights Reserved 
- * (2014-02-10, 13:56:21)
- * 
- *
- *  CREATED BY MODULESGARDEN       ->        http://modulesgarden.com
- *  CONTACT                        ->       contact@modulesgarden.com
- *
- *
- *
- *
- * This software is furnished under a license and may be used and copied
- * only  in  accordance  with  the  terms  of such  license and with the
- * inclusion of the above copyright notice.  This software  or any other
- * copies thereof may not be provided or otherwise made available to any
- * other person.  No title to and  ownership of the  software is  hereby
- * transferred.
- *
- *
- * ******************************************************************** */
+// Translation strings are kept on one line
+// phpcs:disable Generic.Files.LineLength.TooLong
 
-/**
- * @author Maciej Husak <maciej@modulesgarden.com>
- */
-
-$lang                                       = array();
+$lang                                       = [];
 $lang['mainsite']['management']             = 'Management';
 $lang['mainsite']['logintopanel']           = 'Log In To Panel';
 $lang['mainsite']['editcontactemail']       = 'Edit Contact E-mail';
@@ -34,12 +11,17 @@ $lang['mainsite']['manageroutes']           = "Manage Routes";
 $lang['mainsite']['managealiases']          = "Manage Aliases";
 $lang['mainsite']['sso']                    = "SSO";
 $lang['mainsite']['back']                   = 'Back';
-$lang['mainsite']['notfound']               = 'Page not found.';
+$lang['mainsite']['notadded']               = "The domain '%s' has not been added to this spam filter account.";
+$lang['mainsite']['notconfigured']          = 'This product is not configured properly. Please contact support.';
+$lang['mainsite']['notsetup']               = 'This service has not been set up yet. Please contact support.';
+$lang['mainsite']['invaliddomain']          = 'The domain of this service is not valid. Please contact support.';
+$lang['mainsite']['unavailable']            = 'The spam filter cannot be reached at the moment. Please contact support.';
+$lang['mainsite']['apierror']               = 'The spam filter returned an error. Please contact support.';
 
 
 $lang['ManageRoutes']['header']             = 'Manage Routes';
 $lang['ManageRoutes']['destination']        = 'Destination';
-$lang['ManageRoutes']['port']               = 'Port (Optional)';
+$lang['ManageRoutes']['port_optional']      = 'Port (Optional)';
 $lang['ManageRoutes']['action']             = 'Action';
 $lang['ManageRoutes']['nothing']            = 'Nothing to display.';
 $lang['ManageRoutes']['add_route']          = 'Add a route';
@@ -54,13 +36,14 @@ $lang['ManageRoutes']['remove_info']        = 'You are not allowed to delete thi
 $lang['ManageRoutes']['selectall']          = 'Select All';
 $lang['ManageRoutes']['delete']             = 'Delete';
 $lang['ManageRoutes']['route_denied']       = 'You are not allowed to change this data.';
+$lang['ManageRoutes']['invalid_route']      = 'Please enter a valid hostname or IP address and a port between 1 and 65535.';
 
 
-  
+
 $lang['ManageAliases']['header']            = 'Manage Aliases';
 $lang['ManageAliases']['action']            = 'Action';
 $lang['ManageAliases']['alias']             = 'Alias';
-$lang['ManageAliases']['add_alias']         = 'Add An alias';
+$lang['ManageAliases']['add_alias']         = 'Add an alias';
 $lang['ManageAliases']['confirm_delete']    = 'Are you sure you want to delete this alias?';
 $lang['ManageAliases']['nothing']           = 'The domain has no aliases.';
 $lang['ManageAliases']['save']              = 'Save';
@@ -69,6 +52,7 @@ $lang['ManageAliases']['delete']            = 'Delete';
 $lang['ManageAliases']['alias_removed']     = 'Alias has been removed';
 $lang['ManageAliases']['alias_added']       = 'Alias has been added';
 $lang['ManageAliases']['selectall']         = 'Select All';
+$lang['ManageAliases']['invalid_alias']     = 'Please enter a valid domain name.';
 
 
 $lang['EditEmail']['header']                = 'Edit Contact E-mail';
@@ -79,8 +63,8 @@ $lang['EditEmail']['password']              = 'Password';
 $lang['EditEmail']['confirmpassword']       = 'Confirm Password';
 $lang['EditEmail']['email']                 = 'E-mail';
 $lang['EditEmail']['email_changed']         = 'E-mail has been changed.';
-$lang['EditEmail']['primarycontact']        = 'Primary contact e-mail:';
-$lang['EditEmail']['admincontact']          = 'Administrator\'s contact:';
+$lang['EditEmail']['primarycontact']        = 'Primary contact e-mail';
+$lang['EditEmail']['admincontact']          = 'Administrator\'s contact';
 $lang['EditEmail']['email_denied']          = 'You are not allowed to change this data.';
-
-?>
+$lang['EditEmail']['invalid_email']         = 'Please enter a valid e-mail address.';
+$lang['EditEmail']['no_changes']            = 'Nothing to save, the contacts are unchanged.';

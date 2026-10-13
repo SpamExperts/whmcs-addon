@@ -1,64 +1,87 @@
 <?php
 
-/* * ********************************************************************
- * Customization Services by ModulesGarden.com
- * Copyright  ModulesGarden, INBS Group Brand, All Rights Reserved 
- * (2014-02-11, 09:51:59)
- * 
- *
- *  CREATED BY MODULESGARDEN       ->        http://modulesgarden.com
- *  CONTACT                        ->       contact@modulesgarden.com
- *
- *
- *
- *
- * This software is furnished under a license and may be used and copied
- * only  in  accordance  with  the  terms  of such  license and with the
- * inclusion of the above copyright notice.  This software  or any other
- * copies thereof may not be provided or otherwise made available to any
- * other person.  No title to and  ownership of the  software is  hereby
- * transferred.
- *
- *
- * ******************************************************************** */
-
 /**
- * @author Maciej Husak <maciej@modulesgarden.com>
+ * Management page, loaded by kwspamexperts_page() and run in its scope.
+ *
+ * @var array $params Module parameters from WHMCS
+ * @var kwspamexperts_api $api
+ * @var string $domain Domain of the service
+ * @var bool $handle_actions Run the posted action instead of loading the page data
+ * @var array $vars Template variables, returned by the page function
  */
 if (!defined("WHMCS")) {
-  die("This file cannot be accessed directly");
+    die("This file cannot be accessed directly");
 }
 
-if(! $params['configoption6']){
-    if(isset($_POST['primaryemail'])){
+if (! $params['configoption6']) {
+    if ($handle_actions) {
+        // Each contact is updated on its own, so report each result. Empty
+        // and unchanged fields are skipped, and failed input is kept for the form.
+        $contacts = [
+            'primaryemail' => ['domaincontact', 'primarycontact'],
+            'adminemail' => ['domainadmincontact', 'admincontact'],
+        ];
+        $statuses = [];
+        $input = [];
+        foreach ($contacts as $field => $contact) {
+            [$endpoint, $label] = $contact;
+            if (!isset($_POST[$field]) || !is_string($_POST[$field]) || trim($_POST[$field]) === '') {
+                continue;
+            }
+            $api->call($endpoint . '/get/domain/' . $domain . '/');
+            if ($api->isSuccess() && $api->getResponse()['result'] === $_POST[$field]) {
+                continue;
+            }
+            if (!kwspamexperts_isEmail($_POST[$field])) {
+                $status = ['code' => 0,'msg' => $vars['lang']['invalid_email']];
+            } else {
+                $api->call($endpoint . '/set/domain/' . $domain . '/email/' . rawurlencode($_POST[$field]) . '/');
+                if ($api->isSuccess()) {
+                    $status = ['code' => 1,'msg' => $vars['lang']['email_changed']];
+                } else {
+                    $status = ['code' => 0,'msg' => $api->error()];
+                }
+            }
+            if ($status['code'] !== 1) {
+                $input[$label] = $_POST[$field];
+            }
+            $status['msg'] = $vars['lang'][$label] . ': ' . $status['msg'];
+            $statuses[] = $status;
+        }
+        if ($statuses) {
+            $codes = array_column($statuses, 'code');
+            $vars['_status'] = [
+                'code' => min($codes),
+                'msg' => implode(' ', array_column($statuses, 'msg')),
+                'list' => $statuses,
+                'input' => $input,
+            ];
+        } else {
+            // Code 3 is a notice, shown as an info alert
+            $vars['_status'] = ['code' => 3, 'msg' => $vars['lang']['no_changes']];
+        }
 
-        $api->call('domaincontact/set/domain/'.$domain.'/email/'.$_POST['primaryemail'].'/');
-        if ($api->isSuccess())
-            $vars['_status'] = array('code'=>1,'msg'=>$vars['lang']['email_changed']);
-        else 
-            $vars['_status'] = array('code'=>0,'msg'=>$api->error());
+        return;
     }
-
-    if(isset($_POST['adminemail'])){
-        $api->call('domainadmincontact/set/domain/'.$domain.'/email/'.$_POST['adminemail'].'/');
-        if ($api->isSuccess())
-            $vars['_status'] = array('code'=>1,'msg'=>$vars['lang']['email_changed']);
-        else 
-            $vars['_status'] = array('code'=>0,'msg'=>$api->error());
-    }
-
 
     $api ->call("domaincontact/get/domain/$domain/");
-    if ($api->isSuccess())
-    {
+    if ($api->isSuccess()) {
         $vars['primarycontact'] = $api->getResponse()['result'];
+    } else {
+        $vars['_status'] = ['code' => 0,'msg' => $api->error()];
     }
 
     $api ->call("domainadmincontact/get/domain/$domain/");
-    if ($api->isSuccess())
-    {
+    if ($api->isSuccess()) {
         $vars['admincontact'] = $api->getResponse()['result'];
+    } else {
+        $vars['_status'] = ['code' => 0,'msg' => $api->error()];
     }
-} else {   
-    $vars['_status'] = array('code'=>2,'msg'=>$vars['lang']['email_denied']);
+
+    // Show what failed to save, so it can be corrected instead of retyped
+    if (isset($vars['_result']['input'])) {
+        $vars = array_merge($vars, $vars['_result']['input']);
+    }
+} else {
+    $vars['_status'] = ['code' => 2,'msg' => $vars['lang']['email_denied']];
 }

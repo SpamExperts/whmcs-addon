@@ -2,118 +2,98 @@
 
 //SOME DEFINES
 defined('DS') or define('DS', DIRECTORY_SEPARATOR);
-defined('WHMCS_MAIN_DIR') or define('WHMCS_MAIN_DIR', substr(__DIR__, 0, strpos(__DIR__, 'modules'.DS.'addons')));
-//Use module in admin mode
-$IS_CLIENTAREA = false;
 
 /**
  * Just change function name. Do not edit anything more.
- */ 
+ */
 
 
 function spamexperts_config()
 {
     //SOME USEFUL STUFF
     // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-    require_once __DIR__.DS.'core'.DS.'functions.php';
+    require_once __DIR__ . DS . 'core' . DS . 'functions.php';
 
     // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-    require_once __DIR__.DS.'config.php';
-    
+    require_once __DIR__ . DS . 'config.php';
+
     $module = spamexperts_getModuleClass(__FILE__);
-    $MGC = new $module();
-    return array
-    (
-        'name'          =>  $MGC->system_name,
-        'description'   =>  $MGC->description,
-        'version'       =>  $MGC->version,
-        'author'        =>  $MGC->author
-    );
+    $moduleConfig = new $module();
+    return [
+        'name'          =>  $moduleConfig->system_name,
+        'description'   =>  $moduleConfig->description,
+        'version'       =>  $moduleConfig->version,
+        'author'        =>  $moduleConfig->author
+    ];
 }
 
 function spamexperts_activate()
 {
     //SOME USEFUL STUFF
     // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-    require_once __DIR__.DS.'core'.DS.'functions.php';
+    require_once __DIR__ . DS . 'core' . DS . 'functions.php';
 
     // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-    require_once __DIR__.DS.'config.php';
+    require_once __DIR__ . DS . 'config.php';
 
     $module = spamexperts_getModuleClass(__FILE__);
-    $MGC = new $module();
-    $MGC->activate();
+    $moduleConfig = new $module();
+    $moduleConfig->activate();
 }
 
 function spamexperts_deactivate()
 {
     //SOME USEFUL STUFF
     // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-    require_once __DIR__.DS.'core'.DS.'functions.php';
+    require_once __DIR__ . DS . 'core' . DS . 'functions.php';
 
     // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-    require_once __DIR__.DS.'config.php';
+    require_once __DIR__ . DS . 'config.php';
 
     $module = spamexperts_getModuleClass(__FILE__);
-    $MGC = new $module();
-    $MGC->deactivate();
+    $moduleConfig = new $module();
+    $moduleConfig->deactivate();
 }
 
 
+/**
+ * Addon upgrade
+ * @param array $vars
+ */
 function spamexperts_upgrade($vars)
 {
     //SOME USEFUL STUFF
     // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-    require_once __DIR__.DS.'core'.DS.'functions.php';
+    require_once __DIR__ . DS . 'core' . DS . 'functions.php';
 
     // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-    require_once __DIR__.DS.'config.php';
+    require_once __DIR__ . DS . 'config.php';
 
     $module = spamexperts_getModuleClass(__FILE__);
-    $MGC = new $module();
-    $MGC->upgrade();
+    $moduleConfig = new $module();
+    $moduleConfig->upgrade();
 }
 
 /**
  * Admin area output
- * @param type $vars 
+ * @param array $vars
  */
 function spamexperts_output($vars)
 {
     // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-    require_once __DIR__.DS.'config.php';
+    require_once __DIR__ . DS . 'config.php';
     // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-    require_once __DIR__.DS.'core'.DS.'output.php';
+    require_once __DIR__ . DS . 'core' . DS . 'output.php';
 }
-
-function spamexperts_clientarea($vars) 
-{
-    //Enable Client Area
-    global $IS_CLIENTAREA;
-    $IS_CLIENTAREA = true;
-
-    // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-    require_once __DIR__.DS.'config.php';
-    // phpcs:ignore PHPCS_SecurityAudit.Misc.IncludeMismatch.ErrMiscIncludeMismatchNoExt,PHPCS_SecurityAudit.BadFunctions.EasyRFI.WarnEasyRFI
-    $content = require_once __DIR__.DS.'core'.DS.'output_client.php';
-    
-    return array(
-        'pagetitle'     => 'Addon',
-        'breadcrumb'	=> array('index.php?m=NicIT' => 'NicIT'),
-        'templatefile'	=> 'core/base',
-        'requirelogin'	=> isset($_SESSION['uid']) ? false : true,
-        'vars' => array(
-            'content'	=> $content,
-        ),
-    );
- 
-}
-
 
 /**** HELPER ****/
+/**
+ * Module class name, the name of the addon directory
+ * @param string $file
+ * @return string
+ */
 function spamexperts_getModuleClass($file)
 {
     // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
     return basename(dirname($file));
 }
-?>

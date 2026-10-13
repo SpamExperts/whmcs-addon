@@ -6,17 +6,22 @@ use WHMCS\Database\Capsule;
 //define addons main dir
 // phpcs:ignore PHPCS_SecurityAudit.BadFunctions.FilesystemFunctions.WarnFilesystem
 defined('ADDON_DIR') or define('ADDON_DIR', dirname(__DIR__));
+defined('ADDON_NAME') or define('ADDON_NAME', basename(ADDON_DIR));
 
-if(!function_exists('getWHMCSconfig'))
-{
-    function getWHMCSconfig($k) 
+if (!function_exists('getWHMCSconfig')) {
+    /**
+     * @param string $k Setting name in tblconfiguration
+     * @return string
+     */
+    function getWHMCSconfig($k)
     {
         try {
             $settings = Capsule::table('tblconfiguration')
                 ->where('setting', $k)
                 ->first();
-            $config = $settings->value;
+            $config = $settings->value ?? '';
         } catch (\Exception $e) {
+            logModuleCall(ADDON_NAME, __FUNCTION__, $k, $e->getMessage());
             addError("Cannot read configuration.");
             $config = '';
         }
@@ -24,8 +29,21 @@ if(!function_exists('getWHMCSconfig'))
     }
 }
 
-if(!function_exists('addError'))
-{
+if (!function_exists('getApiSettings')) {
+    /**
+     * @return array The saved API settings, with empty credentials before the first save
+     */
+    function getApiSettings()
+    {
+        $data = unserialize(getWHMCSconfig('kwspamexperts_api'), ['allowed_classes' => false]);
+        return is_array($data) ? $data : ['url' => '', 'user' => '', 'password' => ''];
+    }
+}
+
+if (!function_exists('addError')) {
+    /**
+     * @param string $error
+     */
     function addError($error)
     {
         $_SESSION[ADDON_NAME]['errors'][] = $error;
@@ -33,49 +51,40 @@ if(!function_exists('addError'))
 }
 
 
-if(!function_exists('addInfo'))
-{
+if (!function_exists('addInfo')) {
+    /**
+     * @param string $info
+     */
     function addInfo($info)
     {
         $_SESSION[ADDON_NAME]['infos'][] = $info;
     }
 }
 
-if(!function_exists('getErrors'))
-{
+if (!function_exists('getErrors')) {
     function getErrors()
     {
-        $errors = $_SESSION[ADDON_NAME]['errors'];
+        $errors = $_SESSION[ADDON_NAME]['errors'] ?? null;
         $_SESSION[ADDON_NAME]['errors'] = null;
         return $errors;
     }
 }
 
-if(!function_exists('getInfos'))
-{
+if (!function_exists('getInfos')) {
     function getInfos()
     {
-        $infos = $_SESSION[ADDON_NAME]['infos'];
+        $infos = $_SESSION[ADDON_NAME]['infos'] ?? null;
         $_SESSION[ADDON_NAME]['infos'] = null;
         return $infos;
     }
 }
 
-if(!function_exists('getAddonUrl'))
-{
-    function getAddonUrl($modpage = null, $modsubpage = null)
-    {
-        global $IS_CLIENTAREA;
-        if($IS_CLIENTAREA)
-            return 'index.php?m=' . ADDON_NAME.($modpage ? '&modpage=' . $modpage : '') . ($modsubpage ? '&modsubpage=' . $modsubpage : '');
-        else
-            return 'addonmodules.php?module=' . ADDON_NAME . ($modpage ? '&modpage=' . $modpage : '') . ($modsubpage ? '&modsubpage=' . $modsubpage : '');
-    }
-}
-
-
-if(!function_exists('saveWHMCSconfig'))
-{
+if (!function_exists('saveWHMCSconfig')) {
+    /**
+     * @param string $k Setting name in tblconfiguration
+     * @param string $v
+     * @return bool
+     */
     function saveWHMCSconfig($k, $v)
     {
         try {
@@ -87,6 +96,8 @@ if(!function_exists('saveWHMCSconfig'))
             addInfo('Configuration has been saved.');
             $saved = true;
         } catch (\Exception $e) {
+            // Only the setting name, the value holds the API password
+            logModuleCall(ADDON_NAME, __FUNCTION__, $k, $e->getMessage());
             addError("Configuration update failed.");
             $saved = false;
         }
@@ -94,7 +105,11 @@ if(!function_exists('saveWHMCSconfig'))
     }
 }
 
-if(!function_exists('updateProductsConfig')){
+if (!function_exists('updateProductsConfig')) {
+    /**
+     * @param string $c Serialized API settings
+     * @return bool
+     */
     function updateProductsConfig($c)
     {
         $array = unserialize($c);
@@ -120,6 +135,8 @@ if(!function_exists('updateProductsConfig')){
                 ]);
             $updated = true;
         } catch (\Exception $e) {
+            // Not the settings, they hold the API password
+            logModuleCall(ADDON_NAME, __FUNCTION__, 'tblproducts', $e->getMessage());
             addError("Products configuration update failed.");
             $updated = false;
         }
